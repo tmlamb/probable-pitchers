@@ -1,0 +1,19 @@
+{
+  "name": "@probable/db",
+  "version": "0.0.0",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "license": "MIT",
+  "scripts": {
+    "dev": "prisma studio --port 5556", 
+    "db-push": "prisma db push",
+    "postinstall": "prisma generate"
+  },
+  "dependencies": {
+    "@prisma/client": "^4.2.1"
+  },
+  "devDependencies": {
+    "prisma": "^4.2.1",
+    "typescript": "4.8.3"
+  }
+}
