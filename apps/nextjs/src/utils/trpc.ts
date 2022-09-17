@@ -1,7 +1,8 @@
 // src/utils/trpc.ts
 import type { AppRouter } from "@probable/api";
 import { transformer } from "@probable/api/transformer";
-import { setupTRPC } from "@trpc/next";
+import { httpBatchLink } from "@trpc/client";
+import { createTRPCNext } from "@trpc/next";
 
 const getBaseUrl = () => {
   if (typeof window !== "undefined") return ""; // browser should use relative url
@@ -10,10 +11,14 @@ const getBaseUrl = () => {
   return `http://localhost:${process.env.PORT ?? 3000}`; // dev SSR should use localhost
 };
 
-export const trpc = setupTRPC<AppRouter>({
+export const trpc = createTRPCNext<AppRouter>({
   config() {
     return {
-      url: `${getBaseUrl()}/api/trpc`,
+      links: [
+        httpBatchLink({
+          url: `${getBaseUrl()}/api/trpc`,
+        }),
+      ],
       transformer,
     };
   },
