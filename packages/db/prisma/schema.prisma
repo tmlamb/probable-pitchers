@@ -15,6 +15,14 @@ model User {
 }
 
 model Team {
-  id   Int    @id
-  name String @unique
+  id      Int       @id
+  name    String    @unique
+  Pitcher Pitcher[]
+}
+
+model Pitcher {
+  id     Int    @id
+  name   String
+  team   Team   @relation(fields: [teamId], references: [id])
+  teamId Int
 }
