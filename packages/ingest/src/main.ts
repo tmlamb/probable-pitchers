@@ -19,22 +19,45 @@ const games = await getGames("2022-09-17");
 
 const newTeamIds: number[] = [];
 
-games.forEach(async (game) => {
-  const homeTeam = await client.team.byId.query(game.teams.home.team.id);
-  if (!homeTeam && newTeamIds.includes(game.teams.home.team.id)) {
-    newTeamIds.push(game.teams.home.team.id);
-    client.team.create.mutate({
-      id: game.teams.home.team.id,
-      name: game.teams.home.team.name,
-    });
-  }
+games.forEach((game) => {
+  [
+    { ...game.teams.away, homeAway: "away" },
+    { ...game.teams.home, homeAway: "home" },
+  ].forEach(async (team) => {
+    const existingTeam = await client.team.byId.query(team.team.id);
+    if (!existingTeam && !newTeamIds.includes(team.team.id)) {
+      newTeamIds.push(team.team.id);
+      client.team.create.mutate({
+        id: team.team.id,
+        name: team.team.name,
+      });
+    } else if (existingTeam && existingTeam.name !== team.team.name) {
+      client.team.update.mutate({
+        id: team.team.id,
+        name: team.team.name,
+      });
+    }
 
-  const awayTeam = await client.team.byId.query(game.teams.away.team.id);
-  if (!awayTeam && newTeamIds.includes(game.teams.away.team.id)) {
-    newTeamIds.push(game.teams.away.team.id);
-    client.team.create.mutate({
-      id: game.teams.away.team.id,
-      name: game.teams.away.team.name,
-    });
-  }
+    if (team.probablePitcher) {
+      const existingPitcher = await client.pitcher.byId.query(
+        team.probablePitcher.id
+      );
+      if (!existingPitcher) {
+        client.pitcher.create.mutate({
+          id: team.probablePitcher.id,
+          name: team.probablePitcher.fullName,
+          teamId: team.team.id,
+        });
+      } else if (
+        existingPitcher.name !== team.probablePitcher.fullName ||
+        existingPitcher.teamId !== team.team.id
+      ) {
+        client.pitcher.update.mutate({
+          id: team.probablePitcher.id,
+          name: team.probablePitcher.fullName,
+          teamId: team.team.id,
+        });
+      }
+    }
+  });
 });
