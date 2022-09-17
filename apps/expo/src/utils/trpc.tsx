@@ -1,5 +1,7 @@
 import type { AppRouter } from "@probable/api";
+import { httpBatchLink } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react";
+
 /**
  * A set of typesafe hooks for consuming your API.
  */
@@ -17,7 +19,8 @@ const getBaseUrl = () => {
    * you don't have anything else running on it, or you'd have to change it.
    */
   const localhost = Constants.manifest?.debuggerHost?.split(":")[0];
-  if (!localhost) throw new Error("failed to get localhost, configure it manually");
+  if (!localhost)
+    throw new Error("failed to get localhost, configure it manually");
   return `http://${localhost}:3000`;
 };
 
@@ -35,7 +38,7 @@ export const TRPCProvider: React.FC<{ children: React.ReactNode }> = ({
   const [queryClient] = React.useState(() => new QueryClient());
   const [trpcClient] = React.useState(() => {
     const url = getBaseUrl() + "/api/trpc";
-    return trpc.createClient({ url, transformer });
+    return trpc.createClient({ links: [httpBatchLink({ url })], transformer });
   });
 
   return (
