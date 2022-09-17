@@ -1,15 +1,20 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["referentialIntegrity"]
 }
 
 datasource db {
-  provider = "mysql"
-  url = env("DATABASE_URL")
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
   referentialIntegrity = "prisma"
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  pushToken String   @unique
+  id        Int    @id @default(autoincrement())
+  pushToken String @unique
+}
+
+model Team {
+  id   Int    @id
+  name String @unique
 }

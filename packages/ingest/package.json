@@ -1,0 +1,25 @@
+{
+  "name": "@probable/ingest",
+  "version": "0.0.0",
+  "main": "index.js",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "start": "ts-node ./src/main.ts"
+  },
+  "dependencies": {
+    "@probable/api": "*",
+    "@probable/db": "*",
+    "@tanstack/react-query": "^4.2.3",
+    "@trpc/client": "next",
+    "@trpc/server": "next",
+    "node-fetch": "^3.2.10",
+    "superjson": "^1.9.1",
+    "ts-node": "^10.9.1",
+    "zod": "^3.18.0"
+  },
+  "devDependencies": {
+    "typescript": "4.8.3"
+  }
+}
