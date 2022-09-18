@@ -15,14 +15,25 @@ model User {
 }
 
 model Team {
-  id      Int       @id
-  name    String    @unique
-  Pitcher Pitcher[]
+  id       Int       @id
+  name     String    @unique
+  Pitchers Pitcher[]
 }
 
 model Pitcher {
-  id     Int    @id
-  name   String
-  team   Team   @relation(fields: [teamId], references: [id])
-  teamId Int
+  id        Int    @id
+  name      String
+  team      Team   @relation(fields: [teamId], references: [id])
+  teamId    Int
+  HomeGames Game[] @relation("HomePitcher")
+  AwayGames Game[] @relation("AwayPitcher")
+}
+
+model Game {
+  id            Int      @id
+  date          DateTime
+  homePitcher   Pitcher? @relation("HomePitcher", fields: [homePitcherId], references: [id])
+  homePitcherId Int?
+  awayPitcher   Pitcher? @relation("AwayPitcher", fields: [awayPitcherId], references: [id])
+  awayPitcherId Int?
 }

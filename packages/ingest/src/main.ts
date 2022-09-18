@@ -15,15 +15,12 @@ const client = createTRPCProxyClient<AppRouter>({
   transformer: superjson,
 });
 
-const games = await getGames("2022-09-17");
+const games = await getGames("2022-09-18");
 
 const newTeamIds: number[] = [];
 
-games.forEach((game) => {
-  [
-    { ...game.teams.away, homeAway: "away" },
-    { ...game.teams.home, homeAway: "home" },
-  ].forEach(async (team) => {
+games.forEach(async (game) => {
+  [game.teams.away, game.teams.home].forEach(async (team) => {
     const existingTeam = await client.team.byId.query(team.team.id);
     if (!existingTeam && !newTeamIds.includes(team.team.id)) {
       newTeamIds.push(team.team.id);
@@ -60,4 +57,14 @@ games.forEach((game) => {
       }
     }
   });
+
+  const existingGame = await client.game.byId.query(game.gamePk);
+  if (!existingGame) {
+    client.game.create.mutate({
+      id: game.gamePk,
+      date: new Date(game.gameDate),
+      homePitcherId: game.teams.home.probablePitcher?.id,
+      awayPitcherId: game.teams.away.probablePitcher?.id,
+    });
+  }
 });
