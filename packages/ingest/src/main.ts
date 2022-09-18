@@ -24,12 +24,12 @@ games.forEach(async (game) => {
     const existingTeam = await client.team.byId.query(team.team.id);
     if (!existingTeam && !newTeamIds.includes(team.team.id)) {
       newTeamIds.push(team.team.id);
-      client.team.create.mutate({
+      await client.team.create.mutate({
         id: team.team.id,
         name: team.team.name,
       });
     } else if (existingTeam && existingTeam.name !== team.team.name) {
-      client.team.update.mutate({
+      await client.team.update.mutate({
         id: team.team.id,
         name: team.team.name,
       });
@@ -40,7 +40,7 @@ games.forEach(async (game) => {
         team.probablePitcher.id
       );
       if (!existingPitcher) {
-        client.pitcher.create.mutate({
+        await client.pitcher.create.mutate({
           id: team.probablePitcher.id,
           name: team.probablePitcher.fullName,
           teamId: team.team.id,
@@ -49,7 +49,7 @@ games.forEach(async (game) => {
         existingPitcher.name !== team.probablePitcher.fullName ||
         existingPitcher.teamId !== team.team.id
       ) {
-        client.pitcher.update.mutate({
+        await client.pitcher.update.mutate({
           id: team.probablePitcher.id,
           name: team.probablePitcher.fullName,
           teamId: team.team.id,
@@ -60,7 +60,7 @@ games.forEach(async (game) => {
 
   const existingGame = await client.game.byId.query(game.gamePk);
   if (!existingGame) {
-    client.game.create.mutate({
+    await client.game.create.mutate({
       id: game.gamePk,
       date: new Date(game.gameDate),
       homePitcherId: game.teams.home.probablePitcher?.id,
