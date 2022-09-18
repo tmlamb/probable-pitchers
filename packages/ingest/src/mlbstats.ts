@@ -34,7 +34,7 @@ const ScheduleResponse = z.object({
 
 export async function getGames(date: string): Promise<z.infer<typeof Game>[]> {
   return fetch(
-    `https://statsapi.mlb.com/api/v1/schedule?sportId=1&date=${date}&language=en&hydrate=team(league),probablePitcher`
+    `https://statsapi.mlb.com/api/v1/schedule?sportId=1&date=${date}&language=en&hydrate=team,probablePitcher`
   )
     .then((res) => res.json())
     .then((data) => {
