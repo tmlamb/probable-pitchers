@@ -1,25 +1,9 @@
-import { AppRouter } from "@probable/api";
-import { createTRPCProxyClient, httpLink } from "@trpc/client";
-import fetch from "node-fetch";
-import superjson from "superjson";
-import { getGames } from "./mlbstats.js";
+import { format, formatISO } from "date-fns";
+import { Game, getGames } from "../services/mlbstats.js";
+import { sendPushNotification } from "../services/notifications.js";
+import { client } from "../trpc.js";
 
-global.fetch = fetch as any;
-
-const client = createTRPCProxyClient<AppRouter>({
-  links: [
-    httpLink({
-      url: "http://localhost:3000/api/trpc",
-    }),
-  ],
-  transformer: superjson,
-});
-
-const games = await getGames("2022-09-18");
-
-const newTeamIds: number[] = [];
-
-games.forEach(async (game) => {
+async function processGame(game: Game) {
   [game.teams.away, game.teams.home].forEach(async (team) => {
     const existingTeam = await client.team.byId.query(team.team.id);
     if (!existingTeam && !newTeamIds.includes(team.team.id)) {
@@ -66,5 +50,38 @@ games.forEach(async (game) => {
       homePitcherId: game.teams.home.probablePitcher?.id,
       awayPitcherId: game.teams.away.probablePitcher?.id,
     });
+
+    [
+      game.teams.home.probablePitcher?.id,
+      game.teams.away.probablePitcher?.id,
+    ].forEach(async (pitcherId) => {
+      if (pitcherId) {
+        const subscriptions = await client.subscription.byPitcherId.query(
+          pitcherId
+        );
+        subscriptions.forEach(async (subscription) => {
+          const user = await client.user.byId.query(subscription.userId);
+          const pitcher = await client.pitcher.byId.query(pitcherId);
+          if (user?.pushToken && pitcher) {
+            sendPushNotification(
+              user.pushToken,
+              "Probable Pitcher Alert",
+              `${pitcher.name} is pitching today at ${format(
+                new Date(game.gameDate),
+                "h:m aaa"
+              )}!`
+            );
+          }
+        });
+      }
+    });
   }
-});
+}
+
+const games = await getGames(formatISO(new Date(), { representation: "date" }));
+
+const newTeamIds: number[] = [];
+
+for (const game of games) {
+  await processGame(game);
+}

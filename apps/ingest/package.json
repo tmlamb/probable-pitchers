@@ -6,14 +6,15 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "start": "ts-node ./src/main.ts"
+    "daily": "ts-node ./src/daily-games.ts",
+    "seed": "ts-node ./src/seed-teams-players.ts"
   },
   "dependencies": {
     "@probable/api": "*",
     "@probable/db": "*",
     "@tanstack/react-query": "^4.2.3",
     "@trpc/client": "next",
-    "@trpc/server": "next",
+    "date-fns": "^2.29.3",
     "node-fetch": "^3.2.10",
     "superjson": "^1.9.1",
     "ts-node": "^10.9.1",
