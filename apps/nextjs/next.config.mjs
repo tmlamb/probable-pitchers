@@ -17,5 +17,6 @@ export default withTM(["@probable/api", "@probable/db"])(
   defineNextConfig({
     reactStrictMode: true,
     swcMinify: true,
+    output: "standalone",
   })
 );
