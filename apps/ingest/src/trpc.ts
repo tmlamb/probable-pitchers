@@ -6,10 +6,12 @@ import superjson from "superjson";
 // Allows trpc to use node-fetch
 global.fetch = fetch as any;
 
+const API_URL = process.env.API_URL || "http://localhost:3000/api/trpc";
+
 export const client = createTRPCProxyClient<AppRouter>({
   links: [
     httpLink({
-      url: "http://localhost:3000/api/trpc",
+      url: API_URL,
     }),
   ],
   transformer: superjson,
