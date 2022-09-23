@@ -1,6 +1,6 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["referentialIntegrity"]
+  previewFeatures = ["referentialIntegrity", "fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -10,23 +10,28 @@ datasource db {
 }
 
 model User {
-  id        Int    @id @default(autoincrement())
-  pushToken String @unique
+  id            Int            @id @default(autoincrement())
+  deviceId      String         @unique
+  pushToken     String?        @unique
+  subscriptions Subscription[]
 }
 
 model Team {
   id       Int       @id
   name     String    @unique
-  Pitchers Pitcher[]
+  pitchers Pitcher[]
 }
 
 model Pitcher {
-  id        Int    @id
-  name      String
-  team      Team   @relation(fields: [teamId], references: [id])
-  teamId    Int
-  HomeGames Game[] @relation("HomePitcher")
-  AwayGames Game[] @relation("AwayPitcher")
+  id            Int            @id
+  name          String
+  team          Team           @relation(fields: [teamId], references: [id])
+  teamId        Int
+  homeGames     Game[]         @relation("HomePitcher")
+  awayGames     Game[]         @relation("AwayPitcher")
+  subscriptions Subscription[]
+
+  @@fulltext([name])
 }
 
 model Game {
@@ -36,4 +41,13 @@ model Game {
   homePitcherId Int?
   awayPitcher   Pitcher? @relation("AwayPitcher", fields: [awayPitcherId], references: [id])
   awayPitcherId Int?
+}
+
+model Subscription {
+  id        Int     @id @default(autoincrement())
+  user      User    @relation(fields: [userId], references: [id])
+  userId    Int
+  pitcher   Pitcher @relation(fields: [pitcherId], references: [id])
+  pitcherId Int
+  enabled   Boolean
 }
