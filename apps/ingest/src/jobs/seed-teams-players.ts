@@ -17,12 +17,6 @@ async function processTeam(team: Team) {
   }
 }
 
-const teams = await getTeams(format(new Date(), "yyyy"));
-
-for (const team of teams) {
-  await processTeam(team);
-}
-
 async function processPitcher(pitcher: Player) {
   const existingPitcher = await client.pitcher.byId.query(pitcher.id);
   if (!existingPitcher) {
@@ -44,8 +38,18 @@ async function processPitcher(pitcher: Player) {
   }
 }
 
-const pitchers = await getPitchers(format(new Date(), "yyyy"));
+export async function processSeason() {
+  const season = format(new Date(), "yyyy");
 
-for (const pitcher of pitchers) {
-  await processPitcher(pitcher);
+  const teams = await getTeams(season);
+
+  for (const team of teams) {
+    await processTeam(team);
+  }
+
+  const pitchers = await getPitchers(season);
+
+  for (const pitcher of pitchers) {
+    await processPitcher(pitcher);
+  }
 }

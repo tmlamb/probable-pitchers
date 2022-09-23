@@ -4,6 +4,7 @@ import { sendPushNotification } from "../services/notifications.js";
 import { client } from "../trpc.js";
 
 async function processGame(game: Game) {
+  const newTeamIds: number[] = [];
   [game.teams.away, game.teams.home].forEach(async (team) => {
     const existingTeam = await client.team.byId.query(team.team.id);
     if (!existingTeam && !newTeamIds.includes(team.team.id)) {
@@ -78,10 +79,12 @@ async function processGame(game: Game) {
   }
 }
 
-const games = await getGames(formatISO(new Date(), { representation: "date" }));
+export async function processGames() {
+  const games = await getGames(
+    formatISO(new Date(), { representation: "date" })
+  );
 
-const newTeamIds: number[] = [];
-
-for (const game of games) {
-  await processGame(game);
+  for (const game of games) {
+    await processGame(game);
+  }
 }
