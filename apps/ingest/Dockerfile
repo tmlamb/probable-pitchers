@@ -33,6 +33,7 @@ ARG API_URL
 
 WORKDIR /probable-pitchers
 COPY --from=deps /probable-pitchers/node_modules ./node_modules
+COPY --from=deps /probable-pitchers/apps/ingest/node_modules ./apps/ingest/node_modules
 COPY . .
 
 # Next.js collects completely anonymous telemetry data about general usage.
@@ -64,6 +65,7 @@ RUN adduser --system --uid 1001 ingest
 COPY --from=builder /probable-pitchers/apps/ingest/package.json ./apps/ingest/package.json
 COPY --from=builder /probable-pitchers/package.json ./package.json
 COPY --from=builder /probable-pitchers/node_modules ./node_modules
+COPY --from=builder /probable-pitchers/apps/ingest/node_modules ./apps/ingest/node_modules
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
