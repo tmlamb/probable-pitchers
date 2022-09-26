@@ -1,0 +1,53 @@
+name: Pulumi
+on:
+  push:
+    branches:
+      - main
+jobs:
+  tag-images:
+    name: Tag Latest Images
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.GHCR_USER }}
+          password: ${{ secrets.GHCR_ACCESS_TOKEN }}
+      - name: Tag NextJS Image
+        uses: shrink/actions-docker-registry-tag@v2
+        with:
+          registry: ghcr.io
+          repository: ${{ github.repository }}
+          target: ghcr.io/tmlamb/probable-pitchers-nextjs:sha-${{ github.sha }}
+          tags: |
+            ghcr.io/tmlamb/probable-pitchers-nextjs:latest
+      - name: Tag Ingest Image
+        uses: shrink/actions-docker-registry-tag@v2
+        with:
+          registry: ghcr.io
+          repository: ${{ github.repository }}
+          target: ghcr.io/tmlamb/probable-pitchers-ingest:sha-${{ github.sha }}
+          tags: |
+            ghcr.io/tmlamb/probable-pitchers-ingest:latest
+  update-infra:
+    name: Update Infrastructure
+    needs: tag-images
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: "${{ secrets.GCP_CREDENTIALS }}"
+      - run: cd infrastructure && npm install
+      - uses: pulumi/actions@v3
+        with:
+          command: up
+          stack-name: dev
+          work-dir: infrastructure
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
