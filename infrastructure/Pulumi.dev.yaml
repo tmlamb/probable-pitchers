@@ -1,0 +1,14 @@
+config:
+  google-native:project: probable-363616
+  google-native:region: us-central1
+  probable-pitchers:containerRegistry:
+    email:
+      secure: AAABACX1QTxqZ/C9iEiZjmET8GzVzl28GldgluMhEwLDw9iExnMNcsxDy+DQkiwY
+    host:
+      secure: AAABABplJSbzEsBXTJM4bGVk2sMykrFeetEU91ZSFcK3RiCA+WCM351ouCeVdTc=
+    password:
+      secure: AAABAIrSZNjgfkUNZu/q8CuGKKZp+YT7utlYL+Zx3Ys1emzrjD1/bgbw0wFBsv1MFutg8Tgozypk8n6plEZOQTvskP2geMDR
+    user:
+      secure: AAABALC3jFvjzzRcZdHlL1RxCcMkv0A/NFSNnXoJlAUzQug6KaY=
+  probable-pitchers:dbUrl:
+    secure: AAABAA/q4Gj+pGnc+toLS6CdZjTUW9eld+A36iUs7U9W3Efs+uZWm4RIHxv5tQ4mg44k94mmhgKzjbXUMJ6MGZj0jqTcUwg+6VMXKWyfKq9FNRqg3aLBO5zbJ4psDTotwFzT7GxiGDR3KHnKalHRpg0+kOlTUsgDSJJZoy1KjMLjQsQEi0r1TdgZgFgo8Cxga8nwqtt3kLXE4BtbjXZUeuzjPFYedDep1JLsOw8I5A==
