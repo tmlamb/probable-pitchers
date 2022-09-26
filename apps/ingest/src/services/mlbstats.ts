@@ -52,6 +52,7 @@ const ScheduleResponse = z.object({
 });
 
 export async function getGames(date: string): Promise<Game[]> {
+  console.log("Fetching games for date: ", date);
   return fetch(
     `https://statsapi.mlb.com/api/v1/schedule?sportId=1&date=${date}&hydrate=team,probablePitcher`
   )

@@ -42,4 +42,4 @@ yarn-error.log*
 # turbo
 .turbo
 
-mlbstats.http
+k8s

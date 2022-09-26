@@ -1,0 +1,11 @@
+
+https://statsapi.mlb.com/api/v1/schedule?sportId=1&date=2022-09-18&language=en&hydrate=team,probablePitcher
+
+###
+
+https://statsapi.mlb.com/api/v1/teams?sportId=1&language=en
+
+###
+
+https://statsapi.mlb.com/api/v1/sports/1/players?season=2022&language=en
+
