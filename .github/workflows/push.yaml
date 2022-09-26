@@ -16,7 +16,7 @@ jobs:
         uses: google-github-actions/auth@v0
         with:
           credentials_json: "${{ secrets.GCP_CREDENTIALS }}"
-      - run: npm install
+      - run: cd infrastructure && npm install
       - uses: pulumi/actions@v3
         with:
           command: up
@@ -34,11 +34,19 @@ jobs:
           registry: ghcr.io
           username: ${{ secrets.GHCR_USER }}
           password: ${{ secrets.GHCR_ACCESS_TOKEN }}
-      - name: Tag Images
+      - name: Tag NextJS Image
         uses: shrink/actions-docker-registry-tag@v2
         with:
           registry: ghcr.io
           repository: ${{ github.repository }}
-          target: sha-${{ github.sha }}
+          target: ghcr.io/tmlamb/probable-pitchers-nextjs:sha-${{ github.sha }}
           tags: |
-            latest
+            ghcr.io/tmlamb/probable-pitchers-nextjs:latest
+      - name: Tag Ingest Image
+        uses: shrink/actions-docker-registry-tag@v2
+        with:
+          registry: ghcr.io
+          repository: ${{ github.repository }}
+          target: ghcr.io/tmlamb/probable-pitchers-ingest:sha-${{ github.sha }}
+          tags: |
+            ghcr.io/tmlamb/probable-pitchers-ingest:latest
