@@ -41,45 +41,23 @@ preferences: {}
 users:
 - name: ${context}
   user:
-    exec:
-      apiVersion: client.authentication.k8s.io/v1beta1
-      command: gke-gcloud-auth-plugin
-      installHint: Install gke-gcloud-auth-plugin for use with kubectl by following
-        https://cloud.google.com/blog/products/containers-kubernetes/kubectl-auth-changes-in-gke
-      interactiveMode: IfAvailable
-      provideClusterInfo: true
+    auth-provider:
+      config:
+        cmd-args: config config-helper --format=json
+        cmd-path: gcloud
+        expiry-key: '{.credential.token_expiry}'
+        token-key: '{.credential.access_token}'
+      name: gcp
 `;
   });
-// export const kubeconfig = pulumi.
-//     all([ cluster.name, cluster.endpoint, cluster.masterAuth ]).
-//     apply(([ name, endpoint, masterAuth ]) => {
-//         const context = `${gcp.config.project}_${gcp.config.zone}_${name}`;
-//         return `apiVersion: v1
-// clusters:
-// - cluster:
-//     certificate-authority-data: ${masterAuth.clusterCaCertificate}
-//     server: https://${endpoint}
-//   name: ${context}
-// contexts:
-// - context:
-//     cluster: ${context}
-//     user: ${context}
-//   name: ${context}
-// current-context: ${context}
-// kind: Config
-// preferences: {}
-// users:
-// - name: ${context}
-//   user:
-//     auth-provider:
-//       config:
-//         cmd-args: config config-helper --format=json
-//         cmd-path: gcloud
-//         expiry-key: '{.credential.token_expiry}'
-//         token-key: '{.credential.access_token}'
-//       name: gcp
-// `;
-//     });
+// user:
+//   exec:
+//     apiVersion: client.authentication.k8s.io/v1beta1
+//     command: gke-gcloud-auth-plugin
+//     installHint: Install gke-gcloud-auth-plugin for use with kubectl by following
+//       https://cloud.google.com/blog/products/containers-kubernetes/kubectl-auth-changes-in-gke
+//     interactiveMode: IfAvailable
+//     provideClusterInfo: true- name: ${context}
 
 // Create a Kubernetes provider instance that uses our cluster from above.
 const clusterProvider = new k8s.Provider(name, {
