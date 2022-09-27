@@ -4,35 +4,29 @@ on:
     branches:
       - main
 jobs:
-  tag-images:
-    name: Tag Latest Images
+  build-images:
+    name: Build Container Images
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
       - name: Login to container registry
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
           username: ${{ secrets.GHCR_USER }}
           password: ${{ secrets.GHCR_ACCESS_TOKEN }}
-      - name: Tag NextJS Image
-        uses: shrink/actions-docker-registry-tag@v2
-        with:
-          registry: ghcr.io
-          repository: ${{ github.repository }}
-          target: ghcr.io/tmlamb/probable-pitchers-nextjs:sha-${{ github.sha }}
-          tags: |
-            ghcr.io/tmlamb/probable-pitchers-nextjs:latest
-      - name: Tag Ingest Image
-        uses: shrink/actions-docker-registry-tag@v2
-        with:
-          registry: ghcr.io
-          repository: ${{ github.repository }}
-          target: ghcr.io/tmlamb/probable-pitchers-ingest:sha-${{ github.sha }}
-          tags: |
-            ghcr.io/tmlamb/probable-pitchers-ingest:latest
-  update-infra:
+      - name: Build and publish nextjs image
+        run: |
+          docker build . --file apps/nextjs/Dockerfile --tag ghcr.io/tmlamb/probable-pitchers-nextjs:sha-${{ github.sha }} --tag ghcr.io/tmlamb/probable-pitchers-nextjs:latest
+          docker push --all-tags ghcr.io/tmlamb/probable-pitchers-nextjs
+      - name: Build and publish ingest image
+        run: |
+          docker build . --file apps/ingest/Dockerfile --tag ghcr.io/tmlamb/probable-pitchers-ingest:sha-${{ github.sha }} --tag ghcr.io/tmlamb/probable-pitchers-ingest:latest
+          docker push --all-tags ghcr.io/tmlamb/probable-pitchers-ingest
+  deploy-infra:
     name: Update Infrastructure
-    needs: tag-images
+    needs: build-images
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
