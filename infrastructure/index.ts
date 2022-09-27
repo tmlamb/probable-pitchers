@@ -43,13 +43,13 @@ preferences: {}
 users:
 - name: ${context}
   user:
-    exec:
-      apiVersion: client.authentication.k8s.io/v1beta1
-      command: gke-gcloud-auth-plugin
-      installHint: Install gke-gcloud-auth-plugin for use with kubectl by following
-        https://cloud.google.com/blog/products/containers-kubernetes/kubectl-auth-changes-in-gke
-      interactiveMode: IfAvailable
-      provideClusterInfo: true
+    auth-provider:
+      config:
+        cmd-args: config config-helper --format=json
+        cmd-path: gcloud
+        expiry-key: '{.credential.token_expiry}'
+        token-key: '{.credential.access_token}'
+      name: gcp
 `;
   });
 
