@@ -17,6 +17,8 @@ const cluster = new google.container.v1.Cluster(name, {
 // Export the Cluster name
 export const clusterName = cluster.name;
 
+console.log("created cluster: ", clusterName);
+
 // Manufacture a GKE-style kubeconfig. Note that this is slightly "different"
 // because of the way GKE requires gcloud to be in the picture for cluster
 // authentication (rather than using the client cert/key directly).
@@ -50,14 +52,16 @@ users:
       name: gcp
 `;
   });
+
 // user:
-//   exec:
-//     apiVersion: client.authentication.k8s.io/v1beta1
-//     command: gke-gcloud-auth-plugin
-//     installHint: Install gke-gcloud-auth-plugin for use with kubectl by following
-//       https://cloud.google.com/blog/products/containers-kubernetes/kubectl-auth-changes-in-gke
-//     interactiveMode: IfAvailable
-//     provideClusterInfo: true- name: ${context}
+//   auth-provider:
+//     config:
+//       cmd-args: config config-helper --format=json
+//       cmd-path: gcloud
+//       expiry-key: '{.credential.token_expiry}'
+//       token-key: '{.credential.access_token}'
+//     name: gcp
+console.log("generated kubeconfig: ", kubeconfig);
 
 // Create a Kubernetes provider instance that uses our cluster from above.
 const clusterProvider = new k8s.Provider(name, {
@@ -73,7 +77,7 @@ const ns = new k8s.core.v1.Namespace(
 
 // Export the Namespace name
 export const namespaceName = ns.metadata.name;
-
+console.log("created namespace: ", namespaceName);
 // const quota = new k8s.core.v1.ResourceQuota(
 //   "probable-quota",
 //   {

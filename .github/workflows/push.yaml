@@ -39,6 +39,11 @@ jobs:
           credentials_json: "${{ secrets.GCP_CREDENTIALS }}"
       - name: "Set up Cloud SDK"
         uses: "google-github-actions/setup-gcloud@v0"
+      - id: "get-credentials"
+        uses: "google-github-actions/get-gke-credentials@v0"
+        with:
+          cluster_name: "probable-pitchers"
+          location: "us-central1"
       - run: cd infrastructure && npm install
       - uses: pulumi/actions@v3
         with:
