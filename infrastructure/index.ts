@@ -215,7 +215,9 @@ const cronjob = new k8s.batch.v1.CronJob(
                   env: [
                     {
                       name: "API_URL",
-                      value: "http://probable-nextjs-6f93a84f/api/trpc",
+                      value: service.metadata.name.apply(
+                        (name) => `http://${name}/api/trpc`
+                      ),
                     },
                     {
                       name: "INGEST_JOBS",
