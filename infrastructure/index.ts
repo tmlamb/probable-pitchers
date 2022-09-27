@@ -204,7 +204,7 @@ const cronjob = new k8s.batch.v1.CronJob(
                   env: [
                     {
                       name: "API_URL",
-                      value: "http://probable-nextjs.probable/api/trpc",
+                      value: "http://probable-nextjs/api/trpc",
                     },
                     {
                       name: "INGEST_JOBS",
