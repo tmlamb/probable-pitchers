@@ -26,7 +26,7 @@ jobs:
   #         docker push --all-tags ghcr.io/tmlamb/probable-pitchers-ingest
   deploy-infra:
     name: Update Infrastructure
-    needs: build-images
+    # needs: build-images
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
