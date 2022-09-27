@@ -4,64 +4,6 @@ import { containerRegistry } from "./config";
 
 const config = new pulumi.Config();
 
-// const name = "probable-cluster";
-
-// Create a GKE cluster
-// const cluster = new google.container.v1.Cluster(name, {
-//   autopilot: {
-//     enabled: true,
-//   },
-// });
-
-// Export the Cluster name
-// export const clusterName = cluster.name;
-
-// console.log("created cluster: ", clusterName);
-
-// Manufacture a GKE-style kubeconfig. Note that this is slightly "different"
-// because of the way GKE requires gcloud to be in the picture for cluster
-// authentication (rather than using the client cert/key directly).
-// export const kubeconfig = pulumi
-//   .all([cluster.name, cluster.endpoint, cluster.masterAuth])
-//   .apply(([name, endpoint, masterAuth]) => {
-//     const context: string = `${google.config.project}_${google.config.region}_${name}`;
-//     return `apiVersion: v1
-// clusters:
-// - cluster:
-//     certificate-authority-data: ${masterAuth.clusterCaCertificate}
-//     server: https://${endpoint}
-//   name: ${context}
-// contexts:
-// - context:
-//     cluster: ${context}
-//     user: ${context}
-//   name: ${context}
-// current-context: ${context}
-// kind: Config
-// preferences: {}
-// users:
-// - name: ${context}
-//   user:
-//     auth-provider:
-//       config:
-//         cmd-args: config config-helper --format=json
-//         cmd-path: gcloud
-//         expiry-key: '{.credential.token_expiry}'
-//         token-key: '{.credential.access_token}'
-//       name: gcp
-// `;
-//   });
-
-// user:
-//   auth-provider:
-//     config:
-//       cmd-args: config config-helper --format=json
-//       cmd-path: gcloud
-//       expiry-key: '{.credential.token_expiry}'
-//       token-key: '{.credential.access_token}'
-//     name: gcp
-// console.log("generated kubeconfig: ", kubeconfig);
-
 // Create a Kubernetes provider instance that uses our cluster from above.
 const clusterProvider = new k8s.Provider("probable-pitchers", {
   kubeconfig: process.env.KUBECONFIG,
