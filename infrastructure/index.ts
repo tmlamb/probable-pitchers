@@ -4,21 +4,18 @@ import { containerRegistry } from "./config";
 
 const config = new pulumi.Config();
 
-// Create a Kubernetes provider instance that uses our cluster from above.
 const clusterProvider = new k8s.Provider("probable-pitchers", {
   kubeconfig: process.env.KUBECONFIG,
 });
 
-// Create a Kubernetes Namespace
 const ns = new k8s.core.v1.Namespace(
   "probable",
   {},
   { provider: clusterProvider }
 );
 
-// Export the Namespace name
 export const namespaceName = ns.metadata.name;
-console.log("created namespace: ", namespaceName);
+
 // const quota = new k8s.core.v1.ResourceQuota(
 //   "probable-quota",
 //   {
@@ -156,10 +153,8 @@ const cronjob = new k8s.batch.v1.CronJob(
                   imagePullPolicy: "Always",
                   env: [
                     {
-                      name: "API_URL",
-                      value: service.metadata.name.apply(
-                        (name) => `http://${name}/api/trpc`
-                      ),
+                      name: "DATABASE_URL",
+                      value: config.requireSecret("dbUrl"),
                     },
                     {
                       name: "INGEST_JOBS",

@@ -3,9 +3,10 @@
   "version": "0.0.0",
   "main": "./index.ts",
   "types": "./index.ts",
+  "type": "module",
   "license": "MIT",
   "scripts": {
-    "dev": "prisma studio --port 5556", 
+    "dev": "prisma studio --port 5556",
     "db-push": "prisma db push",
     "postinstall": "prisma generate"
   },

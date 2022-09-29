@@ -29,7 +29,7 @@ RUN \
 FROM --platform=linux/amd64 node:16-alpine AS builder
 
 ARG INGEST_JOBS
-ARG API_URL
+ARG DATABASE_URL
 
 WORKDIR /probable-pitchers
 COPY --from=deps /probable-pitchers/node_modules ./node_modules

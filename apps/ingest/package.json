@@ -6,8 +6,8 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "daily": "ts-node ./src/jobs/daily-games.ts",
-    "seed": "ts-node ./src/jobs/seed-teams-players.ts"
+    "daily": "INGEST_JOBS=daily-games ts-node-esm ./src/index.ts",
+    "seed": "INGEST_JOBS=seed-season ts-node-esm ./src/index.ts"
   },
   "dependencies": {
     "@probable/api": "*",

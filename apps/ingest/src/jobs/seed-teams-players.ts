@@ -1,40 +1,34 @@
 import { format } from "date-fns";
+import { client } from "../db.js";
 import { getPitchers, getTeams, Player, Team } from "../services/mlbstats.js";
-import { client } from "../trpc.js";
 
 async function processTeam(team: Team) {
-  const existingTeam = await client.team.byId.query(team.id);
+  const existingTeam = await client.team.byId(team.id);
   if (!existingTeam) {
-    await client.team.create.mutate({
-      id: team.id,
-      name: team.name,
-    });
+    await client.team.create(team.id, team.name);
   } else if (existingTeam && existingTeam.name !== team.name) {
-    await client.team.update.mutate({
-      id: team.id,
-      name: team.name,
-    });
+    await client.team.update(team.id, team.name);
   }
 }
 
 async function processPitcher(pitcher: Player) {
-  const existingPitcher = await client.pitcher.byId.query(pitcher.id);
+  const existingPitcher = await client.pitcher.byId(pitcher.id);
   if (!existingPitcher) {
-    await client.pitcher.create.mutate({
-      id: pitcher.id,
-      name: pitcher.fullName,
-      teamId: pitcher.currentTeam.id,
-    });
+    await client.pitcher.create(
+      pitcher.id,
+      pitcher.fullName,
+      pitcher.currentTeam.id
+    );
   } else if (
     existingPitcher &&
     (existingPitcher.name !== pitcher.fullName ||
       existingPitcher.teamId !== pitcher.currentTeam.id)
   ) {
-    await client.pitcher.update.mutate({
-      id: pitcher.id,
-      name: pitcher.fullName,
-      teamId: pitcher.currentTeam.id,
-    });
+    await client.pitcher.update(
+      pitcher.id,
+      pitcher.fullName,
+      pitcher.currentTeam.id
+    );
   }
 }
 

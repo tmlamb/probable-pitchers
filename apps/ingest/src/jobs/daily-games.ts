@@ -1,69 +1,62 @@
-import { format, formatISO } from "date-fns";
+import { format } from "date-fns";
+import formatISO from "date-fns/formatISO/index.js";
+import { client } from "../db.js";
 import { Game, getGames } from "../services/mlbstats.js";
 import { sendPushNotification } from "../services/notifications.js";
-import { client } from "../trpc.js";
 
 async function processGame(game: Game) {
   console.log("Processing Game: ", game);
   const newTeamIds: number[] = [];
   [game.teams.away, game.teams.home].forEach(async (team) => {
-    const existingTeam = await client.team.byId.query(team.team.id);
+    const existingTeam = await client.team.byId(team.team.id);
     if (!existingTeam && !newTeamIds.includes(team.team.id)) {
       newTeamIds.push(team.team.id);
-      await client.team.create.mutate({
-        id: team.team.id,
-        name: team.team.name,
-      });
+      await client.team.create(team.team.id, team.team.name);
     } else if (existingTeam && existingTeam.name !== team.team.name) {
-      await client.team.update.mutate({
-        id: team.team.id,
-        name: team.team.name,
-      });
+      await client.team.update(team.team.id, team.team.name);
     }
 
     if (team.probablePitcher) {
-      const existingPitcher = await client.pitcher.byId.query(
+      const existingPitcher = await client.pitcher.byId(
         team.probablePitcher.id
       );
       if (!existingPitcher) {
-        await client.pitcher.create.mutate({
-          id: team.probablePitcher.id,
-          name: team.probablePitcher.fullName,
-          teamId: team.team.id,
-        });
+        await client.pitcher.create(
+          team.probablePitcher.id,
+          team.probablePitcher.fullName,
+          team.team.id
+        );
       } else if (
         existingPitcher.name !== team.probablePitcher.fullName ||
         existingPitcher.teamId !== team.team.id
       ) {
-        await client.pitcher.update.mutate({
-          id: team.probablePitcher.id,
-          name: team.probablePitcher.fullName,
-          teamId: team.team.id,
-        });
+        await client.pitcher.update(
+          team.probablePitcher.id,
+          team.probablePitcher.fullName,
+          team.team.id
+        );
       }
     }
   });
 
-  const existingGame = await client.game.byId.query(game.gamePk);
+  const existingGame = await client.game.byId(game.gamePk);
   if (!existingGame) {
-    await client.game.create.mutate({
-      id: game.gamePk,
-      date: new Date(game.gameDate),
-      homePitcherId: game.teams.home.probablePitcher?.id,
-      awayPitcherId: game.teams.away.probablePitcher?.id,
-    });
+    await client.game.create(
+      game.gamePk,
+      new Date(game.gameDate),
+      game.teams.home.probablePitcher?.id,
+      game.teams.away.probablePitcher?.id
+    );
 
     [
       game.teams.home.probablePitcher?.id,
       game.teams.away.probablePitcher?.id,
     ].forEach(async (pitcherId) => {
       if (pitcherId) {
-        const subscriptions = await client.subscription.byPitcherId.query(
-          pitcherId
-        );
+        const subscriptions = await client.subscription.byPitcherId(pitcherId);
         subscriptions.forEach(async (subscription) => {
-          const user = await client.user.byId.query(subscription.userId);
-          const pitcher = await client.pitcher.byId.query(pitcherId);
+          const user = await client.user.byId(subscription.userId);
+          const pitcher = await client.pitcher.byId(pitcherId);
           if (user?.pushToken && pitcher) {
             sendPushNotification(
               user.pushToken,
