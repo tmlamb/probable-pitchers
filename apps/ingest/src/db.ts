@@ -1,5 +1,8 @@
-// import { prisma } from "@probable/db";
-import { prisma } from "@probable/db";
+import { PrismaClient } from "@prisma/client";
+
+export const prisma = new PrismaClient({
+  log: ["query"],
+});
 
 export const client = {
   team: {
