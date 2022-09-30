@@ -77,7 +77,7 @@ const deployment = new k8s.apps.v1.Deployment(
     },
     spec: {
       selector: { matchLabels: appLabels },
-      replicas: 2,
+      replicas: 1,
       template: {
         metadata: { labels: appLabels },
         spec: {
@@ -137,7 +137,7 @@ const cronjob = new k8s.batch.v1.CronJob(
       namespace: namespaceName,
     },
     spec: {
-      schedule: "0 * * * *",
+      schedule: "0 10 * * *",
       jobTemplate: {
         spec: {
           template: {
