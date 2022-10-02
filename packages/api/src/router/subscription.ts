@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { t } from "../trpc";
+import { isAuthed, t } from "../trpc";
 
 export const subscriptionRouter = t.router({
   byPitcherId: t.procedure.input(z.number()).query(({ ctx, input }) => {
@@ -7,21 +7,27 @@ export const subscriptionRouter = t.router({
       where: { pitcherId: input, enabled: true },
     });
   }),
-  byUserId: t.procedure.input(z.number()).query(({ ctx, input }) => {
-    return ctx.prisma.subscription.findMany({
-      where: { userId: input },
-    });
-  }),
-  byUserIdWithPitcher: t.procedure.input(z.number()).query(({ ctx, input }) => {
-    return ctx.prisma.subscription.findMany({
-      where: { userId: input },
-      include: { pitcher: true },
-    });
-  }),
+  byUserId: t.procedure
+    .input(z.string())
+    .use(isAuthed)
+    .query(({ ctx, input }) => {
+      return ctx.prisma.subscription.findMany({
+        where: { userId: input },
+      });
+    }),
+  byUserIdWithPitcher: t.procedure
+    .input(z.string())
+    .use(isAuthed)
+    .query(({ ctx, input }) => {
+      return ctx.prisma.subscription.findMany({
+        where: { userId: input },
+        include: { pitcher: true },
+      });
+    }),
   create: t.procedure
     .input(
       z.object({
-        userId: z.number(),
+        userId: z.string(),
         pitcherId: z.number(),
       })
     )

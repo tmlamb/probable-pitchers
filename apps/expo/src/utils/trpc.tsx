@@ -1,6 +1,10 @@
 import type { AppRouter } from "@probable/api";
+import { transformer } from "@probable/api/transformer";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react";
+import { SessionProvider } from "next-auth/expo";
+import { useState } from "react";
 
 /**
  * A set of typesafe hooks for consuming your API.
@@ -28,22 +32,22 @@ const getBaseUrl = () => {
  * A wrapper for your app that provides the TRPC context.
  * Use only in _app.tsx
  */
-import { transformer } from "@probable/api/transformer";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import React from "react";
-
 export const TRPCProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [queryClient] = React.useState(() => new QueryClient());
-  const [trpcClient] = React.useState(() => {
+  const [queryClient] = useState(() => new QueryClient());
+  const [trpcClient] = useState(() => {
     const url = getBaseUrl() + "/api/trpc";
     return trpc.createClient({ links: [httpBatchLink({ url })], transformer });
   });
 
   return (
-    <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-    </trpc.Provider>
+    <SessionProvider baseUrl={getBaseUrl()}>
+      <trpc.Provider client={trpcClient} queryClient={queryClient}>
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
+      </trpc.Provider>
+    </SessionProvider>
   );
 };

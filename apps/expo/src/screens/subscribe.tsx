@@ -1,28 +1,27 @@
-import React, { useState } from "react";
-import { Pressable, SafeAreaView, Text, View } from "react-native";
-import useDeviceStore from "../hooks/use-device-store";
+import { useState } from "react";
+import { SafeAreaView, Text, View } from "react-native";
 import { trpc } from "../utils/trpc";
 import SearchInput from "./searchInput";
 
 export const Subscribe = () => {
-  const deviceId = useDeviceStore((store) => store.deviceId);
-  const { data: user } = trpc.user.byDeviceId.useQuery(deviceId);
+  // const deviceId = useDeviceStore((store) => store.deviceId);
+  // const { data: user } = trpc.user.byDeviceId.useQuery(deviceId);
 
-  const { data: subscriptions, refetch } = trpc.subscription.byUserId.useQuery(
-    user?.id ?? -1,
-    {
-      enabled: !!user,
-    }
-  );
+  // const { data: subscriptions, refetch } = trpc.subscription.byUserId.useQuery(
+  //   user?.id ?? -1,
+  //   {
+  //     enabled: !!user,
+  //   }
+  // );
 
   const [searchFilter, setSearchFilter] = useState<string>();
 
-  const { data: pitchers } = trpc.pitcher.byNameSearch.useQuery(
-    searchFilter?.split(" ") || [],
-    {
-      enabled: !!searchFilter && !!user,
-    }
-  );
+  // const { data: pitchers } = trpc.pitcher.byNameSearch.useQuery(
+  //   searchFilter?.split(" ") || [],
+  //   {
+  //     enabled: !!searchFilter && !!user,
+  //   }
+  // );
 
   const utils = trpc.useContext();
 
@@ -37,7 +36,7 @@ export const Subscribe = () => {
     },
   });
 
-  if (!user || !subscriptions) return null;
+  // if (!user || !subscriptions) return null;
 
   return (
     <SafeAreaView>
@@ -50,7 +49,7 @@ export const Subscribe = () => {
             setSearchFilter(text);
           }}
         />
-        {pitchers?.map((pitcher) => {
+        {/* {pitchers?.map((pitcher) => {
           const existingSubscription = subscriptions.find(
             (sub) => sub.pitcherId === pitcher.id
           );
@@ -80,27 +79,9 @@ export const Subscribe = () => {
                   <Text>Subscribe</Text>
                 </Pressable>
               )}
-              {/* <Switch
-              onValueChange={(value) => {
-                console.log("onchange");
-                pitcher.subscribed = value;
-                const existingSub = subscriptions.find(
-                  (s) => s.pitcherId === pitcher.id
-                );
-                if (existingSub) {
-                  unsubscribe(existingSub.id);
-                } else if (value) {
-                  subscribe({
-                    userId: user.id,
-                    pitcherId: pitcher.id,
-                  });
-                }
-              }}
-              value={pitcher.subscribed}
-            /> */}
             </View>
           );
-        })}
+        })} */}
       </View>
     </SafeAreaView>
   );

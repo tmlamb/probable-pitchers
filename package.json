@@ -5,7 +5,7 @@
     "packages/*"
   ],
   "scripts": {
-    "postinstall": "turbo run postinstall",
+    "postinstall": "patch-package && turbo run postinstall",
     "db-push": "npm run db-push -w @probable/db",
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "prettier": "latest",
-    "turbo": "latest"
+    "turbo": "latest",
+    "patch-package": "^6.4.7"
   }
 }

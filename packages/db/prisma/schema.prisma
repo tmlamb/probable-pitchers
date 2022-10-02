@@ -9,11 +9,46 @@ datasource db {
   referentialIntegrity = "prisma"
 }
 
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
 model User {
-  id            Int            @id @default(autoincrement())
-  deviceId      String         @unique
-  pushToken     String?        @unique
+  id            String         @id @default(cuid())
+  emailVerified DateTime? // Never used, but required by NextAuth and it's Prisma Adapter.
   subscriptions Subscription[]
+  accounts      Account[]
+  sessions      Session[]
+  devices       Device[]
+}
+
+model Device {
+  id        String @id @default(cuid())
+  pushToken String @unique
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
 }
 
 model Team {
@@ -45,8 +80,8 @@ model Game {
 
 model Subscription {
   id        Int     @id @default(autoincrement())
-  user      User    @relation(fields: [userId], references: [id])
-  userId    Int
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
   pitcher   Pitcher @relation(fields: [pitcherId], references: [id])
   pitcherId Int
   enabled   Boolean

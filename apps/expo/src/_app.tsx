@@ -1,4 +1,3 @@
-import { registerRootComponent } from "expo";
 import { Subscription } from "expo-modules-core";
 import * as Notifications from "expo-notifications";
 import { StatusBar } from "expo-status-bar";
@@ -6,6 +5,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { TRPCProvider } from "./utils/trpc";
 
+import { registerRootComponent } from "expo";
 import Navigation from "./navigation/navigation";
 
 const App = () => {

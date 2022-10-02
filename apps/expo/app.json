@@ -6,6 +6,10 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "scheme": "app",
+    "extra": {
+      "nextAuthUrl": "http://10.79.0.132:3000"
+    },
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
