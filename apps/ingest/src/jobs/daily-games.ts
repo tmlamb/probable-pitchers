@@ -57,15 +57,17 @@ async function processGame(game: Game) {
         subscriptions.forEach(async (subscription) => {
           const user = await client.user.byId(subscription.userId);
           const pitcher = await client.pitcher.byId(pitcherId);
-          if (user?.pushToken && pitcher) {
-            sendPushNotification(
-              user.pushToken,
-              "Probable Pitcher Alert",
-              `${pitcher.name} is pitching today at ${format(
-                new Date(game.gameDate),
-                "h:m aaa"
-              )}!`
-            );
+          if (pitcher) {
+            user?.devices.forEach((device) => {
+              sendPushNotification(
+                device.pushToken,
+                "Probable Pitcher Alert",
+                `${pitcher.name} is pitching today at ${format(
+                  new Date(game.gameDate),
+                  "h:m aaa"
+                )}!`
+              );
+            });
           }
         });
       }

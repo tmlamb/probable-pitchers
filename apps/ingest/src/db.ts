@@ -56,8 +56,11 @@ export const client = {
     },
   },
   user: {
-    byId: (id: number) => {
-      return prisma.user.findUnique({ where: { id } });
+    byId: (id: string) => {
+      return prisma.user.findUnique({
+        where: { id },
+        include: { devices: true },
+      });
     },
   },
 };
