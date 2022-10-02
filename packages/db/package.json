@@ -8,11 +8,7 @@
   "scripts": {
     "dev": "prisma studio --port 5556",
     "db-push": "prisma db push",
-    "prisma:inline": "cp ../../node_modules/.prisma/client/*.js ../../node_modules/@prisma/client && cp ../../node_modules/.prisma/client/schema.prisma ../../node_modules/@prisma/client",
-    "prisma:migrate": "prisma migrate deploy && npm run prisma:inline",
-    "prisma:migrate:dev": "prisma migrate dev && npm run prisma:inline",
-    "prisma:generate": "prisma generate && npm run prisma:inline",
-    "postinstall": "npm run prisma:generate"
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^4.2.1"
