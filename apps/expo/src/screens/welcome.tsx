@@ -10,10 +10,7 @@ export const Welcome = () => {
       <View className="h-full w-full p-4">
         <Text className="text-2xl font-bold mx-auto pb-2">
           Welcome! Probable Pitchers is a free service that sends you a
-          notification when your favorite players are scheduled to pitch. Once
-          you proceed, the app will request your permission to send
-          notifications to your device. You can modify this later in the
-          application settings.
+          notification when your favorite players are scheduled to pitch.
         </Text>
         <Pressable onPress={() => signIn(() => socialLogin())}>
           <Text>Login with Google</Text>
