@@ -2,14 +2,12 @@
   "expo": {
     "name": "Probable Pitchers",
     "slug": "probable-pitchers",
+    "owner": "tmlamb",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "scheme": "app",
-    "extra": {
-      "nextAuthUrl": "http://10.79.0.132:3000"
-    },
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",

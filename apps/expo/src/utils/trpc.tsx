@@ -6,6 +6,7 @@ import { createTRPCReact } from "@trpc/react";
 import { SessionProvider } from "next-auth/expo";
 import { useState } from "react";
 
+const { apiBaseUrl } = Constants.expoConfig?.extra || {};
 /**
  * A set of typesafe hooks for consuming your API.
  */
@@ -17,6 +18,10 @@ export const trpc = createTRPCReact<AppRouter>();
  */
 import Constants from "expo-constants";
 const getBaseUrl = () => {
+  if (apiBaseUrl) {
+    return apiBaseUrl;
+  }
+
   /**
    * Gets the IP address of your host-machine. If it cannot automatically find it,
    * you'll have to manually set it. NOTE: Port 3000 should work for most but confirm
