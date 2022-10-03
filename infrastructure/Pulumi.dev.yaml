@@ -1,16 +1,22 @@
 config:
   gcp:project: probable-pitchers-363818
   gcp:region: us-central1
+  probable-pitchers:authGoogleClientId:
+    secure: AAABAP0LUEHU31UhUuFqL585gAyVddrlwCESzUWDvKd9X93HxGpyrWlDymC75HbVYFbFhYJmVnpL7utEnUOZuowxFpylw9IGKE5jurQjoDiMQzNFJIp6Cehco3UgtyWDEPuFEIYdwA==
+  probable-pitchers:authGoogleClientSecret:
+    secure: AAABAGs2YV5ZCRbuCMYPiS+YljQP06Y8uF3IAk3mxdYG2r0+cdR1GzvV26XIltQVxeC7WcT6zkpcpUQ96Ps82s2JrA==
   probable-pitchers:containerRegistry:
+    email:
+      secure: AAABAE5NSeMNoxEYPzLVwStpszOBRejoXQsmQg2SAQ+eWZvvKYF8Wh1czP3fMqaj
     host:
       secure: AAABABhGVlfBtmCWh0uwogdrCEAebzGODAMjZmXwhFRdq0dHenblXVh9Y2DrKjE=
     password:
       secure: AAABABvxlirX8F5Lx0N87c62Fvc1vuvstCAGlmctxCaoirESeZBidy1y8tI2w3EgZKOJZ62aJmtueJu+s5qmGLgBl1O1/TY1
     user:
       secure: AAABAEl8FCSt7gbLWoR6TaidOVfAEMFyBovH6hm8xDegZn4Rj2g=
-    email:
-      secure: AAABAE5NSeMNoxEYPzLVwStpszOBRejoXQsmQg2SAQ+eWZvvKYF8Wh1czP3fMqaj
   probable-pitchers:dbUrl:
     secure: AAABAJOJnaPZ/5gHF4KkWY8/qB8ocwRtxpA1jUjObaHKKRoCEbjAuQ5xqLcSUhn9bqoWXoe3g3R307ucWBmgj95oQd5wyaE+3S2KBG3oy3HMMFxsX+JAsfAWH/3ds6VSzcLTsxJfuyVXGZx+ug+WAbZpu0Q1Iz1ila00jp+do2xqOFFe/L/qAD6070mdirHF38YHS4HMnG83k2Mqw7G3TvPJBKDXLnxTSMaBF7hktg==
   probable-pitchers:domains:
-    - dev.probablepitchers.net
+  - dev.probablepitchers.net
+  probable-pitchers:nextAuthSecret:
+    secure: AAABALQ3esO3TxKF1WUtELN84g9BlRusxNIwkDofF8mIUWYu37Fm+vIDUZNiL97cQv927YlfzWlHjpBoSyyt718PL8IAb3DGoih/Wg==

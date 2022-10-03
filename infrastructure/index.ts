@@ -80,6 +80,18 @@ const deployment = new k8s.apps.v1.Deployment(
                   name: "DATABASE_URL",
                   value: config.requireSecret("dbUrl"),
                 },
+                {
+                  name: "AUTH_GOOGLE_CLIENT_ID",
+                  value: config.requireSecret("authGoogleClientId"),
+                },
+                {
+                  name: "AUTH_GOOGLE_CLIENT_SECRET",
+                  value: config.requireSecret("authGoogleClientSecret"),
+                },
+                {
+                  name: "NEXTAUTH_SECRET",
+                  value: config.requireSecret("nextAuthSecret"),
+                },
               ],
             },
           ],
