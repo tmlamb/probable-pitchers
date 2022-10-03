@@ -29,6 +29,11 @@ RUN \
 FROM --platform=linux/amd64 node:16-alpine AS builder
 
 ARG DATABASE_URL
+ARG AUTH_GOOGLE_CLIENT_ID
+ARG AUTH_GOOGLE_CLIENT_SECRET
+ARG NEXTAUTH_SECRET
+ARG NEXTAUTH_URL
+ARG NEXTAUTH_EXPO_URL
 
 WORKDIR /probable-pitchers
 COPY --from=deps /probable-pitchers/node_modules ./node_modules
