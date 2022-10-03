@@ -15,6 +15,7 @@ COPY packages/db ./packages/db
 COPY package.json  package-lock.json ./
 COPY apps/nextjs/package.json ./apps/nextjs/package.json
 COPY turbo.json ./turbo.json
+COPY patches ./patches
 RUN \
   if [ -f package-lock.json ]; then npm ci; \
   else echo "Lockfile not found." && exit 1; \
