@@ -22,6 +22,7 @@ export const socialLogin = async (): Promise<SigninResult | null> => {
     clientId,
     redirectUri,
     scopes: ["openid"],
+    usePKCE: true,
   });
 
   request.state = state;
