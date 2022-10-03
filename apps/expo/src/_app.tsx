@@ -39,14 +39,12 @@ const App = () => {
   }, []);
 
   return (
-    <React.StrictMode>
-      <TRPCProvider>
-        <SafeAreaProvider>
-          <Navigation />
-          <StatusBar />
-        </SafeAreaProvider>
-      </TRPCProvider>
-    </React.StrictMode>
+    <TRPCProvider>
+      <SafeAreaProvider>
+        <Navigation />
+        <StatusBar />
+      </SafeAreaProvider>
+    </TRPCProvider>
   );
 };
 

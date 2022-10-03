@@ -1,27 +1,20 @@
 import { useState } from "react";
-import { SafeAreaView, Text, View } from "react-native";
+import { Pressable, SafeAreaView, Text, View } from "react-native";
 import { trpc } from "../utils/trpc";
 import SearchInput from "./searchInput";
 
 export const Subscribe = () => {
-  // const deviceId = useDeviceStore((store) => store.deviceId);
-  // const { data: user } = trpc.user.byDeviceId.useQuery(deviceId);
-
-  // const { data: subscriptions, refetch } = trpc.subscription.byUserId.useQuery(
-  //   user?.id ?? -1,
-  //   {
-  //     enabled: !!user,
-  //   }
-  // );
+  const { data: subscriptions, refetch } =
+    trpc.subscription.byUserId.useQuery();
 
   const [searchFilter, setSearchFilter] = useState<string>();
 
-  // const { data: pitchers } = trpc.pitcher.byNameSearch.useQuery(
-  //   searchFilter?.split(" ") || [],
-  //   {
-  //     enabled: !!searchFilter && !!user,
-  //   }
-  // );
+  const { data: pitchers } = trpc.pitcher.byNameSearch.useQuery(
+    searchFilter?.split(" ") || [],
+    {
+      enabled: !!searchFilter,
+    }
+  );
 
   const utils = trpc.useContext();
 
@@ -49,8 +42,8 @@ export const Subscribe = () => {
             setSearchFilter(text);
           }}
         />
-        {/* {pitchers?.map((pitcher) => {
-          const existingSubscription = subscriptions.find(
+        {pitchers?.map((pitcher) => {
+          const existingSubscription = subscriptions?.find(
             (sub) => sub.pitcherId === pitcher.id
           );
           return (
@@ -71,7 +64,6 @@ export const Subscribe = () => {
                 <Pressable
                   onPress={() => {
                     subscribe({
-                      userId: user.id,
                       pitcherId: pitcher.id,
                     });
                   }}
@@ -81,7 +73,7 @@ export const Subscribe = () => {
               )}
             </View>
           );
-        })} */}
+        })}
       </View>
     </SafeAreaView>
   );
