@@ -72,6 +72,7 @@ const deployment = new k8s.apps.v1.Deployment(
               name: appLabels.app,
               image: "ghcr.io/tmlamb/probable-pitchers-nextjs:latest",
               ports: [{ name: "http", containerPort: 3000 }],
+              imagePullPolicy: "Always",
               livenessProbe: {
                 httpGet: { path: "/", port: "http" },
               },
@@ -91,6 +92,14 @@ const deployment = new k8s.apps.v1.Deployment(
                 {
                   name: "NEXTAUTH_SECRET",
                   value: config.requireSecret("nextAuthSecret"),
+                },
+                {
+                  name: "NEXTAUTH_URL",
+                  value: config.requireSecret("nextAuthUrl"),
+                },
+                {
+                  name: "NEXTAUTH_EXPO_URL",
+                  value: config.requireSecret("nextAuthExpoUrl"),
                 },
               ],
             },
