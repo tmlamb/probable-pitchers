@@ -1,13 +1,21 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import type { DefaultUser } from "next-auth";
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
 import { prisma } from "@probable/db";
 import { isValidProvider, nativeProviders } from "./providers";
 
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+    };
+  }
+}
+
 const adapter = PrismaAdapter(prisma);
 export const authOptions: NextAuthOptions = {
-  debug: true,
   adapter,
   providers: [
     GoogleProvider({
@@ -57,6 +65,10 @@ export const authOptions: NextAuthOptions = {
         }
       }
       return true;
+    },
+    async session({ session, user }) {
+      session.user.id = user.id;
+      return session;
     },
   },
 };

@@ -2,41 +2,26 @@ import { z } from "zod";
 import { isAuthed, t } from "../trpc";
 
 export const subscriptionRouter = t.router({
-  byPitcherId: t.procedure.input(z.number()).query(({ ctx, input }) => {
+  byUserId: t.procedure.use(isAuthed).query(({ ctx }) => {
     return ctx.prisma.subscription.findMany({
-      where: { pitcherId: input, enabled: true },
+      where: { userId: ctx.session?.user.id },
+      include: { pitcher: true },
     });
   }),
-  byUserId: t.procedure
-    .input(z.string())
-    .use(isAuthed)
-    .query(({ ctx, input }) => {
-      return ctx.prisma.subscription.findMany({
-        where: { userId: input },
-      });
-    }),
-  byUserIdWithPitcher: t.procedure
-    .input(z.string())
-    .use(isAuthed)
-    .query(({ ctx, input }) => {
-      return ctx.prisma.subscription.findMany({
-        where: { userId: input },
-        include: { pitcher: true },
-      });
-    }),
   create: t.procedure
+    .use(isAuthed)
     .input(
       z.object({
-        userId: z.string(),
         pitcherId: z.number(),
       })
     )
     .mutation(({ ctx, input }) => {
       return ctx.prisma.subscription.create({
-        data: { ...input, enabled: true },
+        data: { ...input, userId: ctx.session?.user.id, enabled: true },
       });
     }),
   update: t.procedure
+    .use(isAuthed)
     .input(
       z.object({
         id: z.number(),
@@ -44,12 +29,33 @@ export const subscriptionRouter = t.router({
       })
     )
     .mutation(({ ctx, input }) => {
-      return ctx.prisma.subscription.update({
+      const subscription = ctx.prisma.subscription.findUnique({
         where: { id: input.id },
+      });
+      Promise.resolve(subscription).then((sub) => {
+        if (sub?.userId !== ctx.session?.user.id) {
+          throw new Error("User not authorized to update this subscription");
+        }
+      });
+      return ctx.prisma.subscription.update({
+        where: {
+          id: input.id,
+        },
         data: input,
       });
     }),
-  delete: t.procedure.input(z.number()).mutation(({ ctx, input }) => {
-    return ctx.prisma.subscription.delete({ where: { id: input } });
-  }),
+  delete: t.procedure
+    .use(isAuthed)
+    .input(z.number())
+    .mutation(({ ctx, input }) => {
+      const subscription = ctx.prisma.subscription.findUnique({
+        where: { id: input },
+      });
+      Promise.resolve(subscription).then((sub) => {
+        if (sub?.userId !== ctx.session?.user.id) {
+          throw new Error("User not authorized to delete this subscription");
+        }
+      });
+      return ctx.prisma.subscription.delete({ where: { id: input } });
+    }),
 });
