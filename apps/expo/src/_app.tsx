@@ -1,12 +1,23 @@
+import { registerRootComponent } from "expo";
+import Constants from "expo-constants";
 import { Subscription } from "expo-modules-core";
 import * as Notifications from "expo-notifications";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useRef, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import * as Sentry from "sentry-expo";
+import Navigation from "./navigation/navigation";
 import { TRPCProvider } from "./utils/trpc";
 
-import { registerRootComponent } from "expo";
-import Navigation from "./navigation/navigation";
+const { sentryPublicDsn, appEnv } = Constants.expoConfig?.extra || {};
+
+if (sentryPublicDsn) {
+  Sentry.init({
+    dsn: sentryPublicDsn,
+    enableInExpoDevelopment: true,
+    debug: appEnv !== "production",
+  });
+}
 
 const App = () => {
   const [notification, setNotification] = useState(false);

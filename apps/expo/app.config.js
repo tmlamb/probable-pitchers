@@ -1,4 +1,4 @@
-const { APP_ENV, API_BASE_URL, NEXTAUTH_URL } = process.env;
+const { APP_ENV, API_BASE_URL, NEXTAUTH_URL, SENTRY_PUBLIC_DSN } = process.env;
 
 export default ({ config }) => {
   const appConfig = {
@@ -20,6 +20,8 @@ export default ({ config }) => {
       ...config.extra,
       apiBaseUrl: API_BASE_URL,
       nextAuthUrl: NEXTAUTH_URL,
+      sentryPublicDsn: SENTRY_PUBLIC_DSN,
+      appEnv: APP_ENV,
     },
   };
   return appConfig;
