@@ -1,8 +1,8 @@
 import { signOut } from "next-auth/expo";
 import { Pressable, SafeAreaView, Text, View } from "react-native";
-import HeaderRightContainer from "../navigation/headerRightContainer";
-import { RootStackScreenProps } from "../navigation/types";
-import { trpc } from "../utils/trpc";
+import HeaderRightContainer from "../components/HeaderRightContainer";
+import { RootStackScreenProps } from "../components/Navigation/types";
+import { trpc } from "../components/TRPCProvider";
 
 export const Home = ({
   navigation: { navigate },

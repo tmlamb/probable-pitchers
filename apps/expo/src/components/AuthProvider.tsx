@@ -2,7 +2,8 @@ import { nativeProviders } from "@probable/api";
 import * as AuthSession from "expo-auth-session";
 import { discovery as googleDiscovery } from "expo-auth-session/providers/google";
 import Constants from "expo-constants";
-import { getSignInInfo, SigninResult } from "next-auth/expo";
+import { getSignInInfo, SessionProvider, SigninResult } from "next-auth/expo";
+import { getBaseUrl } from "../utils";
 
 const projectNameForProxy = Constants.manifest2?.extra?.scopeKey;
 
@@ -48,3 +49,11 @@ export const socialLogin = async (): Promise<SigninResult | null> => {
     provider,
   };
 };
+
+const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  return <SessionProvider baseUrl={getBaseUrl()}>{children}</SessionProvider>;
+};
+
+export default AuthProvider;

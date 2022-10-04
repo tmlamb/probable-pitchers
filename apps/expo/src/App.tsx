@@ -5,8 +5,9 @@ import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useRef, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import * as Sentry from "sentry-expo";
-import Navigation from "./navigation/navigation";
-import { TRPCProvider } from "./utils/trpc";
+import AuthProvider from "./components/AuthProvider";
+import Navigation from "./components/Navigation/Navigation";
+import TRPCProvider from "./components/TRPCProvider";
 
 const { sentryPublicDsn, appEnv } = Constants.expoConfig?.extra || {};
 if (sentryPublicDsn) {
@@ -48,11 +49,13 @@ export default function App() {
   }, []);
 
   return (
-    <TRPCProvider>
-      <SafeAreaProvider>
-        <Navigation />
-        <StatusBar />
-      </SafeAreaProvider>
-    </TRPCProvider>
+    <AuthProvider>
+      <TRPCProvider>
+        <SafeAreaProvider>
+          <Navigation />
+          <StatusBar />
+        </SafeAreaProvider>
+      </TRPCProvider>
+    </AuthProvider>
   );
 }

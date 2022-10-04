@@ -2,7 +2,7 @@ import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import { signIn } from "next-auth/expo";
 import { Platform, Pressable, SafeAreaView, Text, View } from "react-native";
-import { socialLogin } from "../utils/auth";
+import { socialLogin } from "../components/AuthProvider";
 
 export const Welcome = () => {
   return (
