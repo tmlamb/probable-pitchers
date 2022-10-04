@@ -1,4 +1,3 @@
-import { registerRootComponent } from "expo";
 import Constants from "expo-constants";
 import { Subscription } from "expo-modules-core";
 import * as Notifications from "expo-notifications";
@@ -10,7 +9,6 @@ import Navigation from "./navigation/navigation";
 import { TRPCProvider } from "./utils/trpc";
 
 const { sentryPublicDsn, appEnv } = Constants.expoConfig?.extra || {};
-
 if (sentryPublicDsn) {
   Sentry.init({
     dsn: sentryPublicDsn,
@@ -19,7 +17,7 @@ if (sentryPublicDsn) {
   });
 }
 
-const App = () => {
+export default function App() {
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef<Subscription>();
   const responseListener = useRef<Subscription>();
@@ -57,6 +55,4 @@ const App = () => {
       </SafeAreaProvider>
     </TRPCProvider>
   );
-};
-
-registerRootComponent(App);
+}

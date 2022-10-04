@@ -1,11 +1,16 @@
+import { nativeProviders } from "@probable/api";
 import * as AuthSession from "expo-auth-session";
+import { discovery as googleDiscovery } from "expo-auth-session/providers/google";
+import Constants from "expo-constants";
 import { getSignInInfo, SigninResult } from "next-auth/expo";
 
-import { nativeProviders } from "@probable/api";
-import { discovery as googleDiscovery } from "expo-auth-session/providers/google";
+const projectNameForProxy = Constants.manifest2?.extra?.scopeKey;
 
 export const socialLogin = async (): Promise<SigninResult | null> => {
-  const redirectUri = AuthSession.makeRedirectUri({ useProxy: true });
+  const redirectUri = AuthSession.makeRedirectUri({
+    useProxy: true,
+    projectNameForProxy,
+  });
   const provider = nativeProviders.google;
   const signinInfo = await getSignInInfo({
     provider,
@@ -31,7 +36,10 @@ export const socialLogin = async (): Promise<SigninResult | null> => {
   await request.makeAuthUrlAsync(googleDiscovery);
 
   // useAuthRequestResult
-  const result = await request.promptAsync(googleDiscovery, { useProxy: true });
+  const result = await request.promptAsync(googleDiscovery, {
+    useProxy: true,
+    projectNameForProxy,
+  });
   return {
     result,
     state,

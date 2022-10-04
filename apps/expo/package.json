@@ -1,7 +1,6 @@
 {
   "name": "@probable/expo",
   "version": "1.0.0",
-  "main": "src/_app.tsx",
   "scripts": {
     "start": "expo start",
     "dev": "expo start",
