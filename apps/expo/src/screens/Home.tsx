@@ -1,7 +1,11 @@
+import { AntDesign } from "@expo/vector-icons";
 import { signOut } from "next-auth/expo";
+import React from "react";
 import { Pressable, SafeAreaView, Text, View } from "react-native";
 import HeaderRightContainer from "../components/HeaderRightContainer";
-import { RootStackScreenProps } from "../components/Navigation/types";
+import LinkButton from "../components/LinkButton";
+import { RootStackScreenProps } from "../components/Navigation";
+import { SpecialText } from "../components/Themed";
 import { trpc } from "../components/TRPCProvider";
 
 export const Home = ({
@@ -12,13 +16,15 @@ export const Home = ({
   return (
     <>
       <HeaderRightContainer>
-        <Pressable
-          onPress={() => {
-            navigate("Subscribe");
-          }}
+        <LinkButton
+          to={{ screen: "Subscribe" }}
+          className={"py-6 pl-8 pr-3 -my-6 -mr-4"}
+          accessibilityLabel="Navigate to subscription management screen"
         >
-          <Text>+</Text>
-        </Pressable>
+          <SpecialText>
+            <AntDesign name="plus" size={28} />
+          </SpecialText>
+        </LinkButton>
       </HeaderRightContainer>
       <SafeAreaView>
         <View className="h-full w-full p-4">

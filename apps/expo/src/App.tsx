@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import * as Sentry from "sentry-expo";
 import AuthProvider from "./components/AuthProvider";
-import Navigation from "./components/Navigation/Navigation";
+import { Navigation } from "./components/Navigation";
 import TRPCProvider from "./components/TRPCProvider";
 
 const { sentryPublicDsn, appEnv } = Constants.expoConfig?.extra || {};

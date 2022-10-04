@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Pressable, SafeAreaView, Text, View } from "react-native";
+import SearchInput from "../components/SearchInput";
 import { trpc } from "../components/TRPCProvider";
-import SearchInput from "./SearchInput";
 
 export const Subscribe = () => {
   const { data: subscriptions, refetch } =

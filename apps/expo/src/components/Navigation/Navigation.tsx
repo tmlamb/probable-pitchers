@@ -3,9 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useSession } from "next-auth/expo";
 import { Platform, Text } from "react-native";
 import "react-native-get-random-values";
-import { Home } from "../../screens/Home";
-import { Subscribe } from "../../screens/Subscribe";
-import { Welcome } from "../../screens/Welcome";
+import { Home, Subscribe, Welcome } from "../../screens/";
 import { RootStackParamList } from "./types";
 
 const AppStack = createNativeStackNavigator<RootStackParamList>();
