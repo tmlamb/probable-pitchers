@@ -20,14 +20,17 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.triplesight.probablepitchers"
+      "bundleIdentifier": "com.triplesight.probablepitchers",
+      "buildNumber": "1"
     },
     "android": {
+      "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.triplesight.probablepitchers"
+      "package": "com.triplesight.probablepitchers",
+      "versionCode": 1
     },
     "runtimeVersion": {
       "policy": "sdkVersion"
