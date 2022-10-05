@@ -2,6 +2,8 @@ import { NavigationAction, useLinkProps } from "@react-navigation/native";
 import { To } from "@react-navigation/native/lib/typescript/src/useLinkTo";
 import React from "react";
 import { PressableProps } from "react-native";
+import { ClassInput } from "twrnc/dist/esm/types";
+import tw from "../tailwind";
 import ButtonContainer from "./ButtonContainer";
 import { RootStackParamList } from "./Navigation";
 
@@ -10,7 +12,7 @@ type Props = {
   action?: NavigationAction;
   children: JSX.Element | JSX.Element[];
   onPress?: () => void;
-  className?: string;
+  style?: ClassInput;
   beforeNavigation?: () => void;
 } & PressableProps;
 
@@ -19,7 +21,7 @@ export default function LinkButton({
   action,
   children,
   onPress,
-  className,
+  style,
   beforeNavigation,
   disabled,
   accessibilityHint,
@@ -33,7 +35,7 @@ export default function LinkButton({
 
   return (
     <ButtonContainer
-      className={className}
+      style={tw.style(style)}
       onPress={(e) => {
         onPress?.();
         if (disabled) {
@@ -54,7 +56,7 @@ export default function LinkButton({
 
 LinkButton.defaultProps = {
   action: undefined,
-  className: undefined,
+  style: undefined,
   onPress: undefined,
   beforeNavigation: () => null,
 };

@@ -3,13 +3,14 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useSession } from "next-auth/expo";
 import { Platform, Text } from "react-native";
 import "react-native-get-random-values";
-import { Home, Subscribe, Welcome } from "../../screens/";
+import { Home, Settings, Subscribe, Welcome } from "../../screens/";
 import { RootStackParamList } from "./types";
 
 const AppStack = createNativeStackNavigator<RootStackParamList>();
 
 export default function Navigation() {
   const { status, data } = useSession();
+  console.log("status", status);
 
   return status === "loading" ? (
     <Text>Loading...</Text>
@@ -27,6 +28,7 @@ export default function Navigation() {
             component={Welcome}
             options={{
               headerTitle: "",
+              presentation: "modal",
             }}
           />
         ) : (
@@ -43,8 +45,17 @@ export default function Navigation() {
               name="Subscribe"
               component={Subscribe}
               options={{
-                headerTitle: "",
-                title: "Probable Pitchers",
+                title: "Add Subscription",
+                headerBackTitle: "Home",
+              }}
+            />
+            <AppStack.Screen
+              name="Settings"
+              component={Settings}
+              options={{
+                title: "Settings",
+                headerBackTitle: "Home",
+                animation: "fade_from_bottom",
               }}
             />
           </>

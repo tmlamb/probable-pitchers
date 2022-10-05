@@ -1,13 +1,15 @@
 import React from "react";
 import { Pressable, PressableProps } from "react-native";
+import { ClassInput } from "twrnc/dist/esm/types";
+import tw from "../tailwind";
 
 type Props = {
-  className?: string;
+  style?: ClassInput;
 } & PressableProps;
 
 export default function ButtonContainer({
   children,
-  className,
+  style,
   onPress,
   disabled,
   accessibilityHint,
@@ -20,7 +22,9 @@ export default function ButtonContainer({
     <Pressable
       disabled={disabled}
       onPress={onPress}
-      className={`${className} active:opacity-60 opacity-100`}
+      style={({ pressed }) =>
+        tw.style(style, pressed ? "opacity-60" : "opacity-100")
+      }
       accessibilityRole={accessibilityRole || "button"}
       accessibilityHint={accessibilityHint}
       accessibilityLabel={accessibilityLabel}
@@ -35,5 +39,5 @@ export default function ButtonContainer({
 }
 
 ButtonContainer.defaultProps = {
-  className: undefined,
+  style: undefined,
 };

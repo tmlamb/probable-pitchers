@@ -27,7 +27,7 @@
     "expo-secure-store": "~11.3.0",
     "expo-status-bar": "~1.4.0",
     "expo-web-browser": "~11.0.0",
-    "nativewind": "^2.0.5",
+    "twrnc": "^3.4.0",
     "next-auth": "^4.10.3",
     "react": "18.0.0",
     "react-dom": "18.0.0",
@@ -39,7 +39,8 @@
     "react-native-web": "~0.18.9",
     "sentry-expo": "~5.0.0",
     "uuid": "^9.0.0",
-    "zustand": "^4.1.1"
+    "zustand": "^4.1.1",
+    "react-native-reanimated": "~2.9.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

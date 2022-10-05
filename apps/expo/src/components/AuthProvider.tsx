@@ -3,7 +3,7 @@ import * as AuthSession from "expo-auth-session";
 import { discovery as googleDiscovery } from "expo-auth-session/providers/google";
 import Constants from "expo-constants";
 import { getSignInInfo, SessionProvider, SigninResult } from "next-auth/expo";
-import { getBaseUrl } from "../utils";
+import { getBaseUrl } from "../api";
 
 const projectNameForProxy = Constants.manifest2?.extra?.scopeKey;
 

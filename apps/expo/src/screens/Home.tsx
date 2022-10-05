@@ -1,24 +1,50 @@
 import { AntDesign } from "@expo/vector-icons";
-import { signOut } from "next-auth/expo";
 import React from "react";
-import { Pressable, SafeAreaView, Text, View } from "react-native";
+import { ActivityIndicator, FlatList } from "react-native";
+import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+import HeaderLeftContainer from "../components/HeaderLeftContainer";
 import HeaderRightContainer from "../components/HeaderRightContainer";
 import LinkButton from "../components/LinkButton";
 import { RootStackScreenProps } from "../components/Navigation";
-import { SpecialText } from "../components/Themed";
+import ScreenLayout from "../components/ScreenLayout";
+import {
+  AlertText,
+  PrimaryText,
+  SecondaryText,
+  SpecialText,
+  specialTextColor,
+  ThemedView,
+} from "../components/Themed";
 import { trpc } from "../components/TRPCProvider";
+import tw from "../tailwind";
 
 export const Home = ({
   navigation: { navigate },
 }: RootStackScreenProps<"Home">) => {
-  const { data: subscriptions } = trpc.subscription.byUserId.useQuery();
+  const {
+    data: subscriptions,
+    isSuccess,
+    isLoading,
+    isError,
+  } = trpc.subscription.byUserId.useQuery();
 
   return (
-    <>
+    <ScreenLayout>
+      <HeaderLeftContainer>
+        <LinkButton
+          to={{ screen: "Settings" }}
+          style={tw`py-6 pl-2.5 pr-8 -my-6 -ml-4 web:-ml-3`}
+          accessibilityLabel="Navigate to Application Settings"
+        >
+          <SpecialText>
+            <AntDesign name="setting" size={24} />
+          </SpecialText>
+        </LinkButton>
+      </HeaderLeftContainer>
       <HeaderRightContainer>
         <LinkButton
           to={{ screen: "Subscribe" }}
-          className={"py-6 pl-8 pr-3 -my-6 -mr-4"}
+          style={tw`py-6 pl-8 pr-3 -my-6 -mr-4`}
           accessibilityLabel="Navigate to subscription management screen"
         >
           <SpecialText>
@@ -26,21 +52,79 @@ export const Home = ({
           </SpecialText>
         </LinkButton>
       </HeaderRightContainer>
-      <SafeAreaView>
-        <View className="h-full w-full p-4">
-          <Text className="text-5xl font-bold mx-auto pb-2">
-            Probable Pitchers
-          </Text>
-          {subscriptions?.map((sub) => (
-            <View key={sub.id}>
-              <Text>{sub.pitcher.name}</Text>
-            </View>
-          ))}
-          <Pressable onPress={signOut}>
-            <Text>Sign Out</Text>
-          </Pressable>
-        </View>
-      </SafeAreaView>
-    </>
+      <FlatList
+        contentContainerStyle={tw`px-3 pt-9 pb-12`}
+        bounces={false}
+        data={subscriptions}
+        ListHeaderComponent={
+          <PrimaryText
+            style={tw`text-4xl font-bold tracking-tight mb-9`}
+            accessibilityRole="header"
+          >
+            {`Probable Pitcher`}
+          </PrimaryText>
+        }
+        renderItem={({ index, item: subscription }) => (
+          <Animated.View entering={FadeIn.delay(150)} exiting={FadeOut}>
+            <ThemedView
+              key={subscription.id}
+              style={tw.style(
+                "border-b-2",
+                index === 0 ? "rounded-t-xl" : undefined,
+                index + 1 === subscriptions?.length
+                  ? "rounded-b-xl border-b-0"
+                  : undefined
+              )}
+            >
+              <PrimaryText style={tw`flex-1 pr-2.5`} numberOfLines={1}>
+                {subscription.pitcher.name}
+              </PrimaryText>
+            </ThemedView>
+          </Animated.View>
+        )}
+        ListEmptyComponent={
+          <>
+            {isSuccess && (
+              <Animated.View entering={FadeIn.delay(150)} exiting={FadeOut}>
+                <SecondaryText
+                  style={tw`mb-9 mx-3 text-sm`}
+                  accessibilityRole="summary"
+                >
+                  To get started, add an alert subscription for your favorite
+                  pitcher.
+                </SecondaryText>
+                <LinkButton
+                  to={{ screen: "Subscribe" }}
+                  accessibilityLabel="Navigate to subscription management screen"
+                >
+                  <ThemedView rounded>
+                    <SpecialText>Add Subscription</SpecialText>
+                  </ThemedView>
+                </LinkButton>
+              </Animated.View>
+            )}
+            {isLoading && (
+              <Animated.View entering={FadeIn} exiting={FadeOut}>
+                <ActivityIndicator
+                  size="large"
+                  color={String(tw.style(specialTextColor).color)}
+                />
+              </Animated.View>
+            )}
+            {isError && (
+              <Animated.View entering={FadeIn.delay(150)} exiting={FadeOut}>
+                <AlertText
+                  style={tw`mb-9 mx-3 text-sm`}
+                  accessibilityRole="alert"
+                >
+                  An error occurred while loading your subscriptions. Please try
+                  again later.
+                </AlertText>
+              </Animated.View>
+            )}
+          </>
+        }
+      />
+    </ScreenLayout>
   );
 };

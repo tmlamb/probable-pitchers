@@ -1,5 +1,7 @@
 import React from "react";
 import { AccessibilityRole, Text } from "react-native";
+import { ClassInput } from "twrnc/dist/esm/types";
+import tw from "../../tailwind";
 
 export const primaryTextColor = "text-slate-900 dark:text-white";
 export const secondaryTextColor = "text-slate-500 dark:text-slate-400";
@@ -8,7 +10,7 @@ export const alertTextColor = "text-red-500 dark:text-red-400";
 
 type CommonProps = {
   children: React.ReactNode;
-  className?: string;
+  style?: ClassInput;
   numberOfLines?: number;
   accessibilityRole?: AccessibilityRole;
   accessible?: boolean;
@@ -16,7 +18,7 @@ type CommonProps = {
 
 export function PrimaryText({
   children,
-  className,
+  style,
   numberOfLines,
   accessibilityRole,
   accessible,
@@ -24,7 +26,7 @@ export function PrimaryText({
   return (
     <Text
       numberOfLines={numberOfLines}
-      className={`${primaryTextColor} 'text-lg' ${className}`}
+      style={tw.style(primaryTextColor, "text-lg", style)}
       accessibilityRole={accessibilityRole}
       accessible={accessible}
     >
@@ -35,7 +37,7 @@ export function PrimaryText({
 
 export function SecondaryText({
   children,
-  className,
+  style,
   numberOfLines,
   accessibilityRole,
   accessible,
@@ -43,7 +45,7 @@ export function SecondaryText({
   return (
     <Text
       numberOfLines={numberOfLines}
-      className={`${secondaryTextColor} 'text-lg' ${className}`}
+      style={tw.style(secondaryTextColor, "text-lg", style)}
       accessibilityRole={accessibilityRole}
       accessible={accessible}
     >
@@ -54,7 +56,7 @@ export function SecondaryText({
 
 export function SpecialText({
   children,
-  className,
+  style,
   numberOfLines,
   accessibilityRole,
   accessible,
@@ -62,7 +64,7 @@ export function SpecialText({
   return (
     <Text
       numberOfLines={numberOfLines}
-      className={`${specialTextColor} 'text-lg' ${className}`}
+      style={tw.style(specialTextColor, "text-lg", style)}
       accessibilityRole={accessibilityRole}
       accessible={accessible}
     >
@@ -73,7 +75,7 @@ export function SpecialText({
 
 export function AlertText({
   children,
-  className,
+  style,
   numberOfLines,
   accessibilityRole,
   accessible,
@@ -81,7 +83,7 @@ export function AlertText({
   return (
     <Text
       numberOfLines={numberOfLines}
-      className={`${alertTextColor} 'text-lg' ${className}`}
+      style={tw.style(alertTextColor, "text-lg", style)}
       accessibilityRole={accessibilityRole}
       accessible={accessible}
     >
@@ -91,25 +93,25 @@ export function AlertText({
 }
 
 PrimaryText.defaultProps = {
-  className: undefined,
+  style: undefined,
   numberOfLines: undefined,
   accessibilityRole: undefined,
   accessible: true,
 };
 SecondaryText.defaultProps = {
-  className: undefined,
+  style: undefined,
   numberOfLines: undefined,
   accessibilityRole: undefined,
   accessible: true,
 };
 SpecialText.defaultProps = {
-  className: undefined,
+  style: undefined,
   numberOfLines: undefined,
   accessibilityRole: undefined,
   accessible: true,
 };
 AlertText.defaultProps = {
-  className: undefined,
+  style: undefined,
   numberOfLines: undefined,
   accessibilityRole: undefined,
   accessible: true,

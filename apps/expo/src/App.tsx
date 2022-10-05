@@ -5,9 +5,11 @@ import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useRef, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import * as Sentry from "sentry-expo";
+import { useDeviceContext } from "twrnc";
 import AuthProvider from "./components/AuthProvider";
 import { Navigation } from "./components/Navigation";
 import TRPCProvider from "./components/TRPCProvider";
+import tw from "./tailwind";
 
 const { sentryPublicDsn, appEnv } = Constants.expoConfig?.extra || {};
 if (sentryPublicDsn) {
@@ -22,6 +24,9 @@ export default function App() {
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef<Subscription>();
   const responseListener = useRef<Subscription>();
+
+  // https://github.com/jaredh159/tailwind-react-native-classnames#enabling-device-context-prefixes
+  useDeviceContext(tw);
 
   useEffect(() => {
     // This listener is fired whenever a notification is received while the app is foregrounded

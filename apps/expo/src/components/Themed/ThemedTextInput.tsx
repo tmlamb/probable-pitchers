@@ -6,7 +6,11 @@ import {
   TextInput as NativeTextInput,
   TextInputChangeEventData,
   TextInputKeyPressEventData,
+  ViewStyle,
 } from "react-native";
+import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+import { ClassInput } from "twrnc/dist/esm/types";
+import tw from "../../tailwind";
 import {
   primaryTextColor,
   SecondaryText,
@@ -19,9 +23,9 @@ type Props = {
   onChange?: (e: NativeSyntheticEvent<TextInputChangeEventData>) => void;
   onBlur?: (e: unknown) => void;
   value?: string;
-  className?: string;
-  textInputClassName?: string;
-  labelClassName?: string;
+  style?: ViewStyle;
+  textInputStyle?: ClassInput;
+  labelStyle?: ClassInput;
   label?: string;
   placeholder?: string;
   placeholderTextColor?: ColorValue;
@@ -59,9 +63,9 @@ export default function TextInput({
   onChange,
   onBlur,
   value,
-  className,
-  textInputClassName,
-  labelClassName,
+  style,
+  textInputStyle,
+  labelStyle,
   label,
   placeholder,
   placeholderTextColor,
@@ -83,32 +87,42 @@ export default function TextInput({
   };
 
   return (
-    <ThemedView className={`relative py-0 web:px-0 ${className}`}>
-      <ThemedView
-        className={"px-0 py-2 web:py-0 relative w-full bg-transparent"}
-      >
+    <ThemedView style={tw.style("relative py-0 web:px-0", style)}>
+      <ThemedView style={tw`px-0 py-2 web:py-0 relative w-full bg-transparent`}>
         {label && (
-          <SecondaryText
-            className={`absolute leading-tight text-lg tracking-tight pl-0 web:pl-3
-              ${labelClassName}`}
-            accessible={false}
+          <Animated.View
+            entering={FadeIn}
+            exiting={FadeOut}
+            style={tw`absolute`}
           >
-            {label}
-          </SecondaryText>
+            <SecondaryText
+              style={tw.style(
+                "leading-tight text-lg tracking-tight pl-0",
+                labelStyle
+              )}
+              accessible={false}
+            >
+              {label}
+            </SecondaryText>
+          </Animated.View>
         )}
         <NativeTextInput
           onChangeText={handleChange}
           onChange={onChange}
           onBlur={onBlur}
           value={value ? nbspReplace(value) : value}
-          className={`${primaryTextColor} 
-            w-full pb-[2.8px] pt-[2.5px] android:py-[.15px] z-20 pr-0 text-lg web:text-right web:pr-3 web:pt-[10.75px] web:pb-[10.75px] leading-tight tracking-tight 
-            ${textInputClassName}`}
+          style={tw.style(
+            primaryTextColor,
+            "w-full pb-[2.8px] pt-[2.5px] android:py-[.15px] z-20 pr-0 text-lg web:text-right web:pr-3 web:pt-[10.75px] web:pb-[10.75px] leading-tight tracking-tight",
+            textInputStyle
+          )}
           placeholder={placeholder}
-          placeholderTextColor={placeholderTextColor || secondaryTextColor}
+          placeholderTextColor={
+            placeholderTextColor || tw.color(secondaryTextColor)
+          }
           maxLength={maxLength}
           keyboardType={keyboardType}
-          textAlign={label ? "right" : undefined}
+          textAlign={"right"}
           textAlignVertical="center"
           selectTextOnFocus={selectTextOnFocus}
           clearTextOnFocus={clearTextOnFocus}
@@ -130,12 +144,12 @@ export default function TextInput({
 
 TextInput.defaultProps = {
   value: undefined,
-  className: undefined,
+  style: undefined,
   onChangeText: (text: string) => text,
   onChange: undefined,
   onBlur: undefined,
-  textInputClassName: undefined,
-  labelClassName: undefined,
+  textInputStyle: undefined,
+  labelStyle: undefined,
   maxLength: undefined,
   label: undefined,
   placeholder: undefined,

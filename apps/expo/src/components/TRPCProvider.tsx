@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react";
 import { useState } from "react";
-import { getBaseUrl } from "../utils";
+import { getBaseUrl } from "../api";
 
 /**
  * A set of typesafe hooks for consuming your API.

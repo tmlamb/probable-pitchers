@@ -85,4 +85,6 @@ model Subscription {
   pitcher   Pitcher @relation(fields: [pitcherId], references: [id])
   pitcherId Int
   enabled   Boolean
+
+  @@unique([userId, pitcherId])
 }
