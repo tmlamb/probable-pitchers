@@ -47,6 +47,7 @@ model User {
 model Device {
   id        String @id @default(cuid())
   pushToken String @unique
+  timezone  String
   user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
 }

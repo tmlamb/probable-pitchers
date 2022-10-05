@@ -77,8 +77,8 @@ async function processGame(game: Game) {
                 "Probable Pitcher Alert",
                 `${pitcher.name} is pitching today at ${format(
                   new Date(game.gameDate),
-                  "h:m aaa"
-                )}!`
+                  "hh:mm aaa"
+                )}`
               );
             });
           }

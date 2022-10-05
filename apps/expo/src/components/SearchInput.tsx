@@ -64,7 +64,7 @@ export default function SearchInput({ onChange }: Props) {
       </Animated.View>
       {showCancelButton && (
         <Animated.View
-          entering={FadeInRight}
+          entering={FadeInRight.delay(300)}
           exiting={FadeOutRight.duration(100)}
           onLayout={(event) => {
             const roundedWidth = Math.round(event.nativeEvent.layout.width);

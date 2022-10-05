@@ -1,8 +1,8 @@
 import { AntDesign } from "@expo/vector-icons";
-import * as Device from "expo-device";
+import { PermissionStatus } from "expo-modules-core";
 import * as Notifications from "expo-notifications";
 import React, { useState } from "react";
-import { ActivityIndicator, FlatList, Platform } from "react-native";
+import { ActivityIndicator, FlatList } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import ButtonContainer from "../components/ButtonContainer";
 import ScreenLayout from "../components/ScreenLayout";
@@ -20,26 +20,18 @@ import { useTrackParallelMutations } from "../hooks/use-track-parallel-mutations
 import tw from "../tailwind";
 
 export const Subscribe = () => {
-  const {
-    data: subscriptions,
-    refetch,
-    isSuccess: subscriptionsFetched,
-    isLoading: subsLoading,
-  } = trpc.subscription.byUserId.useQuery();
-
-  const { data: devices, isSuccess: devicesFetched } =
-    trpc.device.byUserId.useQuery();
+  const { data: subscriptions, isSuccess: subscriptionsFetched } =
+    trpc.subscription.byUserId.useQuery();
 
   const [searchFilter, setSearchFilter] = useState<string>();
 
   const {
     data: pitchersFromSearch,
     isSuccess,
-    isLoading,
     isInitialLoading,
     isError,
   } = trpc.pitcher.byNameSearch.useQuery(searchFilter?.split(" ") || [], {
-    enabled: !!searchFilter && subscriptionsFetched && devicesFetched,
+    enabled: !!searchFilter && subscriptionsFetched,
   });
 
   const utils = trpc.useContext();
@@ -49,10 +41,6 @@ export const Subscribe = () => {
     subscription:
       subscriptions?.find((sub) => sub.pitcherId === pitcher.id) || undefined,
   }));
-
-  const { mutate: registerDevice } = trpc.device.create.useMutation({
-    onSettled: () => utils.device.byUserId.invalidate(),
-  });
 
   const mutationTracker = useTrackParallelMutations();
 
@@ -114,6 +102,12 @@ export const Subscribe = () => {
     },
   });
 
+  const [pushStatus, setPushStatus] = useState<PermissionStatus>();
+
+  Notifications.getPermissionsAsync().then(({ status }) => {
+    setPushStatus(status);
+  });
+
   return (
     <ScreenLayout>
       <FlatList
@@ -145,7 +139,6 @@ export const Subscribe = () => {
                     onPress={() => {
                       unsubscribe(pitcher.subscription!.id);
                     }}
-                    // disabled={!mutationTracker.allEnded() || isLoading}
                   >
                     <AlertText>
                       <AntDesign name="minuscircle" size={20} />
@@ -155,26 +148,15 @@ export const Subscribe = () => {
               {!pitcher.subscription && (
                 <ButtonContainer
                   style={tw`absolute right-0 py-4 pl-4 pr-3`}
-                  // disabled={!mutationTracker.allEnded() || isLoading}
                   onPress={async () => {
-                    const pushToken = await registerForPushNotifications();
-                    if (pushToken) {
-                      if (
-                        devices &&
-                        !devices.some(
-                          (device) => device.pushToken === pushToken
-                        )
-                      ) {
-                        registerDevice({ token: pushToken });
-                      }
-                      subscribe({
-                        pitcherId: pitcher.id,
-                      });
-                    } else {
+                    if (pushStatus === PermissionStatus.DENIED) {
                       alert(
-                        "To subscribe you must allow Probable Pitcher to send push notifications. Check the application settings."
+                        "Permission for this application to send push notifications has been denied. To receive alerts, you must allow notifications for Probable Pitcher in your phone's application settings."
                       );
                     }
+                    subscribe({
+                      pitcherId: pitcher.id,
+                    });
                   }}
                 >
                   <SpecialText>
@@ -239,35 +221,4 @@ export const Subscribe = () => {
       />
     </ScreenLayout>
   );
-};
-
-const registerForPushNotifications = async () => {
-  let token;
-  if (Device.isDevice) {
-    const { status: existingStatus } =
-      await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-    if (existingStatus !== "granted") {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
-    if (finalStatus !== "granted") {
-      alert("Failed to get push token for push notification!");
-      return;
-    }
-    token = (await Notifications.getExpoPushTokenAsync()).data;
-  } else {
-    alert("Must use physical device for Push Notifications");
-  }
-
-  if (Platform.OS === "android") {
-    Notifications.setNotificationChannelAsync("default", {
-      name: "default",
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: "#FF231F7C",
-    });
-  }
-
-  return token;
 };

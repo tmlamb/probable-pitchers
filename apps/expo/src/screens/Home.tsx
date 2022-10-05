@@ -1,6 +1,9 @@
 import { AntDesign } from "@expo/vector-icons";
-import React from "react";
-import { ActivityIndicator, FlatList } from "react-native";
+import * as Device from "expo-device";
+import * as Localization from "expo-localization";
+import * as Notifications from "expo-notifications";
+import React, { useEffect, useRef, useState } from "react";
+import { ActivityIndicator, AppState, FlatList, Platform } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import HeaderLeftContainer from "../components/HeaderLeftContainer";
 import HeaderRightContainer from "../components/HeaderRightContainer";
@@ -21,6 +24,60 @@ import tw from "../tailwind";
 export const Home = ({
   navigation: { navigate },
 }: RootStackScreenProps<"Home">) => {
+  const [expoPushToken, setExpoPushToken] = useState<string>();
+
+  useEffect(() => {
+    registerForPushNotifications().then((pushToken) => {
+      setExpoPushToken(pushToken);
+    });
+  }, []);
+
+  const { data: device, isSuccess: deviceFetched } =
+    trpc.device.byPushToken.useQuery(expoPushToken!, {
+      enabled: !!expoPushToken,
+    });
+
+  const trpcContext = trpc.useContext();
+  const { mutate: registerDevice } = trpc.device.create.useMutation({
+    onSettled: () => trpcContext.device.byPushToken.invalidate(),
+  });
+  const { mutate: updateDevice } = trpc.device.update.useMutation({
+    onSettled: () => trpcContext.device.byPushToken.invalidate(),
+  });
+
+  useEffect(() => {
+    if (deviceFetched && expoPushToken) {
+      const timezone = Localization.timezone;
+      if (!device) {
+        registerDevice({ pushToken: expoPushToken, timezone });
+      } else if (device.timezone !== timezone) {
+        updateDevice({
+          id: device.id,
+          pushToken: device.pushToken,
+          timezone,
+        });
+      }
+    }
+  }, [device, deviceFetched, expoPushToken]);
+
+  const appState = useRef(AppState.currentState);
+  useEffect(() => {
+    const listener = AppState.addEventListener("change", (nextAppState) => {
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === "active"
+      ) {
+        registerForPushNotifications().then((pushToken) => {
+          setExpoPushToken(pushToken);
+        });
+      }
+      appState.current = nextAppState;
+    });
+    return () => {
+      listener.remove();
+    };
+  }, []);
+
   const {
     data: subscriptions,
     isSuccess,
@@ -127,4 +184,34 @@ export const Home = ({
       />
     </ScreenLayout>
   );
+};
+
+const registerForPushNotifications = async () => {
+  let token;
+  if (Device.isDevice) {
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== "granted") {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== "granted") {
+      return;
+    }
+    token = (await Notifications.getExpoPushTokenAsync()).data;
+  } else {
+    alert("Must use physical device for Push Notifications");
+  }
+
+  if (Platform.OS === "android") {
+    Notifications.setNotificationChannelAsync("default", {
+      name: "default",
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: "#FF231F7C",
+    });
+  }
+
+  return token;
 };
