@@ -1,9 +1,11 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useSession } from "next-auth/expo";
-import { Platform, Text } from "react-native";
+import React from "react";
+import { ActivityIndicator, Platform, View } from "react-native";
 import "react-native-get-random-values";
 import { Home, Settings, Subscribe, Welcome } from "../../screens/";
+import tw from "../../tailwind";
 import { RootStackParamList } from "./types";
 
 const AppStack = createNativeStackNavigator<RootStackParamList>();
@@ -12,7 +14,9 @@ export default function Navigation() {
   const { status, data } = useSession();
 
   return status === "loading" ? (
-    <Text>Loading...</Text>
+    <View style={tw`h-full w-full justify-center`}>
+      <ActivityIndicator size="large" />
+    </View>
   ) : (
     <NavigationContainer>
       <AppStack.Navigator
