@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import { formatInTimeZone } from "date-fns-tz";
 import formatISO from "date-fns/formatISO/index.js";
 import { client } from "../db.js";
 import { Game, getGames } from "../services/mlbstats.js";
@@ -70,15 +70,19 @@ async function processGame(game: Game) {
           if (pitcher) {
             user?.devices.forEach((device) => {
               console.log(
-                `Process device ${device.id} with push token ${device.pushToken} for user ${user.id}`
+                `Process device ${device.id} with push token ${device.pushToken} and tz ${device.timezone} for user ${user.id}`
               );
+
+              const localizedGameTime = formatInTimeZone(
+                new Date(game.gameDate),
+                device.timezone,
+                "hh:mm aaa"
+              );
+
               sendPushNotification(
                 device.pushToken,
                 "Probable Pitcher Alert",
-                `${pitcher.name} is pitching today at ${format(
-                  new Date(game.gameDate),
-                  "hh:mm aaa"
-                )}`
+                `${pitcher.name} is pitching today at ${localizedGameTime}`
               );
             });
           }
