@@ -41,6 +41,7 @@ async function processGame(game: Game) {
 
   const existingGame = await client.game.byId(game.gamePk);
   if (!existingGame) {
+    console.log(`Game ${game.gamePk} does not exist, so inserting`);
     await client.game.create(
       game.gamePk,
       new Date(game.gameDate),
@@ -52,13 +53,25 @@ async function processGame(game: Game) {
       game.teams.home.probablePitcher?.id,
       game.teams.away.probablePitcher?.id,
     ].forEach(async (pitcherId) => {
+      console.log(`Processing ${pitcherId} of game ${game.gamePk}`);
       if (pitcherId) {
         const subscriptions = await client.subscription.byPitcherId(pitcherId);
+        console.log(
+          `Pitcher ${pitcherId} has subscriptions: ${JSON.stringify(
+            subscriptions
+          )}`
+        );
         subscriptions.forEach(async (subscription) => {
           const user = await client.user.byId(subscription.userId);
           const pitcher = await client.pitcher.byId(pitcherId);
+          console.log(
+            `Processing subscription ${subscription.id} for user ${user?.id} and pitcher ${pitcher?.id}`
+          );
           if (pitcher) {
             user?.devices.forEach((device) => {
+              console.log(
+                `Process device ${device.id} with push token ${device.pushToken} for user ${user.id}`
+              );
               sendPushNotification(
                 device.pushToken,
                 "Probable Pitcher Alert",
