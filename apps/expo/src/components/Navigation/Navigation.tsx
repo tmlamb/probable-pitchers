@@ -10,7 +10,6 @@ const AppStack = createNativeStackNavigator<RootStackParamList>();
 
 export default function Navigation() {
   const { status, data } = useSession();
-  console.log("status", status);
 
   return status === "loading" ? (
     <Text>Loading...</Text>
