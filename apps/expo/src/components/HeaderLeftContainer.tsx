@@ -1,7 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { View } from "react-native";
-import tw from "../tailwind";
 
 type Props = {
   children: React.ReactNode;
@@ -9,7 +8,7 @@ type Props = {
 
 export default function HeaderLeftContainer({ children }: Props) {
   const memoizedComponent = React.useMemo(
-    () => <View style={tw`web:ml-3`}>{children}</View>,
+    () => <View>{children}</View>,
     [children]
   );
   const navigation = useNavigation();

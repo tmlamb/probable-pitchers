@@ -37,7 +37,6 @@ type Props = {
   editable?: boolean;
   selection?: { start: number; end?: number };
   onKeyPress?: (e: NativeSyntheticEvent<TextInputKeyPressEventData>) => void;
-  innerRef?: React.LegacyRef<NativeTextInput>;
   accessibilityLabel?: string;
   testID?: string;
 };
@@ -77,7 +76,6 @@ export default function TextInput({
   editable,
   selection,
   onKeyPress,
-  innerRef,
   accessibilityLabel,
   testID,
 }: PropsFilled) {
@@ -87,8 +85,8 @@ export default function TextInput({
   };
 
   return (
-    <ThemedView style={tw.style("relative py-0 web:px-0", style)}>
-      <ThemedView style={tw`px-0 py-2 web:py-0 relative w-full bg-transparent`}>
+    <ThemedView style={tw.style("relative py-0", style)}>
+      <ThemedView style={tw`px-0 py-2 relative w-full bg-transparent`}>
         {label && (
           <Animated.View
             entering={FadeIn}
@@ -113,7 +111,7 @@ export default function TextInput({
           value={value ? nbspReplace(value) : value}
           style={tw.style(
             primaryTextColor,
-            "w-full pb-[2.8px] pt-[2.5px] android:py-[.15px] z-20 pr-0 text-lg web:text-right web:pr-3 web:pt-[10.75px] web:pb-[10.75px] leading-tight tracking-tight",
+            "w-full pb-[2.8px] pt-[2.5px] android:py-[.15px] z-20 pr-0 text-lg leading-tight tracking-tight",
             textInputStyle
           )}
           placeholder={placeholder}
@@ -132,7 +130,6 @@ export default function TextInput({
           multiline
           numberOfLines={1}
           scrollEnabled={false}
-          ref={innerRef}
           blurOnSubmit
           accessibilityLabel={accessibilityLabel || label}
           testID={testID}

@@ -7,7 +7,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
-    "scheme": "probable-pitchers",
+    "scheme": "https",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",

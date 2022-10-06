@@ -2,21 +2,16 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useSession } from "next-auth/expo";
 import React from "react";
-import { ActivityIndicator, Platform, View } from "react-native";
+import { Platform } from "react-native";
 import { Home, Settings, Subscribe, Welcome } from "../../screens/";
-import tw from "../../tailwind";
 import { RootStackParamList } from "./types";
 
 const AppStack = createNativeStackNavigator<RootStackParamList>();
 
 export default function Navigation() {
-  const { status, data } = useSession();
+  const { status } = useSession();
 
-  return status === "loading" ? (
-    <View style={tw`h-full w-full justify-center`}>
-      <ActivityIndicator size="large" />
-    </View>
-  ) : (
+  return (
     <NavigationContainer>
       <AppStack.Navigator
         screenOptions={{
@@ -30,7 +25,6 @@ export default function Navigation() {
             component={Welcome}
             options={{
               headerTitle: "",
-              presentation: "modal",
             }}
           />
         ) : (
