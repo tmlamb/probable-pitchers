@@ -132,7 +132,7 @@ export const Home = ({
           accessibilityLabel="Navigate to subscription management screen"
         >
           <SpecialText>
-            <AntDesign name="plus" size={28} />
+            <AntDesign name="edit" size={24} />
           </SpecialText>
         </LinkButton>
       </HeaderRightContainer>
@@ -142,14 +142,14 @@ export const Home = ({
         sections={pitcherSubscriptions}
         ListHeaderComponent={
           <PrimaryText
-            style={tw`text-4xl font-bold tracking-tight`}
+            style={tw`text-4xl font-bold tracking-tight mb-9`}
             accessibilityRole="header"
           >
             {`Probable Pitcher`}
           </PrimaryText>
         }
         renderSectionHeader={({ section: { title } }) => (
-          <SecondaryText style={tw`mt-9 ml-3 mb-1.5 uppercase text-sm`}>
+          <SecondaryText style={tw`ml-3 mb-1.5 uppercase text-sm`}>
             {title}
           </SecondaryText>
         )}

@@ -1,9 +1,10 @@
 import { AntDesign } from "@expo/vector-icons";
+import { Pitcher, Subscription } from "@prisma/client";
 import { PermissionStatus } from "expo-modules-core";
 import * as Notifications from "expo-notifications";
 import React, { useState } from "react";
-import { ActivityIndicator, FlatList } from "react-native";
-import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+import { ActivityIndicator, SectionList } from "react-native";
+import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
 import ButtonContainer from "../components/ButtonContainer";
 import ScreenLayout from "../components/ScreenLayout";
 import SearchInput from "../components/SearchInput";
@@ -114,44 +115,118 @@ export const Subscribe = () => {
     setPushStatus(status);
   });
 
+  const subscribedAndAvailablePitchers: {
+    title: string;
+    data: (Pitcher & { subscription?: Subscription })[];
+  }[] = [];
+
+  if (subscriptions) {
+    subscribedAndAvailablePitchers.push({
+      title: "Subscribed",
+      data:
+        (searchFilter
+          ? pitchers
+              ?.filter((p) => p.subscription)
+              .map(
+                (p) =>
+                  ({
+                    id: p.id,
+                    name: p.name,
+                    teamId: p.teamId,
+                    subscription: {
+                      id: p.subscription!.id,
+                      pitcherId: p.id,
+                      userId: p.subscription!.userId,
+                      enabled: p.subscription!.enabled,
+                    },
+                  } as Pitcher & { subscription?: Subscription })
+              )
+          : subscriptions.map(
+              (s) =>
+                ({
+                  id: s.pitcher.id,
+                  name: s.pitcher.name,
+                  teamId: s.pitcher.teamId,
+                  subscription: {
+                    id: s.id,
+                    pitcherId: s.pitcherId,
+                    userId: s.userId,
+                    enabled: s.enabled,
+                  },
+                } as Pitcher & { subscription?: Subscription })
+            )) || [],
+    });
+  }
+
+  if (searchFilter) {
+    subscribedAndAvailablePitchers.push({
+      title: "Available",
+      data: pitchers?.filter((p) => !p.subscription) || [],
+    });
+  }
+
   return (
     <ScreenLayout>
-      <FlatList
+      <SectionList
         contentContainerStyle={tw`px-3 pt-9 pb-12`}
-        data={pitchers}
+        sections={subscribedAndAvailablePitchers}
         keyboardShouldPersistTaps="handled"
-        renderItem={({ item: pitcher, index }) => (
-          <Animated.View entering={FadeIn} exiting={FadeOut}>
+        renderSectionHeader={({ section: { title, data } }) => (
+          <>
+            {data && data.length > 0 && (
+              <Animated.View
+                entering={FadeIn}
+                exiting={FadeOut}
+                layout={Layout}
+              >
+                <SecondaryText style={tw`ml-3 mb-1.5 uppercase text-sm`}>
+                  {title}
+                </SecondaryText>
+              </Animated.View>
+            )}
+            {!data ||
+              (data.length === 0 && title === "Available" && isInitialLoading && (
+                <Animated.View entering={FadeIn} exiting={FadeOut}>
+                  <ActivityIndicator
+                    size="large"
+                    color={String(tw.style(specialTextColor).color)}
+                  />
+                </Animated.View>
+              ))}
+          </>
+        )}
+        // renderItem={({ item: pitcher, index }) => (
+        renderItem={({ index, item, section }) => (
+          <Animated.View entering={FadeIn.delay(200)} exiting={FadeOut}>
             <ThemedView
               style={tw.style(
                 "border-b-2",
                 index === 0 ? "rounded-t-xl" : undefined,
-                index + 1 === pitchers?.length
+                index + 1 === section.data.length
                   ? "border-b-0 rounded-b-xl mb-6"
                   : undefined
               )}
             >
               <PrimaryText style={tw`flex-1 pr-2.5`} numberOfLines={1}>
-                {pitcher.name}
+                {item.name}
               </PrimaryText>
-              {pitcher.subscription &&
-                pitcher.subscription.userId === "temporary" && (
+              {item.subscription &&
+                item.subscription.userId === "temporary" && (
                   <ActivityIndicator size="small" />
                 )}
-              {pitcher.subscription &&
-                pitcher.subscription.userId !== "temporary" && (
-                  <ButtonContainer
-                    style={tw`absolute right-0 py-4 pl-4 pr-3`}
-                    onPress={() => {
-                      unsubscribe(pitcher.subscription!.id);
-                    }}
-                  >
-                    <AlertText>
-                      <AntDesign name="minuscircle" size={20} />
-                    </AlertText>
-                  </ButtonContainer>
-                )}
-              {!pitcher.subscription && (
+              {item.subscription && item.subscription.userId !== "temporary" && (
+                <ButtonContainer
+                  style={tw`absolute right-0 py-4 pl-4 pr-3`}
+                  onPress={() => {
+                    unsubscribe(item.subscription!.id);
+                  }}
+                >
+                  <AlertText>
+                    <AntDesign name="minuscircle" size={20} />
+                  </AlertText>
+                </ButtonContainer>
+              )}
+              {!item.subscription && (
                 <ButtonContainer
                   style={tw`absolute right-0 py-4 pl-4 pr-3`}
                   onPress={async () => {
@@ -161,7 +236,7 @@ export const Subscribe = () => {
                       );
                     }
                     subscribe({
-                      pitcherId: pitcher.id,
+                      pitcherId: item.id,
                     });
                   }}
                 >
