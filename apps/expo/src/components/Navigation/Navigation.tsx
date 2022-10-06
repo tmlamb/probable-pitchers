@@ -3,7 +3,6 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useSession } from "next-auth/expo";
 import React from "react";
 import { ActivityIndicator, Platform, View } from "react-native";
-import "react-native-get-random-values";
 import { Home, Settings, Subscribe, Welcome } from "../../screens/";
 import tw from "../../tailwind";
 import { RootStackParamList } from "./types";
