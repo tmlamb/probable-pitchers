@@ -5,7 +5,14 @@ export const subscriptionRouter = t.router({
   byUserId: t.procedure.use(isAuthed).query(({ ctx }) => {
     return ctx.prisma.subscription.findMany({
       where: { userId: ctx.session?.user.id },
-      include: { pitcher: true },
+      include: {
+        pitcher: {
+          include: {
+            homeGames: true,
+            awayGames: true,
+          },
+        },
+      },
     });
   }),
   create: t.procedure

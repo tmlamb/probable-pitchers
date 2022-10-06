@@ -1,9 +1,17 @@
 import { AntDesign } from "@expo/vector-icons";
+import { Game, Pitcher, Subscription } from "@prisma/client";
+import { add, isBefore, isFuture, maxTime, min } from "date-fns";
 import * as Device from "expo-device";
 import * as Localization from "expo-localization";
 import * as Notifications from "expo-notifications";
+import _ from "lodash";
 import React, { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, AppState, FlatList, Platform } from "react-native";
+import {
+  ActivityIndicator,
+  AppState,
+  Platform,
+  SectionList,
+} from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import HeaderLeftContainer from "../components/HeaderLeftContainer";
 import HeaderRightContainer from "../components/HeaderRightContainer";
@@ -84,6 +92,28 @@ export const Home = ({
     isLoading,
     isError,
   } = trpc.subscription.byUserId.useQuery();
+  console.log(subscriptions);
+
+  const pitcherSubscriptions: {
+    title: string;
+    data: (Subscription & {
+      pitcher: Pitcher & {
+        homeGames: Game[];
+        awayGames: Game[];
+      };
+    })[];
+  }[] = _(subscriptions)
+    .groupBy((subscription) => {
+      const nextGame = nextGameDate(subscription.pitcher);
+      console.log(nextGame);
+
+      return isBefore(nextGame || maxTime, add(new Date(), { hours: 24 }))
+        ? "Pitching Today"
+        : "Unscheduled";
+    })
+    .map((data, title) => ({ title, data }))
+    .reverse()
+    .value();
 
   return (
     <ScreenLayout>
@@ -109,32 +139,37 @@ export const Home = ({
           </SpecialText>
         </LinkButton>
       </HeaderRightContainer>
-      <FlatList
+      <SectionList
         contentContainerStyle={tw`px-3 pt-9 pb-12`}
         bounces={false}
-        data={subscriptions}
+        sections={pitcherSubscriptions}
         ListHeaderComponent={
           <PrimaryText
-            style={tw`text-4xl font-bold tracking-tight mb-9`}
+            style={tw`text-4xl font-bold tracking-tight`}
             accessibilityRole="header"
           >
             {`Probable Pitcher`}
           </PrimaryText>
         }
-        renderItem={({ index, item: subscription }) => (
+        renderSectionHeader={({ section: { title } }) => (
+          <SecondaryText style={tw`mt-9 ml-3 mb-1.5 uppercase text-sm`}>
+            {title}
+          </SecondaryText>
+        )}
+        renderItem={({ index, item, section }) => (
           <Animated.View entering={FadeIn.delay(150)} exiting={FadeOut}>
             <ThemedView
-              key={subscription.id}
+              key={item.id}
               style={tw.style(
                 "border-b-2",
                 index === 0 ? "rounded-t-xl" : undefined,
-                index + 1 === subscriptions?.length
+                index + 1 === section.data.length
                   ? "rounded-b-xl border-b-0"
                   : undefined
               )}
             >
-              <PrimaryText style={tw`flex-1 pr-2.5`} numberOfLines={1}>
-                {subscription.pitcher.name}
+              <PrimaryText style={tw`flex-1`} numberOfLines={1}>
+                {item.pitcher.name}
               </PrimaryText>
             </ThemedView>
           </Animated.View>
@@ -215,3 +250,17 @@ const registerForPushNotifications = async () => {
 
   return token;
 };
+
+function nextGameDate(
+  pitcher: Pitcher & {
+    homeGames: Game[];
+    awayGames: Game[];
+  }
+): Date | undefined {
+  const futureGames = [...pitcher.homeGames, ...pitcher.awayGames]
+    .filter((game) => isFuture(game.date))
+    .map((game) => game.date);
+  if (futureGames.length) {
+    return min(futureGames);
+  }
+}

@@ -60,7 +60,13 @@ export const Subscribe = () => {
               enabled: true,
               pitcherId: pitcherId,
               userId: "temporary",
-              pitcher: { id: pitcherId, name: "foo", teamId: 123 },
+              pitcher: {
+                id: pitcherId,
+                name: "foo",
+                teamId: 123,
+                homeGames: [],
+                awayGames: [],
+              },
             },
           ];
         }
