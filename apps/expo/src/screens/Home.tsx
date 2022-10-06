@@ -92,7 +92,6 @@ export const Home = ({
     isLoading,
     isError,
   } = trpc.subscription.byUserId.useQuery();
-  console.log(subscriptions);
 
   const pitcherSubscriptions: {
     title: string;
@@ -105,8 +104,6 @@ export const Home = ({
   }[] = _(subscriptions)
     .groupBy((subscription) => {
       const nextGame = nextGameDate(subscription.pitcher);
-      console.log(nextGame);
-
       return isBefore(nextGame || maxTime, add(new Date(), { hours: 24 }))
         ? "Pitching Today"
         : "Unscheduled";
