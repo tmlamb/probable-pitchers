@@ -25,4 +25,11 @@ export const pitcherRouter = t.router({
         },
       });
     }),
+  all: t.procedure.query(({ ctx }) => {
+    return ctx.prisma.pitcher.findMany({
+      where: {
+        name: { not: "" },
+      },
+    });
+  }),
 });
