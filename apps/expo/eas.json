@@ -3,17 +3,28 @@
     "version": ">= 0.55.1"
   },
   "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "APP_ENV": "development"
+      }
+    },
     "preview": {
       "distribution": "internal",
       "channel": "preview",
       "env": {
-        "APP_ENV": "preview"
+        "APP_ENV": "preview",
+        "API_BASE_URL": "https://dev.probablepitchers.net",
+        "NEXTAUTH_URL": "https://dev.probablepitchers.net"
       }
     },
     "production": {
       "channel": "production",
       "env": {
-        "APP_ENV": "production"
+        "APP_ENV": "production",
+        "API_BASE_URL": "https://probablepitchers.net",
+        "NEXTAUTH_URL": "https://probablepitchers.net"
       }
     }
   },
