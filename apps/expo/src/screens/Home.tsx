@@ -161,7 +161,7 @@ export const Home = ({
                 "border-b-2",
                 index === 0 ? "rounded-t-xl" : undefined,
                 index + 1 === section.data.length
-                  ? "rounded-b-xl border-b-0"
+                  ? "rounded-b-xl border-b-0 mb-6"
                   : undefined
               )}
             >

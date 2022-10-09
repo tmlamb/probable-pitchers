@@ -3,7 +3,8 @@ import { Subscription } from "expo-modules-core";
 import * as Notifications from "expo-notifications";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useRef, useState } from "react";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Platform } from "react-native";
+import { enableLayoutAnimations } from "react-native-reanimated";
 import * as Sentry from "sentry-expo";
 import { useDeviceContext } from "twrnc";
 import AuthProvider from "./components/AuthProvider";
@@ -51,13 +52,15 @@ export default function App() {
     };
   }, []);
 
+  if (Platform.OS === "android") {
+    enableLayoutAnimations(false);
+  }
+
   return (
     <AuthProvider>
       <TRPCProvider>
-        <SafeAreaProvider>
-          <Navigation />
-          <StatusBar />
-        </SafeAreaProvider>
+        <Navigation />
+        <StatusBar />
       </TRPCProvider>
     </AuthProvider>
   );
