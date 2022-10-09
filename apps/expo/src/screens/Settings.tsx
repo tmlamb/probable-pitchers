@@ -22,7 +22,7 @@ export const Settings = () => {
           >
             <PrimaryText>Logout</PrimaryText>
             <SecondaryText style={tw`absolute right-2 self-center`}>
-              <AntDesign name="setting" size={20} />
+              <AntDesign name="logout" size={18} />
             </SecondaryText>
           </ThemedView>
         </ButtonContainer>
