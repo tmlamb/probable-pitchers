@@ -7,6 +7,8 @@ const workspaceRoot = path.resolve(projectRoot, "../..");
 
 const config = getDefaultConfig(projectRoot);
 
+config.resolver.sourceExts.push("cjs");
+
 config.watchFolders = [workspaceRoot];
 
 config.resolver.nodeModulesPaths = [
@@ -15,7 +17,5 @@ config.resolver.nodeModulesPaths = [
 ];
 
 // config.resolver.disableHierarchicalLookup = true;
-
-config.resolver.sourceExts = ["jsx", "js", "ts", "tsx", "cjs"];
 
 module.exports = config;
