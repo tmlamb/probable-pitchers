@@ -21,7 +21,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.triplesight.probablepitchers",
-      "buildNumber": "2"
+      "buildNumber": "3"
     },
     "android": {
       "softwareKeyboardLayoutMode": "pan",
@@ -30,7 +30,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.triplesight.probablepitchers",
-      "versionCode": 2
+      "versionCode": 3
     },
     "runtimeVersion": {
       "policy": "sdkVersion"
