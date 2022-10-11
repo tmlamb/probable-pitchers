@@ -5,6 +5,7 @@ export type RootStackParamList = {
   Subscribe: undefined;
   Welcome: undefined;
   Settings: undefined;
+  Loading: undefined;
 };
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> =

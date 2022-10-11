@@ -4,6 +4,7 @@ import { useSession } from "next-auth/expo";
 import React from "react";
 import { Platform } from "react-native";
 import { Home, Settings, Subscribe, Welcome } from "../../screens/";
+import { Loading } from "../../screens/Loading";
 import { RootStackParamList } from "./types";
 
 const AppStack = createNativeStackNavigator<RootStackParamList>();
@@ -19,22 +20,24 @@ export default function Navigation() {
           headerTitleAlign: "center",
         }}
       >
-        {status === "unauthenticated" ? (
+        {status === "unauthenticated" && (
           <AppStack.Screen
             name="Welcome"
             component={Welcome}
             options={{
               headerTitle: "",
+              presentation: "modal",
             }}
           />
-        ) : (
+        )}
+        {status === "authenticated" && (
           <>
             <AppStack.Screen
               name="Home"
               component={Home}
               options={{
                 headerTitle: "",
-                title: "Probable Pitchers",
+                title: "Probable Pitcher",
               }}
             />
             <AppStack.Screen
@@ -55,6 +58,15 @@ export default function Navigation() {
               }}
             />
           </>
+        )}
+        {status === "loading" && (
+          <AppStack.Screen
+            name="Loading"
+            component={Loading}
+            options={{
+              headerTitle: "",
+            }}
+          />
         )}
       </AppStack.Navigator>
     </NavigationContainer>
