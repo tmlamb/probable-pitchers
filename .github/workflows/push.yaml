@@ -79,4 +79,4 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Publish update
-        run: eas update --branch preview --message ${{ github.event.head_commit.message }}
+        run: eas update --branch preview --message "${{ github.event.head_commit.message }}"
