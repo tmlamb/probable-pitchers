@@ -1,4 +1,4 @@
-name: Pulumi
+name: Push Staging
 on:
   push:
     branches:

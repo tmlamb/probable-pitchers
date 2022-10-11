@@ -1,0 +1,18 @@
+name: Prod Release
+on:
+  release:
+    types: [published]
+
+jobs:
+  semver-diff:
+    runs-on: ubuntu-latest
+    name: semver-diff
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run semver-diff
+        id: semver-diff
+        uses: tj-actions/semver-diff@v2.1.0
+      - name: Show release type
+        run: |
+          echo "Release type: ${{ steps.semver-diff.outputs.release_type }}"
+        # Outputs: Release type: major || minor || patch || prerelease || build
