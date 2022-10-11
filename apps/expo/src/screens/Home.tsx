@@ -13,6 +13,7 @@ import {
   SectionList,
 } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+import * as Sentry from "sentry-expo";
 import HeaderLeftContainer from "../components/HeaderLeftContainer";
 import HeaderRightContainer from "../components/HeaderRightContainer";
 import LinkButton from "../components/LinkButton";
@@ -145,7 +146,7 @@ export const Home = ({
             style={tw`text-4xl font-bold tracking-tight mb-9`}
             accessibilityRole="header"
           >
-            {`Probable Pitcher`}
+            Probable Pitcher
           </PrimaryText>
         }
         renderSectionHeader={({ section: { title } }) => (
@@ -223,6 +224,7 @@ const registerForPushNotifications = async () => {
   if (Device.isDevice) {
     const { status: existingStatus } =
       await Notifications.getPermissionsAsync();
+
     let finalStatus = existingStatus;
     if (existingStatus !== "granted") {
       const { status } = await Notifications.requestPermissionsAsync();
@@ -232,6 +234,12 @@ const registerForPushNotifications = async () => {
       return;
     }
     token = (await Notifications.getExpoPushTokenAsync()).data;
+
+    if (!token) {
+      Sentry.Native.captureException(
+        "Unable to get push token after permission was granted."
+      );
+    }
   } else {
     alert("Must use physical device for Push Notifications");
   }
@@ -244,7 +252,6 @@ const registerForPushNotifications = async () => {
       lightColor: "#FF231F7C",
     });
   }
-
   return token;
 };
 
