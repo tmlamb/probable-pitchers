@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "150194805842",
+    "project_id": "probable-pitchers-924cc",
+    "storage_bucket": "probable-pitchers-924cc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:150194805842:android:a58a6b9e3a102c6126138b",
+        "android_client_info": {
+          "package_name": "com.triplesight.probablepitchers"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "150194805842-l2pnsktib7gt07i3m992rermsv66erpt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAy8wOkIGDcrqf9mpLK_p012TULisVB1Uk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "150194805842-l2pnsktib7gt07i3m992rermsv66erpt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
