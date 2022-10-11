@@ -5,7 +5,7 @@ import { containerRegistry } from "./config";
 
 const config = new pulumi.Config();
 const env = pulumi.getStack();
-const imageTag = process.env.DEPLOY_COMMIT || "latest";
+const imageTag = process.env.DEPLOY_COMMIT_TAG || "latest";
 
 const domains = config.requireObject<string[]>("domains");
 

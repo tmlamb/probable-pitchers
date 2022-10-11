@@ -52,7 +52,7 @@ jobs:
           work-dir: infrastructure
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
-          DEPLOY-COMMIT: sha-${{ github.sha }}
+          DEPLOY_COMMIT_TAG: sha-${{ github.sha }}
   update-preview:
     name: Update Preview App
     needs: deploy-infra
