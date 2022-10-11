@@ -20,8 +20,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.triplesight.probablepitchers",
-      "buildNumber": "3"
+      "bundleIdentifier": "com.triplesight.probablepitchers"
     },
     "android": {
       "softwareKeyboardLayoutMode": "pan",
@@ -30,8 +29,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "googleServicesFile": "./google-services.json",
-      "package": "com.triplesight.probablepitchers",
-      "versionCode": 3
+      "package": "com.triplesight.probablepitchers"
     },
     "runtimeVersion": {
       "policy": "sdkVersion"

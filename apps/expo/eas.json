@@ -1,6 +1,7 @@
 {
   "cli": {
-    "version": ">= 0.55.1"
+    "version": ">= 0.55.1",
+    "appVersionSource": "remote"
   },
   "build": {
     "development": {
@@ -25,14 +26,8 @@
         "APP_ENV": "production",
         "API_BASE_URL": "https://probablepitchers.net",
         "NEXTAUTH_URL": "https://probablepitchers.net"
-      }
-    }
-  },
-  "submit": {
-    "production": {
-      "android": {
-        "serviceAccountKeyPath": "/home/tom/Documents/pc-api-8397639170464038628-254-18c04fd08bc2.json"
-      }
+      },
+      "autoIncrement": true
     }
   }
 }
