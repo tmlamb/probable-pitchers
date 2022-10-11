@@ -1,6 +1,7 @@
 config:
   gcp:project: probable-pitchers-363818
   gcp:region: us-central1
+  probable-pitchers:nextjsReplicas: 1
   probable-pitchers:authGoogleClientId:
     secure: AAABAP0LUEHU31UhUuFqL585gAyVddrlwCESzUWDvKd9X93HxGpyrWlDymC75HbVYFbFhYJmVnpL7utEnUOZuowxFpylw9IGKE5jurQjoDiMQzNFJIp6Cehco3UgtyWDEPuFEIYdwA==
   probable-pitchers:authGoogleClientSecret:
@@ -17,7 +18,7 @@ config:
   probable-pitchers:dbUrl:
     secure: AAABAJOJnaPZ/5gHF4KkWY8/qB8ocwRtxpA1jUjObaHKKRoCEbjAuQ5xqLcSUhn9bqoWXoe3g3R307ucWBmgj95oQd5wyaE+3S2KBG3oy3HMMFxsX+JAsfAWH/3ds6VSzcLTsxJfuyVXGZx+ug+WAbZpu0Q1Iz1ila00jp+do2xqOFFe/L/qAD6070mdirHF38YHS4HMnG83k2Mqw7G3TvPJBKDXLnxTSMaBF7hktg==
   probable-pitchers:domains:
-  - dev.probablepitchers.net
+    - dev.probablepitchers.net
   probable-pitchers:nextAuthExpoUrl:
     secure: AAABAFSCPf51LJAu6rrAyHRPkxMJ04ZuJgvr9HtMCsWvN56XKSbhBwHjoOWrpr+Q8eJP4qfOzbx2Mvnfp9EUlNkimGevxVd6Tg5EjsJg
   probable-pitchers:nextAuthSecret:
