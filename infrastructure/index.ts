@@ -8,6 +8,7 @@ const env = pulumi.getStack();
 const imageTag = process.env.DEPLOY_COMMIT_TAG || "latest";
 
 const domains = config.requireObject<string[]>("domains");
+const replicas = config.requireNumber("nextjsReplicas");
 
 const clusterProvider = new k8s.Provider(`probable-pitchers-${env}`, {
   kubeconfig: process.env.KUBECONFIG,
@@ -62,8 +63,15 @@ const deployment = new k8s.apps.v1.Deployment(
       namespace: namespaceName,
     },
     spec: {
+      strategy: {
+        type: "RollingUpdate",
+        rollingUpdate: {
+          maxSurge: 1,
+          maxUnavailable: 1,
+        },
+      },
       selector: { matchLabels: appLabels },
-      replicas: 1,
+      replicas: replicas,
       template: {
         metadata: { labels: appLabels },
         spec: {

@@ -1,6 +1,7 @@
 config:
   gcp:project: probable-pitchers-prod
   gcp:region: us-central1
+  probable-pitchers:nextjsReplicas: 3
   probable-pitchers:authGoogleClientId:
     secure: AAABABURCgDr1O0IOiNwK2ZmRqAYn/syG1rabKVeWtVuP+OLDgQGypLcbtTvySvcoFPSHJCvE9tRgcwqS9leBPjrSawFs5SBzjJv7idmzf3e2bpt1P3D9J/pR6PLg77y6U2ski1r2+I=
   probable-pitchers:authGoogleClientSecret:
