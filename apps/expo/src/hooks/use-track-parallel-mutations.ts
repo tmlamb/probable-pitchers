@@ -13,5 +13,6 @@ export const useTrackParallelMutations = () => {
       }
     },
     allEnded: () => mutationNumber.current === 0,
+    isMutating: () => mutationNumber.current > 0,
   };
 };
