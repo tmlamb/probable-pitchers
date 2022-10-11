@@ -5,6 +5,7 @@ import { containerRegistry } from "./config";
 
 const config = new pulumi.Config();
 const env = pulumi.getStack();
+const imageTag = process.env.DEPLOY_COMMIT || "latest";
 
 const domains = config.requireObject<string[]>("domains");
 
@@ -70,7 +71,7 @@ const deployment = new k8s.apps.v1.Deployment(
           containers: [
             {
               name: appLabels.app,
-              image: "ghcr.io/tmlamb/probable-pitchers-nextjs:latest",
+              image: `ghcr.io/tmlamb/probable-pitchers-nextjs:${imageTag}`,
               ports: [{ name: "http", containerPort: 3000 }],
               imagePullPolicy: "Always",
               livenessProbe: {
@@ -155,7 +156,7 @@ const cronjob = new k8s.batch.v1.CronJob(
                 {
                   name: ingestLabels.app,
 
-                  image: "ghcr.io/tmlamb/probable-pitchers-ingest:latest",
+                  image: `ghcr.io/tmlamb/probable-pitchers-ingest:${imageTag}`,
                   imagePullPolicy: "Always",
                   env: [
                     {
