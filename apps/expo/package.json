@@ -29,6 +29,7 @@
     "expo-random": "~12.3.0",
     "expo-secure-store": "~11.3.0",
     "expo-status-bar": "~1.4.0",
+    "expo-updates": "~0.14.6",
     "expo-web-browser": "~11.0.0",
     "lodash": "^4.17.21",
     "next-auth": "^4.10.3",
