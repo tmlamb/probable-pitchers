@@ -19,8 +19,13 @@ export const authOptions: NextAuthOptions = {
   adapter,
   providers: [
     GoogleProvider({
-      clientId: process.env.AUTH_GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.AUTH_GOOGLE_CLIENT_SECRET as string,
+      clientId: process.env.WEB_AUTH_GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.WEB_AUTH_GOOGLE_CLIENT_SECRET as string,
+      authorization: {
+        params: {
+          scope: "openid",
+        },
+      },
     }),
     {
       ...GoogleProvider({
