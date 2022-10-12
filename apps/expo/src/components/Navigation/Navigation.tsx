@@ -44,7 +44,7 @@ export default function Navigation() {
               name="Subscribe"
               component={Subscribe}
               options={{
-                title: "Edit Subscriptions",
+                title: "Manage Subscriptions",
                 headerBackTitle: "Home",
               }}
             />
