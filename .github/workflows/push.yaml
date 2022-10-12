@@ -79,4 +79,4 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Publish update
-        run: cd apps/expo && APP_ENV=preview API_BASE_URL="https://dev.probablepitchers.net" NEXTAUTH_URL="https://dev.probablepitchers.net" SENTRY_PUBLIC_DSN="${{ secrets.SENTRY_PUBLIC_DSN }}"" eas update --branch preview --message "${{ github.event.head_commit.message }}"
+        run: cd apps/expo && APP_ENV=preview API_BASE_URL="https://dev.probablepitchers.net" NEXTAUTH_URL="https://dev.probablepitchers.net" SENTRY_PUBLIC_DSN="${{ secrets.SENTRY_PUBLIC_DSN }}" eas update --branch preview --message "${{ github.event.head_commit.message }}"
