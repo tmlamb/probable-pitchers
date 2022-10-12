@@ -88,4 +88,4 @@ jobs:
         run: cd apps/expo && APP_ENV=production API_BASE_URL="https://probablepitchers.net" NEXTAUTH_URL="https://probablepitchers.net" SENTRY_PUBLIC_DSN="${{ secrets.SENTRY_PUBLIC_DSN }}" eas update --branch production --message "${{ github.event.release.name }}"
       - name: App Store Build
         if: ${{ steps.semver-diff.outputs.release_type == 'major' }}
-        run: cd apps/expo && eas build --profile production --platform all
+        run: cd apps/expo && eas build --profile production --platform all --non-interactive

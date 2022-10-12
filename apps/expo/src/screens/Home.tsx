@@ -1,5 +1,6 @@
 import { AntDesign } from "@expo/vector-icons";
 import { Game, Pitcher, Subscription } from "@prisma/client";
+import { useFocusEffect } from "@react-navigation/native";
 import { add, isBefore, isFuture, maxTime, min } from "date-fns";
 import * as Device from "expo-device";
 import * as Localization from "expo-localization";
@@ -79,6 +80,7 @@ export const Home = ({
         registerForPushNotifications().then((pushToken) => {
           setExpoPushToken(pushToken);
         });
+        setForceRenderKey((v) => v + 1);
       }
       appState.current = nextAppState;
     });
@@ -113,8 +115,19 @@ export const Home = ({
     .reverse()
     .value();
 
+  // This forces the Dashboard to always re-render when visited.
+  // This is a kludge to allow device theme changes to reflect
+  // without restarting the app, since otherwise the Dashboard
+  // may never re-render.
+  const [forceRenderKey, setForceRenderKey] = React.useState(0);
+  useFocusEffect(
+    React.useCallback(() => {
+      setForceRenderKey((v) => v + 1);
+    }, [])
+  );
+
   return (
-    <ScreenLayout>
+    <ScreenLayout key={forceRenderKey}>
       <HeaderLeftContainer>
         <LinkButton
           to={{ screen: "Settings" }}
