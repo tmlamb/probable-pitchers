@@ -115,7 +115,7 @@ export const Home = ({
     .reverse()
     .value();
 
-  // This forces the Dashboard to always re-render when visited.
+  // This forces the Homepage to always re-render when visited.
   // This is a kludge to allow device theme changes to reflect
   // without restarting the app, since otherwise the Dashboard
   // may never re-render.
