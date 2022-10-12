@@ -18,8 +18,8 @@ export const Welcome = () => {
           the days your favorite players are scheduled to pitch.
         </PrimaryText>
         <PrimaryText style={tw`text-lg text-center pb-9`}>
-          Sign in with one of the options below. You will then be asked to grant
-          permission for the app to send alerts to your device.
+          Sign in with one of the options below. You will be asked to grant
+          permission for the app to send notifications to your device.
         </PrimaryText>
         <Pressable
           style={tw`mx-auto pt-9`}
