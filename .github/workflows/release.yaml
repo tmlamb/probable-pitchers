@@ -65,25 +65,27 @@ jobs:
       - name: Show release type
         run: |
           echo "Release type: ${{ steps.semver-diff.outputs.release_type }}"
-  #     - name: Check for EXPO_TOKEN
-  #       run: |
-  #         if [ -z "${{ secrets.EXPO_TOKEN }}" ]; then
-  #           echo "You must provide an EXPO_TOKEN secret linked to this project's Expo account in this repo's secrets. Learn more: https://docs.expo.dev/eas-update/github-actions"
-  #           exit 1
-  #         fi
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v3
-  #     - name: Setup Node
-  #       uses: actions/setup-node@v3
-  #       with:
-  #         node-version: 16.x
-  #     - name: Setup Expo
-  #       uses: expo/expo-github-action@v7
-  #       with:
-  #         expo-version: latest
-  #         eas-version: latest
-  #         token: ${{ secrets.EXPO_TOKEN }}
-  #     - name: Install dependencies
-  #       run: npm ci
-  #     - name: Publish update
-  #       run: cd apps/expo && APP_ENV=production API_BASE_URL="https://probablepitchers.net" NEXTAUTH_URL="https://probablepitchers.net" SENTRY_PUBLIC_DSN="${{ secrets.SENTRY_PUBLIC_DSN }}"" eas update --branch production --message "${{ github.event.release.body }}"
+      - name: Check for EXPO_TOKEN
+        run: |
+          if [ -z "${{ secrets.EXPO_TOKEN }}" ]; then
+            echo "You must provide an EXPO_TOKEN secret linked to this project's Expo account in this repo's secrets. Learn more: https://docs.expo.dev/eas-update/github-actions"
+            exit 1
+          fi
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+      - name: Setup Expo
+        uses: expo/expo-github-action@v7
+        with:
+          expo-version: latest
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+      - name: Install dependencies
+        run: npm ci
+      - name: Publish Update
+        if: ${{ steps.semver-diff.outputs.release_type != 'major' }}
+        run: cd apps/expo && APP_ENV=production API_BASE_URL="https://probablepitchers.net" NEXTAUTH_URL="https://probablepitchers.net" SENTRY_PUBLIC_DSN="${{ secrets.SENTRY_PUBLIC_DSN }}"" eas update --branch production --message "${{ github.event.release.name }}"
+      - name: App Store Build
+        if: ${{ steps.semver-diff.outputs.release_type == 'major' }}
+        run: cd apps/expo && eas build --profile production --platform all
