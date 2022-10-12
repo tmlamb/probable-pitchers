@@ -79,4 +79,4 @@ jobs:
   #     - name: Install dependencies
   #       run: npm ci
   #     - name: Publish update
-  #       run: cd apps/expo && eas update --branch production --message "${{ github.event.release.body }}"
+  #       run: cd apps/expo && APP_ENV=production API_BASE_URL="https://probablepitchers.net" NEXTAUTH_URL="https://probablepitchers.net" SENTRY_PUBLIC_DSN="${{ secrets.SENTRY_PUBLIC_DSN }}"" eas update --branch production --message "${{ github.event.release.body }}"
