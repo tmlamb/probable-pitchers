@@ -53,11 +53,18 @@ jobs:
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
           DEPLOY_COMMIT_TAG: ${{ github.ref_name }}
-  # update-production:
-  #   name: Update Production App
-  #   needs: deploy-infra
-  #   runs-on: ubuntu-latest
-  #   steps:
+  update-production:
+    name: Update Production App
+    needs: deploy-infra
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run semver-diff
+        id: semver-diff
+        uses: tj-actions/semver-diff@v2.1.0
+      - name: Show release type
+        run: |
+          echo "Release type: ${{ steps.semver-diff.outputs.release_type }}"
   #     - name: Check for EXPO_TOKEN
   #       run: |
   #         if [ -z "${{ secrets.EXPO_TOKEN }}" ]; then
