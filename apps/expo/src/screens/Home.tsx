@@ -5,7 +5,6 @@ import { add, isBefore, isFuture, maxTime, min } from "date-fns";
 import * as Device from "expo-device";
 import * as Localization from "expo-localization";
 import * as Notifications from "expo-notifications";
-import _ from "lodash";
 import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -96,6 +95,16 @@ export const Home = ({
     isError,
   } = trpc.subscription.byUserId.useQuery();
 
+  const pitchingToday = subscriptions?.filter((s) =>
+    isBefore(nextGameDate(s.pitcher) || maxTime, add(new Date(), { hours: 24 }))
+  );
+  const unscheduled = subscriptions?.filter(
+    (s) =>
+      !isBefore(
+        nextGameDate(s.pitcher) || maxTime,
+        add(new Date(), { hours: 24 })
+      )
+  );
   const pitcherSubscriptions: {
     title: string;
     data: (Subscription & {
@@ -104,19 +113,14 @@ export const Home = ({
         awayGames: Game[];
       };
     })[];
-  }[] = _(subscriptions)
-    .orderBy((subscription) => {
-      const nextGame = nextGameDate(subscription.pitcher);
-      return nextGame;
-    })
-    .groupBy((subscription) => {
-      const nextGame = nextGameDate(subscription.pitcher);
-      return isBefore(nextGame || maxTime, add(new Date(), { hours: 24 }))
-        ? "Pitching Today"
-        : "Unscheduled";
-    })
-    .map((data, title) => ({ title, data }))
-    .value();
+  }[] = [];
+
+  if (!!pitchingToday?.length) {
+    pitcherSubscriptions.push({ title: "Pitching Today", data: pitchingToday });
+  }
+  if (!!unscheduled?.length) {
+    pitcherSubscriptions.push({ title: "Unscheduled", data: unscheduled });
+  }
 
   // This forces the Homepage to always re-render when visited.
   // This is a kludge to allow device theme changes to reflect
