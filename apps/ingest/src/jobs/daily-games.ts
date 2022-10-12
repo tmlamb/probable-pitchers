@@ -1,8 +1,9 @@
-import formatInTimeZone from "date-fns-tz/formatInTimeZone/index.js";
+import pkg from "date-fns-tz";
 import formatISO from "date-fns/formatISO/index.js";
 import { client } from "../db.js";
 import { Game, getGames } from "../services/mlbstats.js";
 import { sendPushNotification } from "../services/notifications.js";
+const { formatInTimeZone } = pkg;
 
 async function processGame(game: Game) {
   console.log("Processing Game: ", game);
