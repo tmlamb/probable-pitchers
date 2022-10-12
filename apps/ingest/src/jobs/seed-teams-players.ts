@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import format from "date-fns/format/index.js";
 import { client } from "../db.js";
 import { getPitchers, getTeams, Player, Team } from "../services/mlbstats.js";
 

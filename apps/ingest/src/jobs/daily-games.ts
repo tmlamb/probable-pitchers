@@ -1,4 +1,4 @@
-import { formatInTimeZone } from "date-fns-tz";
+import formatInTimeZone from "date-fns-tz/formatInTimeZone/index.js";
 import formatISO from "date-fns/formatISO/index.js";
 import { client } from "../db.js";
 import { Game, getGames } from "../services/mlbstats.js";
