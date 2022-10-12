@@ -105,6 +105,10 @@ export const Home = ({
       };
     })[];
   }[] = _(subscriptions)
+    .orderBy((subscription) => {
+      const nextGame = nextGameDate(subscription.pitcher);
+      return nextGame;
+    })
     .groupBy((subscription) => {
       const nextGame = nextGameDate(subscription.pitcher);
       return isBefore(nextGame || maxTime, add(new Date(), { hours: 24 }))
@@ -112,7 +116,6 @@ export const Home = ({
         : "Unscheduled";
     })
     .map((data, title) => ({ title, data }))
-    .reverse()
     .value();
 
   // This forces the Homepage to always re-render when visited.
