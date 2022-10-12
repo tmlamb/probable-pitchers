@@ -143,6 +143,53 @@ const service = new k8s.core.v1.Service(
   }
 );
 
+const seedLabels = { app: `probable-seed-${env}` };
+
+const seedJob = new k8s.batch.v1.CronJob(
+  seedLabels.app,
+  {
+    metadata: {
+      namespace: namespaceName,
+    },
+    spec: {
+      schedule: "0 0 1 2 *",
+      jobTemplate: {
+        spec: {
+          template: {
+            spec: {
+              imagePullSecrets: [
+                { name: regcred.metadata.apply((m) => m.name) },
+              ],
+              containers: [
+                {
+                  name: seedLabels.app,
+
+                  image: `ghcr.io/tmlamb/probable-pitchers-ingest:${imageTag}`,
+                  imagePullPolicy: "Always",
+                  env: [
+                    {
+                      name: "DATABASE_URL",
+                      value: config.requireSecret("dbUrl"),
+                    },
+                    {
+                      name: "INGEST_JOBS",
+                      value: "seed-season",
+                    },
+                  ],
+                },
+              ],
+              restartPolicy: "OnFailure",
+            },
+          },
+        },
+      },
+    },
+  },
+  {
+    provider: clusterProvider,
+  }
+);
+
 const ingestLabels = { app: `probable-ingest-${env}` };
 
 const cronjob = new k8s.batch.v1.CronJob(
