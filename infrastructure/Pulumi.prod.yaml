@@ -15,7 +15,7 @@ config:
     user:
       secure: AAABAEX+ckAV3E/RzcPd+80KCbgfVUxiR7h9EZafNKlMPHPgqWY=
   probable-pitchers:dbUrl:
-    secure: AAABAJhZ3Pm+cQHM891pKbalbJkmqfEGS9aJMT4g7sSaOZsQ5u+dZgLgfcNZ4PhRAAjA1NTprYYsC4xqCTdt4aOUncsc8/Bf/za4DsSOXi/jJ5hsRYrhEbRY3qcEL68mGthxR8Ugd0YqXLUt0nl1xA+gYEFI+ZWQCwVbMJzZayLf2QHZpPLD0EeHpv/xIusPaoPX+z2o1UcOQxYpyU5eHUyYPoaHFwYfLKRD5i588J8=
+    secure: AAABAI7PEZ7qo3RSB/es2FeIUM9aWn0SyuPkeq6Qx/9Sc6dZ5bMhzLzMNj7zyMJ185bkpF3pYd4yRyawUc8wWMNcZZCJca9UoL91TjtftrXGNfcNaP2/38PayGhc6LSCeLIwn7xMj+WcJIjznOh8jsxk7FZ9keU931SNUVlSQ5OCTc4WLSJ0WvnhwrVPusvd/8gia3HFYPOojB1pbwQoTcbBT7OQLPNVnvnh8GZHUFY=
   probable-pitchers:domains:
   - www.probablepitchers.net
   - probablepitchers.net
