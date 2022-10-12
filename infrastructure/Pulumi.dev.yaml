@@ -15,7 +15,7 @@ config:
     user:
       secure: AAABAEl8FCSt7gbLWoR6TaidOVfAEMFyBovH6hm8xDegZn4Rj2g=
   probable-pitchers:dbUrl:
-    secure: AAABAK5RKnBZIbMNJt12hwSF+N4TUgvKXEY71xvwW+5derbg/sMoXHuOLrs+4EO1aC8XZFPoPO7kz1I4KBVKcZDv0EqKNncEoKy8QlmoJ1WOrpde3DPU82V4L+fU0BWhAciy7D/qaqxA5qi2FTwafAmHK0U7CZCfgukNiVXogYnXUyNDLdATxIpx67VjGw5O0DNGnRvmLoEzZVWyJTEuBHEPcOnuT8GHurLV67iJyr0=
+    secure: AAABANyHjR2GOw31Zw0s/Mvh0hFM1cy7K/JbZCJsaJSLy3b2bJSsdf9ZdLkOJV8WOOvMlYechXUBzRzla9SngNw3G+Le2xQ+7/szg79KOaOe9AhfnCznnHOUhetoYSU1NQ8+LTQMC1eCtPF/6mDcO8LT5yF3G4RXh4+8nFJqS033v49XHr/3DuaF7qhwKDE1JXA8kU0dULJzFyhNcwbytlY3KUx874MuRYjfGEBS+20=
   probable-pitchers:domains:
   - dev.probablepitchers.net
   probable-pitchers:nextAuthExpoUrl:
