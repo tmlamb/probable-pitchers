@@ -1,6 +1,7 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import type { DefaultUser } from "next-auth";
 import NextAuth, { type NextAuthOptions } from "next-auth";
+import AppleProvider from "next-auth/providers/apple";
 import GoogleProvider from "next-auth/providers/google";
 
 import { prisma } from "@probable/db";
@@ -16,11 +17,45 @@ declare module "next-auth" {
 
 const adapter = PrismaAdapter(prisma);
 export const authOptions: NextAuthOptions = {
+  debug: true,
   adapter,
   providers: [
+    AppleProvider({
+      clientId: process.env.APPLE_CLIENT_ID as string,
+      clientSecret: process.env.APPLE_CLIENT_SECRET as string,
+      authorization: {
+        params: {
+          scope: "openid",
+        },
+      },
+    }),
+    {
+      ...AppleProvider({
+        name: "Apple Expo Proxy",
+        checks: ["state", "pkce"],
+        clientId: process.env.APPLE_CLIENT_ID as string,
+        clientSecret: process.env.APPLE_CLIENT_SECRET as string,
+        token: {
+          async request(context) {
+            const tokens = await context.client.callback(
+              process.env.NEXTAUTH_EXPO_URL,
+              context.params,
+              context.checks
+            );
+            return { tokens };
+          },
+        },
+        id: nativeProviders.apple,
+      }),
+    },
     GoogleProvider({
       clientId: process.env.AUTH_GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.AUTH_GOOGLE_CLIENT_SECRET as string,
+      authorization: {
+        params: {
+          scope: "openid",
+        },
+      },
     }),
     {
       ...GoogleProvider({

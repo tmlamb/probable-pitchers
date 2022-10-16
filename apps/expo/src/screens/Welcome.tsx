@@ -1,7 +1,7 @@
 import { signIn } from "next-auth/expo";
 import React from "react";
 import { Image, Pressable, View } from "react-native";
-import { socialLogin } from "../components/AuthProvider";
+import { appleLogin, googleLogin } from "../components/AuthProvider";
 import ModalLayout from "../components/ModalLayout";
 import { PrimaryText, SpecialText } from "../components/Themed";
 import tw from "../tailwind";
@@ -23,12 +23,18 @@ export const Welcome = () => {
         </PrimaryText>
         <Pressable
           style={tw`mx-auto pt-9`}
-          onPress={() => signIn(() => socialLogin())}
+          onPress={() => signIn(() => googleLogin())}
         >
           <Image
             style={tw`w-[191px] h-[46px]`}
             source={require("../../assets/google_signin_buttons/web/2x/btn_google_signin_dark_normal_web.png")}
           />
+        </Pressable>
+        <Pressable
+          style={tw`mx-auto pt-9`}
+          onPress={() => signIn(() => appleLogin())}
+        >
+          <PrimaryText>Signin With Apple</PrimaryText>
         </Pressable>
       </View>
     </ModalLayout>
