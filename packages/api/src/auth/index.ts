@@ -23,6 +23,11 @@ export const authOptions: NextAuthOptions = {
     AppleProvider({
       clientId: process.env.APPLE_CLIENT_ID as string,
       clientSecret: process.env.APPLE_CLIENT_SECRET as string,
+      authorization: {
+        params: {
+          scope: "openid",
+        },
+      },
     }),
     {
       ...AppleProvider({
@@ -32,7 +37,6 @@ export const authOptions: NextAuthOptions = {
         clientSecret: process.env.APPLE_CLIENT_SECRET as string,
         token: {
           async request(context) {
-            // console.log(JSON.stringify(context));
             const tokens = await context.client.callback(
               process.env.NEXTAUTH_EXPO_URL,
               context.params,
@@ -45,8 +49,8 @@ export const authOptions: NextAuthOptions = {
       }),
     },
     GoogleProvider({
-      clientId: process.env.WEB_AUTH_GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.WEB_AUTH_GOOGLE_CLIENT_SECRET as string,
+      clientId: process.env.AUTH_GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.AUTH_GOOGLE_CLIENT_SECRET as string,
       authorization: {
         params: {
           scope: "openid",

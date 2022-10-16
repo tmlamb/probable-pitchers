@@ -53,7 +53,6 @@ if (process.argv.includes("--help") || process.argv.includes("-h")) {
   const expiresAt = Math.ceil(Date.now() / 1000) + expires_in;
   const expirationTime = exp ?? expiresAt;
   const privateKey = private_key.replace(/\\n/g, "\n");
-  console.log("privateKey", privateKey);
   console.log(`
 Apple client secret generated. Valid until: ${new Date(expirationTime * 1000)}
 

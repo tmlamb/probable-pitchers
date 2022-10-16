@@ -99,12 +99,12 @@ const deployment = new k8s.apps.v1.Deployment(
                   value: config.requireSecret("authGoogleClientSecret"),
                 },
                 {
-                  name: "WEB_AUTH_GOOGLE_CLIENT_ID",
-                  value: config.requireSecret("webAuthGoogleClientId"),
+                  name: "APPLE_CLIENT_ID",
+                  value: config.requireSecret("appleClientId"),
                 },
                 {
-                  name: "WEB_AUTH_GOOGLE_CLIENT_SECRET",
-                  value: config.requireSecret("webAuthGoogleClientSecret"),
+                  name: "APPLE_CLIENT_SECRET",
+                  value: config.requireSecret("appleClientSecret"),
                 },
                 {
                   name: "NEXTAUTH_SECRET",
