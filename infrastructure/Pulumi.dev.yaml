@@ -1,7 +1,7 @@
 config:
   gcp:project: probable-pitchers-363818
   gcp:region: us-central1
-  probable-pitchers:appleClientID:
+  probable-pitchers:appleClientId:
     secure: AAABAIWbabs5PqTzFbxXkMdru6GLY66Bx/UvO0/jM3vF7n1AlN303nE7dx8K50CKsx2GL0p1j5yoMOY=
   probable-pitchers:appleClientSecret:
     secure: AAABAB+tapYO9QotLJOAsFqfmVL9KoWUVmIVYeMji3gSiWcqj6DipWIJ8yJOG3yqlEQe4aT5InkDdM0HRQZHEImr5rr4yj8z7vYDCJFoKtYXPEmwQ+ZiUp1dnM8Jx/sHx8PJz1qribbicMhx1E6/xHBD1P7ydefKwk5CML1p6u+sb4AZ3b/wAMqYfloO/h6u8AgGz8WB+0Qmheuc78cN0t+tNXdz9RDGGjX0KXmG4z/OO5EBeEAX3HQ2OQt41C/aU1PVLnVi0z4mT0FFQPKONIXnkYDn9cCTqOCRQBLs9VFzzIffw6aFSFx8UqZT1ADUI/EhGJTfiOcWGffrsx+7er5A84Os/109YnxW7jBt+SGrCUV2W04F8KHp9W5VLxT78QlpFLc9GCBbQYdmpw6I0Cq8mXNquxZOSGNnV1pecwC7L8OSwTE9/RjHhpU=
