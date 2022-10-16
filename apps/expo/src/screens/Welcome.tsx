@@ -27,14 +27,17 @@ export const Welcome = () => {
         >
           <Image
             style={tw`w-[191px] h-[46px]`}
-            source={require("../../assets/google_signin_buttons/web/2x/btn_google_signin_dark_normal_web.png")}
+            source={require("../../assets/google_signin_buttons/btn_google_signin_dark_normal_web.png")}
           />
         </Pressable>
         <Pressable
           style={tw`mx-auto pt-9`}
           onPress={() => signIn(() => appleLogin())}
         >
-          <PrimaryText>Signin With Apple</PrimaryText>
+          <Image
+            style={tw`w-[185px] h-[41px]`}
+            source={require("../../assets/apple_signin_buttons/appleid_button.png")}
+          />
         </Pressable>
       </View>
     </ModalLayout>
