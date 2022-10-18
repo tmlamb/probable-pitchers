@@ -47,6 +47,17 @@ export const client = {
         data: { id, date, homePitcherId, awayPitcherId },
       });
     },
+    update: (
+      id: number,
+      date: Date,
+      homePitcherId?: number,
+      awayPitcherId?: number
+    ) => {
+      return prisma.game.update({
+        where: { id },
+        data: { id, date, homePitcherId, awayPitcherId },
+      });
+    },
   },
   subscription: {
     byPitcherId: (pitcherId: number) => {

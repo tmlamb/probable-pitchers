@@ -40,6 +40,7 @@ async function processGame(game: Game) {
     }
   });
 
+  const pitchersForNotification: number[] = [];
   const existingGame = await client.game.byId(game.gamePk);
   if (!existingGame) {
     console.log(`Game ${game.gamePk} does not exist, so inserting`);
@@ -49,48 +50,72 @@ async function processGame(game: Game) {
       game.teams.home.probablePitcher?.id,
       game.teams.away.probablePitcher?.id
     );
-
-    [
+    if (game.teams.home.probablePitcher) {
+      pitchersForNotification.push(game.teams.home.probablePitcher?.id);
+    }
+    if (game.teams.away.probablePitcher) {
+      pitchersForNotification.push(game.teams.away.probablePitcher?.id);
+    }
+  } else if (
+    existingGame.awayPitcherId !== game.teams.away.probablePitcher?.id ||
+    existingGame.homePitcherId !== game.teams.home.probablePitcher?.id
+  ) {
+    console.log(
+      `Game ${game.gamePk} exists, but the pitchers have changed, so updating`
+    );
+    await client.game.update(
+      game.gamePk,
+      new Date(game.gameDate),
       game.teams.home.probablePitcher?.id,
-      game.teams.away.probablePitcher?.id,
-    ].forEach(async (pitcherId) => {
-      console.log(`Processing ${pitcherId} of game ${game.gamePk}`);
-      if (pitcherId) {
-        const subscriptions = await client.subscription.byPitcherId(pitcherId);
-        console.log(
-          `Pitcher ${pitcherId} has subscriptions: ${JSON.stringify(
-            subscriptions
-          )}`
-        );
-        subscriptions.forEach(async (subscription) => {
-          const user = await client.user.byId(subscription.userId);
-          const pitcher = await client.pitcher.byId(pitcherId);
+      game.teams.away.probablePitcher?.id
+    );
+    if (
+      game.teams.home.probablePitcher &&
+      game.teams.home.probablePitcher.id !== existingGame.homePitcherId
+    ) {
+      pitchersForNotification.push(game.teams.home.probablePitcher?.id);
+    }
+    if (
+      game.teams.away.probablePitcher &&
+      game.teams.away.probablePitcher.id !== existingGame.awayPitcherId
+    ) {
+      pitchersForNotification.push(game.teams.away.probablePitcher?.id);
+    }
+  }
+
+  pitchersForNotification.forEach(async (pitcherId) => {
+    console.log(`Processing ${pitcherId} of game ${game.gamePk}`);
+    const subscriptions = await client.subscription.byPitcherId(pitcherId);
+    console.log(
+      `Pitcher ${pitcherId} has subscriptions: ${JSON.stringify(subscriptions)}`
+    );
+    subscriptions.forEach(async (subscription) => {
+      const user = await client.user.byId(subscription.userId);
+      const pitcher = await client.pitcher.byId(pitcherId);
+      console.log(
+        `Processing subscription ${subscription.id} for user ${user?.id} and pitcher ${pitcher?.id}`
+      );
+      if (pitcher) {
+        user?.devices.forEach((device) => {
           console.log(
-            `Processing subscription ${subscription.id} for user ${user?.id} and pitcher ${pitcher?.id}`
+            `Process device ${device.id} with push token ${device.pushToken} and tz ${device.timezone} for user ${user.id}`
           );
-          if (pitcher) {
-            user?.devices.forEach((device) => {
-              console.log(
-                `Process device ${device.id} with push token ${device.pushToken} and tz ${device.timezone} for user ${user.id}`
-              );
 
-              const localizedGameTime = formatInTimeZone(
-                new Date(game.gameDate),
-                device.timezone,
-                "hh:mm aaa"
-              );
+          const localizedGameTime = formatInTimeZone(
+            new Date(game.gameDate),
+            device.timezone,
+            "hh:mm aaa"
+          );
 
-              sendPushNotification(
-                device.pushToken,
-                "Probable Pitcher Alert",
-                `${pitcher.name} is pitching today at ${localizedGameTime}`
-              );
-            });
-          }
+          sendPushNotification(
+            device.pushToken,
+            "Probable Pitcher Alert",
+            `${pitcher.name} is pitching today at ${localizedGameTime}`
+          );
         });
       }
     });
-  }
+  });
 }
 
 export async function processGames() {

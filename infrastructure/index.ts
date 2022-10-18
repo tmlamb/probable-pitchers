@@ -207,7 +207,7 @@ const cronjob = new k8s.batch.v1.CronJob(
       namespace: namespaceName,
     },
     spec: {
-      schedule: "0 10 * * *",
+      schedule: "0,30 12,13,14 * * *",
       jobTemplate: {
         spec: {
           template: {
