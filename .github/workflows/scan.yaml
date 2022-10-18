@@ -1,14 +1,12 @@
-name: Push Staging
-on:
-  push:
-    branches:
-      - main
+name: Scan Images
 
 jobs:
   tag-images:
     name: Tag Container Images
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
       - name: Login to container registry
         uses: docker/login-action@v2
         with:
@@ -19,17 +17,7 @@ jobs:
         uses: anchore/scan-action@v3
         with:
           image: "ghcr.io/tmlamb/probable-pitchers-nextjs:latest"
-      - name: Tag nextjs image with version
-        run: |
-          docker pull ghcr.io/tmlamb/probable-pitchers-nextjs:latest
-          docker tag ghcr.io/tmlamb/probable-pitchers-nextjs:latest ghcr.io/tmlamb/probable-pitchers-nextjs:${{ github.ref_name }}
-          docker push ghcr.io/tmlamb/probable-pitchers-nextjs:${{ github.ref_name }}
       - name: Scan nextjx image
         uses: anchore/scan-action@v3
         with:
           image: "ghcr.io/tmlamb/probable-pitchers-ingest:latest"
-      - name: Tag ingest image with version
-        run: |
-          docker pull ghcr.io/tmlamb/probable-pitchers-ingest:latest
-          docker tag ghcr.io/tmlamb/probable-pitchers-ingest:latest ghcr.io/tmlamb/probable-pitchers-ingest:${{ github.ref_name }}
-          docker push ghcr.io/tmlamb/probable-pitchers-ingest:${{ github.ref_name }}
