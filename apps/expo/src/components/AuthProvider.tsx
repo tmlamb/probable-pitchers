@@ -1,8 +1,10 @@
 import { nativeProviders } from "@probable/api";
+import * as AppleAuthentication from "expo-apple-authentication";
 import * as AuthSession from "expo-auth-session";
 import { discovery as googleDiscovery } from "expo-auth-session/providers/google";
 import Constants from "expo-constants";
 import { getSignInInfo, SessionProvider, SigninResult } from "next-auth/expo";
+import * as Sentry from "sentry-expo";
 import { getBaseUrl } from "../api";
 
 const projectNameForProxy = Constants.manifest2?.extra?.scopeKey;
@@ -63,6 +65,7 @@ export const appleLogin = async (): Promise<SigninResult | null> => {
   if (!signinInfo) {
     throw new Error("Couldn't get sign in info from server");
   }
+  console.log("signinInfo", signinInfo);
   const { state, codeChallenge, stateEncrypted, codeVerifier, clientId } =
     signinInfo;
 
@@ -73,6 +76,7 @@ export const appleLogin = async (): Promise<SigninResult | null> => {
     scopes: ["openid"],
     usePKCE: true,
   });
+  console.log("request", request);
 
   request.state = state;
   request.codeChallenge = codeChallenge;
@@ -80,6 +84,7 @@ export const appleLogin = async (): Promise<SigninResult | null> => {
   await request.makeAuthUrlAsync({
     authorizationEndpoint: "https://appleid.apple.com/auth/authorize",
   });
+  console.log("request2", request);
 
   // useAuthRequestResult
   const result = await request.promptAsync(
@@ -91,12 +96,60 @@ export const appleLogin = async (): Promise<SigninResult | null> => {
       projectNameForProxy,
     }
   );
-  return {
+  console.log("result", result);
+  const returnVal = {
     result,
     state,
     stateEncrypted,
     codeVerifier,
     provider,
+  };
+  console.log("returnVal", returnVal);
+  return returnVal;
+};
+
+export const appleLogin2 = async (): Promise<SigninResult | null> => {
+  const redirectUri = AuthSession.makeRedirectUri({
+    useProxy: true,
+    projectNameForProxy,
+  });
+  const provider = nativeProviders.apple;
+  const signinInfo = await getSignInInfo({
+    provider,
+    proxyRedirectUri: redirectUri,
+  });
+  if (!signinInfo) {
+    throw new Error("Couldn't get sign in info from server");
+  }
+  const { state, codeChallenge, stateEncrypted, codeVerifier, clientId } =
+    signinInfo;
+  const credential = await AppleAuthentication.signInAsync({
+    requestedScopes: [
+      // AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+      // AppleAuthentication.AppleAuthenticationScope.EMAIL,
+    ],
+    state,
+    nonce: codeChallenge,
+  });
+  Sentry.Native.captureMessage(`credential: ${credential.authorizationCode}`);
+  return {
+    codeVerifier,
+    provider,
+    result: {
+      authentication: null,
+      error: null,
+      errorCode: null,
+      params: {
+        code: credential.authorizationCode!,
+        // code: "c91420506f23b4b4481e986df607be19c.0.msv.PA_Vny14y0RBvsudRB2ZQg",
+        state,
+      },
+      type: "success",
+      // url: `exp://10.79.0.132:19000/--/expo-auth-session?state=${state}&code=${credential.authorizationCode!}`,
+      url: "",
+    },
+    state,
+    stateEncrypted,
   };
 };
 

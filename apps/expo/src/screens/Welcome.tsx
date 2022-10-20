@@ -1,7 +1,12 @@
+import * as AppleAuthentication from "expo-apple-authentication";
 import { signIn } from "next-auth/expo";
 import React from "react";
 import { Image, Pressable, View } from "react-native";
-import { appleLogin, googleLogin } from "../components/AuthProvider";
+import {
+  appleLogin,
+  appleLogin2,
+  googleLogin,
+} from "../components/AuthProvider";
 import ModalLayout from "../components/ModalLayout";
 import { PrimaryText, SpecialText } from "../components/Themed";
 import tw from "../tailwind";
@@ -39,6 +44,13 @@ export const Welcome = () => {
             source={require("../../assets/apple_signin_buttons/appleid_button.png")}
           />
         </Pressable>
+        <AppleAuthentication.AppleAuthenticationButton
+          buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+          buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
+          cornerRadius={5}
+          style={{ width: 200, height: 44 }}
+          onPress={() => signIn(() => appleLogin2())}
+        />
       </View>
     </ModalLayout>
   );
