@@ -129,9 +129,11 @@ export const appleLogin2 = async (): Promise<SigninResult | null> => {
       // AppleAuthentication.AppleAuthenticationScope.EMAIL,
     ],
     state,
-    nonce: codeChallenge,
   });
   Sentry.Native.captureMessage(`credential: ${credential.authorizationCode}`);
+  Sentry.Native.captureMessage(`identityToken: ${credential.identityToken}`);
+  Sentry.Native.captureMessage(`user: ${credential.user}`);
+  Sentry.Native.captureMessage(`state: ${credential.state}`);
   return {
     codeVerifier,
     provider,

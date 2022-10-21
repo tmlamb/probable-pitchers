@@ -81,7 +81,6 @@ const deployment = new k8s.apps.v1.Deployment(
               name: appLabels.app,
               image: `ghcr.io/tmlamb/probable-pitchers-nextjs:${imageTag}`,
               ports: [{ name: "http", containerPort: 3000 }],
-              imagePullPolicy: "Always",
               livenessProbe: {
                 httpGet: { path: "/", port: "http" },
               },
@@ -173,7 +172,6 @@ const seedJob = new k8s.batch.v1.CronJob(
                   name: seedLabels.app,
 
                   image: `ghcr.io/tmlamb/probable-pitchers-ingest:${imageTag}`,
-                  imagePullPolicy: "Always",
                   env: [
                     {
                       name: "DATABASE_URL",
@@ -220,7 +218,6 @@ const cronjob = new k8s.batch.v1.CronJob(
                   name: ingestLabels.app,
 
                   image: `ghcr.io/tmlamb/probable-pitchers-ingest:${imageTag}`,
-                  imagePullPolicy: "Always",
                   env: [
                     {
                       name: "DATABASE_URL",
