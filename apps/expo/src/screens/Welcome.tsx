@@ -2,12 +2,14 @@ import * as AppleAuthentication from "expo-apple-authentication";
 import { signIn } from "next-auth/expo";
 import React from "react";
 import { Image, Pressable, View } from "react-native";
+import { useAppColorScheme } from "twrnc";
 import { appleLogin, googleLogin } from "../components/AuthProvider";
 import ModalLayout from "../components/ModalLayout";
 import { PrimaryText, SpecialText } from "../components/Themed";
 import tw from "../tailwind";
 
 export const Welcome = () => {
+  const [colorScheme] = useAppColorScheme(tw);
   return (
     <ModalLayout>
       <View style={tw`h-full w-full py-9 px-3`}>
@@ -33,7 +35,11 @@ export const Welcome = () => {
         </Pressable>
         <AppleAuthentication.AppleAuthenticationButton
           buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
-          buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
+          buttonStyle={
+            colorScheme === "dark"
+              ? AppleAuthentication.AppleAuthenticationButtonStyle.WHITE
+              : AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
+          }
           cornerRadius={2}
           style={tw`mx-auto mt-9 w-[185px] h-[41px]`}
           onPress={() => signIn(() => appleLogin())}
