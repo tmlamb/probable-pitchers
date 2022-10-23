@@ -51,8 +51,8 @@ model Device {
   id        String @id @default(cuid())
   pushToken String @unique
   timezone  String
-  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Team {
@@ -86,7 +86,7 @@ model Subscription {
   id        Int     @id @default(autoincrement())
   user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
-  pitcher   Pitcher @relation(fields: [pitcherId], references: [id])
+  pitcher   Pitcher @relation(fields: [pitcherId], references: [id], onDelete: Cascade)
   pitcherId Int
   enabled   Boolean
 

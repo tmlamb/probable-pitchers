@@ -1,8 +1,8 @@
 import { AntDesign } from "@expo/vector-icons";
-import { signOut } from "next-auth/expo";
 import React from "react";
 import { Linking, View } from "react-native";
 import ButtonContainer from "../components/ButtonContainer";
+import LinkButton from "../components/LinkButton";
 import ScreenLayout from "../components/ScreenLayout";
 import {
   PrimaryText,
@@ -16,16 +16,17 @@ export const Settings = () => {
   return (
     <ScreenLayout>
       <View style={tw`flex-1 px-3 py-9 justify-between`}>
-        <ButtonContainer onPress={signOut} accessibilityLabel={"Logout"}>
-          <ThemedView
-            style={tw.style("relative border-b-0 rounded-b-xl rounded-t-xl")}
-          >
-            <PrimaryText>Logout</PrimaryText>
-            <SecondaryText style={tw`absolute right-2 self-center`}>
-              <AntDesign name="logout" size={18} />
+        <LinkButton
+          to={{ screen: "Account" }}
+          accessibilityLabel="Navigate to account management screen"
+        >
+          <ThemedView style={tw`rounded-xl`}>
+            <PrimaryText>Account</PrimaryText>
+            <SecondaryText>
+              <AntDesign name="user" size={24} />
             </SecondaryText>
           </ThemedView>
-        </ButtonContainer>
+        </LinkButton>
         <ButtonContainer
           onPress={() =>
             Linking.openURL(

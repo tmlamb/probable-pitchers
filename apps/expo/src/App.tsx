@@ -1,3 +1,4 @@
+/// <reference path="../../../types/next-auth.d.ts" />
 import Constants from "expo-constants";
 import { Subscription } from "expo-modules-core";
 import * as Notifications from "expo-notifications";

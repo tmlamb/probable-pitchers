@@ -4,7 +4,7 @@ import { isAuthed, t } from "../trpc";
 export const subscriptionRouter = t.router({
   byUserId: t.procedure.use(isAuthed).query(({ ctx }) => {
     return ctx.prisma.subscription.findMany({
-      where: { userId: ctx.session?.user.id },
+      where: { userId: ctx.session.user.id },
       include: {
         pitcher: {
           include: {
@@ -24,7 +24,7 @@ export const subscriptionRouter = t.router({
     )
     .mutation(({ ctx, input }) => {
       return ctx.prisma.subscription.create({
-        data: { ...input, userId: ctx.session?.user.id, enabled: true },
+        data: { ...input, userId: ctx.session.user.id, enabled: true },
       });
     }),
   update: t.procedure
@@ -35,15 +35,13 @@ export const subscriptionRouter = t.router({
         enabled: z.boolean(),
       })
     )
-    .mutation(({ ctx, input }) => {
-      const subscription = ctx.prisma.subscription.findUnique({
+    .mutation(async ({ ctx, input }) => {
+      const subscription = await ctx.prisma.subscription.findUnique({
         where: { id: input.id },
       });
-      Promise.resolve(subscription).then((sub) => {
-        if (sub?.userId !== ctx.session?.user.id) {
-          throw new Error("User not authorized to update this subscription");
-        }
-      });
+      if (subscription?.userId !== ctx.session.user.id) {
+        throw new Error("User not authorized to update this subscription");
+      }
       return ctx.prisma.subscription.update({
         where: {
           id: input.id,
@@ -54,15 +52,13 @@ export const subscriptionRouter = t.router({
   delete: t.procedure
     .use(isAuthed)
     .input(z.number())
-    .mutation(({ ctx, input }) => {
-      const subscription = ctx.prisma.subscription.findUnique({
+    .mutation(async ({ ctx, input }) => {
+      const subscription = await ctx.prisma.subscription.findUnique({
         where: { id: input },
       });
-      Promise.resolve(subscription).then((sub) => {
-        if (sub?.userId !== ctx.session?.user.id) {
-          throw new Error("User not authorized to delete this subscription");
-        }
-      });
+      if (subscription?.userId !== ctx.session.user.id) {
+        throw new Error("User not authorized to delete this subscription");
+      }
       return ctx.prisma.subscription.delete({ where: { id: input } });
     }),
 });

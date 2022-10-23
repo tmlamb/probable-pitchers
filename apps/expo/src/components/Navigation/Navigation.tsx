@@ -4,6 +4,7 @@ import { useSession } from "next-auth/expo";
 import React from "react";
 import { Platform, View } from "react-native";
 import { Home, Settings, Subscribe, Welcome } from "../../screens/";
+import { Account } from "../../screens/Account";
 import { Loading } from "../../screens/Loading";
 import tw from "../../tailwind";
 import { RootStackParamList } from "./types";
@@ -57,6 +58,14 @@ export default function Navigation() {
                   title: "Settings",
                   headerBackTitle: "Home",
                   animation: "fade_from_bottom",
+                }}
+              />
+              <AppStack.Screen
+                name="Account"
+                component={Account}
+                options={{
+                  title: "Account Settings",
+                  headerBackTitle: "Back",
                 }}
               />
             </>

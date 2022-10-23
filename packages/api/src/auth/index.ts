@@ -8,7 +8,6 @@ import { isValidProvider, nativeProviders } from "./providers";
 
 const adapter = PrismaAdapter(prisma);
 export const authOptions: NextAuthOptions = {
-  debug: true,
   adapter,
   providers: [
     AppleProvider({
