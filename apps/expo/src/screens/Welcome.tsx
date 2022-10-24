@@ -1,14 +1,19 @@
 import * as AppleAuthentication from "expo-apple-authentication";
 import { signIn } from "next-auth/expo";
-import React from "react";
-import { Image, Pressable, View } from "react-native";
+import React, { useState } from "react";
+import { ActivityIndicator, Image, Pressable, View } from "react-native";
 import { useAppColorScheme } from "twrnc";
 import { appleLogin, googleLogin } from "../components/AuthProvider";
 import ModalLayout from "../components/ModalLayout";
-import { PrimaryText, SpecialText } from "../components/Themed";
+import {
+  PrimaryText,
+  SpecialText,
+  specialTextColor,
+} from "../components/Themed";
 import tw from "../tailwind";
 
 export const Welcome = () => {
+  const [isSigningIn, setIsSigningIn] = useState(false);
   const [colorScheme] = useAppColorScheme(tw);
   return (
     <ModalLayout>
@@ -24,26 +29,42 @@ export const Welcome = () => {
           Sign in with one of the options below. You will be asked to grant
           permission for the app to send notifications to your device.
         </PrimaryText>
-        <Pressable
-          style={tw`mx-auto pt-9`}
-          onPress={() => signIn(() => googleLogin())}
-        >
-          <Image
-            style={tw`w-[191px] h-[46px]`}
-            source={require("../../assets/google_signin_buttons/btn_google_signin_dark_normal_web.png")}
+        {!isSigningIn ? (
+          <>
+            <Pressable
+              style={tw`mx-auto pt-9 active:opacity-10`}
+              onPress={async () => {
+                setIsSigningIn(true);
+                await signIn(() => googleLogin());
+                setIsSigningIn(false);
+              }}
+            >
+              <Image
+                style={tw`w-[200px] h-[43.24px]`}
+                source={require("../../assets/google_signin_buttons/btn_google_signin_dark_normal_web.png")}
+              />
+            </Pressable>
+            <AppleAuthentication.AppleAuthenticationButton
+              buttonType={
+                AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN
+              }
+              buttonStyle={
+                colorScheme === "dark"
+                  ? AppleAuthentication.AppleAuthenticationButtonStyle.WHITE
+                  : AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
+              }
+              cornerRadius={1}
+              style={tw`mx-auto mt-9 w-[200px] h-[43.24px] active:opacity-10`}
+              onPress={() => signIn(() => appleLogin())}
+            />
+          </>
+        ) : (
+          <ActivityIndicator
+            style={tw`pt-9`}
+            size="large"
+            color={String(tw.style(specialTextColor).color)}
           />
-        </Pressable>
-        <AppleAuthentication.AppleAuthenticationButton
-          buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
-          buttonStyle={
-            colorScheme === "dark"
-              ? AppleAuthentication.AppleAuthenticationButtonStyle.WHITE
-              : AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
-          }
-          cornerRadius={2}
-          style={tw`mx-auto mt-9 w-[185px] h-[41px]`}
-          onPress={() => signIn(() => appleLogin())}
-        />
+        )}
       </View>
     </ModalLayout>
   );
