@@ -3,6 +3,7 @@ import * as AppleAuthentication from "expo-apple-authentication";
 import * as AuthSession from "expo-auth-session";
 import { discovery as googleDiscovery } from "expo-auth-session/providers/google";
 import Constants from "expo-constants";
+import { CodedError } from "expo-modules-core";
 import { getSignInInfo, SessionProvider, SigninResult } from "next-auth/expo";
 import { getBaseUrl } from "../api";
 
@@ -66,10 +67,19 @@ export const appleLogin = async (): Promise<SigninResult | null> => {
   }
   const { state, codeChallenge, stateEncrypted, codeVerifier, clientId } =
     signinInfo;
-  const credential = await AppleAuthentication.signInAsync({
-    requestedScopes: [],
-    state,
-  });
+  let credential = undefined;
+  try {
+    credential = await AppleAuthentication.signInAsync({
+      requestedScopes: [],
+      state,
+    });
+  } catch (e) {
+    if (isCodedError(e) && e.code === "ERR_CANCELED") {
+      return null;
+    } else {
+      throw e;
+    }
+  }
 
   return {
     codeVerifier,
@@ -89,6 +99,12 @@ export const appleLogin = async (): Promise<SigninResult | null> => {
     stateEncrypted,
   };
 };
+
+function isCodedError(
+  possibleCodedError: any
+): possibleCodedError is CodedError {
+  return possibleCodedError && !!(possibleCodedError as CodedError).code;
+}
 
 const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
