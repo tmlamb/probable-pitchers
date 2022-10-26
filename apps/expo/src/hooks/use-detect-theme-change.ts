@@ -32,7 +32,5 @@ export const useDetectThemeChange = () => {
     };
   }, []);
 
-  useEffect(() => {}, [forceRenderKey]);
-
   return forceRenderKey;
 };
