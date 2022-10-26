@@ -16,17 +16,30 @@ export const Settings = () => {
   return (
     <ScreenLayout>
       <View style={tw`flex-1 px-3 py-9 justify-between`}>
-        <LinkButton
-          to={{ screen: "Account" }}
-          accessibilityLabel="Navigate to account management screen"
-        >
-          <ThemedView style={tw`rounded-xl`}>
-            <PrimaryText>Account</PrimaryText>
-            <SecondaryText>
-              <AntDesign name="user" size={24} />
-            </SecondaryText>
-          </ThemedView>
-        </LinkButton>
+        <View>
+          <LinkButton
+            to={{ screen: "Notifications" }}
+            accessibilityLabel="Navigate to notification settings screen"
+          >
+            <ThemedView style={tw`rounded-t-xl border-b-2`}>
+              <PrimaryText>Notifications</PrimaryText>
+              <SecondaryText>
+                <AntDesign name="notification" size={24} />
+              </SecondaryText>
+            </ThemedView>
+          </LinkButton>
+          <LinkButton
+            to={{ screen: "Account" }}
+            accessibilityLabel="Navigate to account settings screen"
+          >
+            <ThemedView style={tw`rounded-b-xl`}>
+              <PrimaryText>Account</PrimaryText>
+              <SecondaryText>
+                <AntDesign name="user" size={24} />
+              </SecondaryText>
+            </ThemedView>
+          </LinkButton>
+        </View>
         <ButtonContainer
           onPress={() =>
             Linking.openURL(

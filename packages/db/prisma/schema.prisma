@@ -36,15 +36,16 @@ model Session {
 }
 
 model User {
-  id            String         @id @default(cuid())
-  subscriptions Subscription[]
-  accounts      Account[]
-  sessions      Session[]
-  devices       Device[]
+  id                   String         @id @default(cuid())
+  subscriptions        Subscription[]
+  accounts             Account[]
+  sessions             Session[]
+  devices              Device[]
+  notificationsEnabled Boolean        @default(true)
   // The following are never used, but required by NextAuth and it's Prisma Adapter.
-  image         String?
-  email         String?        @unique
-  emailVerified DateTime?
+  image                String?
+  email                String?        @unique
+  emailVerified        DateTime?
 }
 
 model Device {
@@ -88,7 +89,6 @@ model Subscription {
   userId    String
   pitcher   Pitcher @relation(fields: [pitcherId], references: [id], onDelete: Cascade)
   pitcherId Int
-  enabled   Boolean
 
   @@unique([userId, pitcherId])
 }

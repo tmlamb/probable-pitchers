@@ -1,18 +1,9 @@
 import { AntDesign } from "@expo/vector-icons";
 import { Game, Pitcher, Subscription } from "@prisma/client";
 import { add, isBefore, isFuture, maxTime, min } from "date-fns";
-import * as Device from "expo-device";
-import * as Localization from "expo-localization";
-import * as Notifications from "expo-notifications";
-import React, { useEffect, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  AppState,
-  Platform,
-  SectionList,
-} from "react-native";
+import React from "react";
+import { ActivityIndicator, SectionList } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
-import * as Sentry from "sentry-expo";
 import HeaderLeftContainer from "../components/HeaderLeftContainer";
 import HeaderRightContainer from "../components/HeaderRightContainer";
 import LinkButton from "../components/LinkButton";
@@ -32,67 +23,6 @@ import tw from "../tailwind";
 export const Home = ({
   navigation: { navigate },
 }: RootStackScreenProps<"Home">) => {
-  const [expoPushToken, setExpoPushToken] = useState<string>();
-
-  useEffect(() => {
-    registerForPushNotifications().then((pushToken) => {
-      setExpoPushToken(pushToken);
-    });
-  }, []);
-
-  const { data: device, isSuccess: deviceFetched } =
-    trpc.device.byPushToken.useQuery(expoPushToken!, {
-      enabled: !!expoPushToken,
-    });
-
-  const trpcContext = trpc.useContext();
-  const { mutate: registerDevice } = trpc.device.create.useMutation({
-    onSettled: () => trpcContext.device.byPushToken.invalidate(),
-  });
-  const { mutate: updateDevice } = trpc.device.update.useMutation({
-    onSettled: () => trpcContext.device.byPushToken.invalidate(),
-  });
-
-  useEffect(() => {
-    if (deviceFetched && expoPushToken) {
-      const timezone = Localization.timezone;
-      if (!device) {
-        registerDevice({ pushToken: expoPushToken, timezone });
-      } else if (device.timezone !== timezone) {
-        updateDevice({
-          id: device.id,
-          pushToken: device.pushToken,
-          timezone,
-        });
-      }
-    }
-  }, [device, deviceFetched, expoPushToken]);
-
-  // Forces the Homepage to always re-render when app is opened.
-  // This is a kludge to allow device theme changes to reflect
-  // without restarting the app, since otherwise the Dashboard
-  // may never re-render.
-  const [forceRenderKey, setForceRenderKey] = React.useState(0);
-
-  const appState = useRef(AppState.currentState);
-  useEffect(() => {
-    const listener = AppState.addEventListener("change", (nextAppState) => {
-      if (
-        appState.current.match(/inactive|background/) &&
-        nextAppState === "active"
-      ) {
-        registerForPushNotifications().then((pushToken) => {
-          setExpoPushToken(pushToken);
-        });
-        setForceRenderKey((v) => v + 1);
-      }
-      appState.current = nextAppState;
-    });
-    return () => {
-      listener.remove();
-    };
-  }, []);
-
   const {
     data: subscriptions,
     isSuccess,
@@ -128,7 +58,7 @@ export const Home = ({
   }
 
   return (
-    <ScreenLayout key={forceRenderKey}>
+    <ScreenLayout>
       <HeaderLeftContainer>
         <LinkButton
           to={{ screen: "Settings" }}
@@ -231,42 +161,6 @@ export const Home = ({
       />
     </ScreenLayout>
   );
-};
-
-const registerForPushNotifications = async () => {
-  let token;
-  if (Device.isDevice) {
-    const { status: existingStatus } =
-      await Notifications.getPermissionsAsync();
-
-    let finalStatus = existingStatus;
-    if (existingStatus !== "granted") {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
-    if (finalStatus !== "granted") {
-      return;
-    }
-    token = (await Notifications.getExpoPushTokenAsync()).data;
-
-    if (!token) {
-      Sentry.Native.captureException(
-        "Unable to get push token after permission was granted."
-      );
-    }
-  } else {
-    alert("Must use physical device for Push Notifications");
-  }
-
-  if (Platform.OS === "android") {
-    Notifications.setNotificationChannelAsync("default", {
-      name: "default",
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: "#FF231F7C",
-    });
-  }
-  return token;
 };
 
 function nextGameDate(

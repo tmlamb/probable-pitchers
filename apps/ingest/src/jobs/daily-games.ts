@@ -91,28 +91,30 @@ async function processGame(game: Game) {
     );
     subscriptions.forEach(async (subscription) => {
       const user = await client.user.byId(subscription.userId);
-      const pitcher = await client.pitcher.byId(pitcherId);
-      console.log(
-        `Processing subscription ${subscription.id} for user ${user?.id} and pitcher ${pitcher?.id}`
-      );
-      if (pitcher) {
-        user?.devices.forEach((device) => {
-          console.log(
-            `Process device ${device.id} with push token ${device.pushToken} and tz ${device.timezone} for user ${user.id}`
-          );
+      if (user?.notificationsEnabled) {
+        const pitcher = await client.pitcher.byId(pitcherId);
+        console.log(
+          `Processing subscription ${subscription.id} for user ${user?.id} and pitcher ${pitcher?.id}`
+        );
+        if (pitcher) {
+          user?.devices.forEach((device) => {
+            console.log(
+              `Process device ${device.id} with push token ${device.pushToken} and tz ${device.timezone} for user ${user.id}`
+            );
 
-          const localizedGameTime = formatInTimeZone(
-            new Date(game.gameDate),
-            device.timezone,
-            "hh:mm aaa"
-          );
+            const localizedGameTime = formatInTimeZone(
+              new Date(game.gameDate),
+              device.timezone,
+              "hh:mm aaa"
+            );
 
-          sendPushNotification(
-            device.pushToken,
-            "Probable Pitcher Alert",
-            `${pitcher.name} is pitching today at ${localizedGameTime}`
-          );
-        });
+            sendPushNotification(
+              device.pushToken,
+              "Probable Pitcher Alert",
+              `${pitcher.name} is pitching today at ${localizedGameTime}`
+            );
+          });
+        }
       }
     });
   });

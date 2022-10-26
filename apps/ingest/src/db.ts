@@ -62,7 +62,7 @@ export const client = {
   subscription: {
     byPitcherId: (pitcherId: number) => {
       return prisma.subscription.findMany({
-        where: { pitcherId, enabled: true },
+        where: { pitcherId },
       });
     },
   },

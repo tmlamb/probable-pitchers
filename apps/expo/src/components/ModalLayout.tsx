@@ -1,6 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
-import React from "react";
+import React, { useEffect } from "react";
 import { View } from "react-native";
+import { useDetectThemeChange } from "../hooks/use-detect-theme-change";
 import tw from "../tailwind";
 import { primaryTextColor } from "./Themed";
 
@@ -11,7 +12,9 @@ export default function ModalLayout({
 }) {
   const navigation = useNavigation();
 
-  React.useEffect(() => {
+  const forceRenderKey = useDetectThemeChange();
+
+  useEffect(() => {
     navigation.setOptions({
       headerStyle: tw`bg-white dark:bg-slate-900`,
       headerTitleStyle: tw.style(primaryTextColor),
@@ -19,7 +22,11 @@ export default function ModalLayout({
       headerTintColor: tw.style(primaryTextColor).color,
       headerBackTitleStyle: tw.style(primaryTextColor),
     });
-  }, [navigation]);
+  }, [navigation, forceRenderKey]);
 
-  return <View style={tw`flex-1 bg-white dark:bg-slate-900`}>{children}</View>;
+  return (
+    <View key={forceRenderKey} style={tw`flex-1 bg-white dark:bg-slate-900`}>
+      {children}
+    </View>
+  );
 }

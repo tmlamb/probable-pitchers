@@ -5,6 +5,7 @@ import * as Notifications from "expo-notifications";
 import React, { useState } from "react";
 import { ActivityIndicator, SectionList } from "react-native";
 import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
+import * as Sentry from "sentry-expo";
 import ButtonContainer from "../components/ButtonContainer";
 import ScreenLayout from "../components/ScreenLayout";
 import SearchInput from "../components/SearchInput";
@@ -79,6 +80,7 @@ export const Subscribe = () => {
     },
     onError: (err, newSubscription, context) => {
       utils.subscription.byUserId.setData(context?.previousSubscriptions);
+      Sentry.Native.captureException(err);
     },
     onSettled: () => {
       mutationTracker.endOne();
@@ -102,6 +104,7 @@ export const Subscribe = () => {
     },
     onError: (err, newSubscription, context) => {
       utils.subscription.byUserId.setData(context?.previousSubscriptions);
+      Sentry.Native.captureException(err);
     },
     onSettled: () => {
       mutationTracker.endOne();
@@ -140,7 +143,6 @@ export const Subscribe = () => {
                       id: p.subscription!.id,
                       pitcherId: p.id,
                       userId: p.subscription!.userId,
-                      enabled: p.subscription!.enabled,
                     },
                   } as Pitcher & { subscription?: Subscription })
               )
@@ -154,7 +156,6 @@ export const Subscribe = () => {
                     id: s.id,
                     pitcherId: s.pitcherId,
                     userId: s.userId,
-                    enabled: s.enabled,
                   },
                 } as Pitcher & { subscription?: Subscription })
             )) || [],

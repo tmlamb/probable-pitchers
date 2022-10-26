@@ -24,7 +24,7 @@ export const subscriptionRouter = t.router({
     )
     .mutation(({ ctx, input }) => {
       return ctx.prisma.subscription.create({
-        data: { ...input, userId: ctx.session.user.id, enabled: true },
+        data: { ...input, userId: ctx.session.user.id },
       });
     }),
   update: t.procedure
