@@ -4,7 +4,7 @@ import { PermissionStatus } from "expo-modules-core";
 import * as Notifications from "expo-notifications";
 import React, { useState } from "react";
 import { ActivityIndicator, SectionList } from "react-native";
-import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
+import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import * as Sentry from "sentry-expo";
 import ButtonContainer from "../components/ButtonContainer";
 import ScreenLayout from "../components/ScreenLayout";
@@ -31,6 +31,7 @@ export const Subscribe = () => {
     data: pitchersFromSearch,
     isSuccess,
     isInitialLoading,
+    isFetching,
     isError,
   } = trpc.pitcher.byNameSearch.useQuery(searchFilter?.split(" ") || [], {
     enabled: !!searchFilter && subscriptionsFetched,
@@ -96,9 +97,7 @@ export const Subscribe = () => {
       mutationTracker.startOne();
       const previousSubscriptions = utils.subscription.byUserId.getData();
       utils.subscription.byUserId.setData((old) =>
-        old?.map((s) =>
-          s.id !== subscriptionId ? s : { ...s, userId: "loading" }
-        )
+        old?.filter((s) => s.id !== subscriptionId)
       );
       return { previousSubscriptions };
     },
@@ -168,7 +167,6 @@ export const Subscribe = () => {
       data: pitchers?.filter((p) => !p.subscription) || [],
     });
   }
-
   return (
     <ScreenLayout>
       <SectionList
@@ -181,11 +179,20 @@ export const Subscribe = () => {
               <Animated.View
                 entering={FadeIn}
                 exiting={FadeOut}
-                layout={Layout}
+                style={tw`flex-row justify-between mb-1.5 mx-3`}
               >
-                <SecondaryText style={tw`ml-3 mb-1.5 uppercase text-sm`}>
+                <SecondaryText style={tw`uppercase text-sm`}>
                   {title}
                 </SecondaryText>
+                <ActivityIndicator
+                  size="small"
+                  hidesWhenStopped
+                  animating={
+                    isFetching ||
+                    (!isSuccess && !!searchFilter) ||
+                    mutationTracker.isMutating()
+                  }
+                />
               </Animated.View>
             )}
             {!data ||
@@ -213,48 +220,61 @@ export const Subscribe = () => {
               <PrimaryText style={tw`flex-1 pr-2.5`} numberOfLines={1}>
                 {item.name}
               </PrimaryText>
-              {item.subscription && item.subscription.userId === "loading" && (
-                <ActivityIndicator size="small" />
-              )}
-              {item.subscription && item.subscription.userId !== "loading" && (
-                <ButtonContainer
-                  style={tw`absolute right-0 py-4 pl-4 pr-3`}
-                  onPress={() => {
-                    unsubscribe(item.subscription!.id);
-                  }}
-                  disabled={mutationTracker.isMutating()}
-                  accessibilityLabel={""}
-                >
-                  <AlertText>
-                    <AntDesign name="minuscircle" size={20} />
-                  </AlertText>
-                </ButtonContainer>
-              )}
-              {!item.subscription && (
-                <ButtonContainer
-                  style={tw`absolute right-0 py-4 pl-4 pr-3`}
-                  onPress={async () => {
-                    if (pushStatus === PermissionStatus.DENIED) {
-                      alert(
-                        "Permission for this application to send push notifications has been denied. To receive alerts, you must allow notifications for Probable Pitcher in your phone's application settings."
-                      );
-                    }
-                    subscribe({
-                      pitcherId: item.id,
-                    });
-                  }}
-                  disabled={mutationTracker.isMutating()}
-                >
-                  <SpecialText>
-                    <AntDesign name="pluscircle" size={20} />
-                  </SpecialText>
-                </ButtonContainer>
-              )}
+              {item.subscription &&
+                item.subscription.userId !== "loading" &&
+                !mutationTracker.isMutating() &&
+                !isFetching &&
+                (isSuccess || !searchFilter) && (
+                  <Animated.View
+                    style={tw`absolute right-0 py-4 pl-4 pr-3`}
+                    entering={FadeIn}
+                    exiting={FadeOut}
+                  >
+                    <ButtonContainer
+                      onPress={() => {
+                        unsubscribe(item.subscription!.id);
+                      }}
+                      accessibilityLabel={""}
+                    >
+                      <AlertText>
+                        <AntDesign name="minuscircle" size={20} />
+                      </AlertText>
+                    </ButtonContainer>
+                  </Animated.View>
+                )}
+              {!item.subscription &&
+                !mutationTracker.isMutating() &&
+                !isFetching &&
+                isSuccess && (
+                  <Animated.View
+                    style={tw`absolute right-0 py-4 pl-4 pr-3`}
+                    entering={FadeIn}
+                    exiting={FadeOut}
+                  >
+                    <ButtonContainer
+                      onPress={async () => {
+                        if (pushStatus === PermissionStatus.DENIED) {
+                          alert(
+                            "Permission for this application to send push notifications has been denied. To receive alerts, you must allow notifications for Probable Pitcher in your phone's application settings."
+                          );
+                        }
+                        subscribe({
+                          pitcherId: item.id,
+                        });
+                      }}
+                    >
+                      <SpecialText>
+                        <AntDesign name="pluscircle" size={20} />
+                      </SpecialText>
+                    </ButtonContainer>
+                  </Animated.View>
+                )}
             </ThemedView>
           </Animated.View>
         )}
         ListHeaderComponent={
           <SearchInput
+            style={tw`mb-6`}
             onChange={(text) => {
               setSearchFilter(text);
             }}

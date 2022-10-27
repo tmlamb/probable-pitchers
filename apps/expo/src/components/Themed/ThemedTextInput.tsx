@@ -86,7 +86,7 @@ export default function TextInput({
 
   return (
     <ThemedView style={tw.style("relative py-0", style)}>
-      <ThemedView style={tw`px-0 py-2 relative w-full bg-transparent`}>
+      <ThemedView style={tw`px-0 py-1.5 relative w-full bg-transparent`}>
         {label && (
           <Animated.View
             entering={FadeIn}

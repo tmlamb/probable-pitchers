@@ -7,15 +7,17 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { ClassInput } from "twrnc/dist/esm/types";
 import tw from "../tailwind";
 import ButtonContainer from "./ButtonContainer";
 import { SpecialText, ThemedTextInput } from "./Themed";
 
 type Props = {
   onChange: (text?: string) => void;
+  style?: ClassInput;
 };
 
-export default function SearchInput({ onChange }: Props) {
+export default function SearchInput({ onChange, style }: Props) {
   const [searchText, setSearchText] = React.useState<string>();
   const [showCancelButton, setShowCancelButton] = React.useState(false);
   const [searchComponentWidth, setSearchComponentWidth] =
@@ -31,7 +33,7 @@ export default function SearchInput({ onChange }: Props) {
 
   return (
     <View
-      style={tw`flex-row items-center justify-between w-full mb-9`}
+      style={tw.style(`flex-row items-center justify-between w-full`, style)}
       onLayout={(event) => {
         const roundedWidth = Math.round(event.nativeEvent.layout.width);
         if (roundedWidth !== searchComponentWidth) {

@@ -24,7 +24,7 @@ export default function ThemedView({
     <View
       style={tw.style(
         rounded ? "rounded-xl" : "rounded-none",
-        "dark:bg-slate-800 dark:border-slate-700 border-slate-300 bg-slate-200 py-2 px-3 flex-row items-center justify-between",
+        "dark:bg-slate-800 dark:border-slate-700 border-slate-300 bg-slate-200 py-1.5 px-3 flex-row items-center justify-between",
         style
       )}
       accessible={accessible}
