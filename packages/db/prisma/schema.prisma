@@ -42,10 +42,10 @@ model User {
   sessions             Session[]
   devices              Device[]
   notificationsEnabled Boolean        @default(true)
-  // The following are never used, but required by NextAuth and it's Prisma Adapter.
-  image                String?
   email                String?        @unique
   emailVerified        DateTime?
+  // The following are never used, but required by NextAuth and it's Prisma Adapter.
+  image                String?
 }
 
 model Device {

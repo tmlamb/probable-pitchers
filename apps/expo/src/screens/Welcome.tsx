@@ -55,7 +55,11 @@ export const Welcome = () => {
               }
               cornerRadius={1}
               style={tw`mx-auto mt-9 w-[200px] h-[43.24px] active:opacity-10`}
-              onPress={() => signIn(() => appleLogin())}
+              onPress={async () => {
+                setIsSigningIn(true);
+                await signIn(() => appleLogin());
+                setIsSigningIn(false);
+              }}
             />
           </>
         ) : (

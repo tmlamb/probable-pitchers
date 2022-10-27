@@ -15,7 +15,7 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.APPLE_CLIENT_SECRET as string,
       authorization: {
         params: {
-          scope: "openid",
+          scope: "openid email",
         },
       },
     }),
@@ -43,7 +43,7 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.AUTH_GOOGLE_CLIENT_SECRET as string,
       authorization: {
         params: {
-          scope: "openid",
+          scope: "openid email",
         },
       },
     }),
