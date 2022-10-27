@@ -32,13 +32,11 @@ export default function Navigation() {
   useEffect(() => {
     function handleNotificationSetup() {
       if (status === "authenticated") {
-        console.log("handlingNotificationSetup");
         registerForPushNotifications().then((pushToken) => {
           setExpoPushToken(pushToken);
         });
       }
     }
-    console.log("notification setup useEffect run");
     handleNotificationSetup();
     const listener = AppState.addEventListener("change", (nextAppState) => {
       if (
@@ -74,7 +72,6 @@ export default function Navigation() {
   });
 
   useEffect(() => {
-    console.log("device useEffect run");
     if (deviceFetched && expoPushToken) {
       const timezone = Localization.timezone;
       if (!device) {

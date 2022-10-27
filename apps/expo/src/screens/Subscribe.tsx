@@ -3,8 +3,8 @@ import { Pitcher, Subscription } from "@prisma/client";
 import { PermissionStatus } from "expo-modules-core";
 import * as Notifications from "expo-notifications";
 import React, { useState } from "react";
-import { ActivityIndicator, SectionList } from "react-native";
-import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+import { ActivityIndicator, View } from "react-native";
+import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
 import * as Sentry from "sentry-expo";
 import ButtonContainer from "../components/ButtonContainer";
 import ScreenLayout from "../components/ScreenLayout";
@@ -14,7 +14,6 @@ import {
   PrimaryText,
   SecondaryText,
   SpecialText,
-  specialTextColor,
   ThemedView,
 } from "../components/Themed";
 import { trpc } from "../components/TRPCProvider";
@@ -22,8 +21,15 @@ import { useTrackParallelMutations } from "../hooks/use-track-parallel-mutations
 import tw from "../tailwind";
 
 export const Subscribe = () => {
-  const { data: subscriptions, isSuccess: subscriptionsFetched } =
-    trpc.subscription.byUserId.useQuery();
+  const mutationTracker = useTrackParallelMutations();
+
+  const {
+    data: subscriptions,
+    isSuccess: subscriptionsFetched,
+    isFetching: subscriptionsFetching,
+  } = trpc.subscription.byUserId.useQuery(undefined, {
+    enabled: !mutationTracker.isMutating(),
+  });
 
   const [searchFilter, setSearchFilter] = useState<string>();
 
@@ -44,8 +50,6 @@ export const Subscribe = () => {
     subscription:
       subscriptions?.find((sub) => sub.pitcherId === pitcher.id) || undefined,
   }));
-
-  const mutationTracker = useTrackParallelMutations();
 
   const { mutate: subscribe } = trpc.subscription.create.useMutation({
     onMutate: ({ pitcherId }) => {
@@ -120,138 +124,154 @@ export const Subscribe = () => {
     setPushStatus(status);
   });
 
-  const subscribedAndAvailablePitchers: {
-    title: string;
-    data: (Pitcher & { subscription?: Subscription })[];
-  }[] = [];
+  // const subscribedAndAvailablePitchers: {
+  //   title: string;
+  //   data: (Pitcher & { subscription?: Subscription })[];
+  // }[] = [];
+  const subscribedAndAvailablePitchers: (
+    | string
+    | (Pitcher & { subscription?: Subscription })
+  )[] = [];
 
   if (subscriptions) {
-    subscribedAndAvailablePitchers.push({
-      title: "Subscribed",
-      data:
-        (searchFilter
-          ? pitchers
-              ?.filter((p) => p.subscription)
-              .map(
-                (p) =>
-                  ({
-                    id: p.id,
-                    name: p.name,
-                    teamId: p.teamId,
-                    subscription: {
-                      id: p.subscription!.id,
-                      pitcherId: p.id,
-                      userId: p.subscription!.userId,
-                    },
-                  } as Pitcher & { subscription?: Subscription })
-              )
-          : subscriptions.map(
-              (s) =>
+    subscribedAndAvailablePitchers.push.apply(
+      subscribedAndAvailablePitchers,
+      (searchFilter
+        ? pitchers
+            ?.filter((p) => p.subscription)
+            .map(
+              (p) =>
                 ({
-                  id: s.pitcher.id,
-                  name: s.pitcher.name,
-                  teamId: s.pitcher.teamId,
+                  id: p.id,
+                  name: p.name,
+                  teamId: p.teamId,
                   subscription: {
-                    id: s.id,
-                    pitcherId: s.pitcherId,
-                    userId: s.userId,
+                    id: p.subscription!.id,
+                    pitcherId: p.id,
+                    userId: p.subscription!.userId,
                   },
                 } as Pitcher & { subscription?: Subscription })
-            )) || [],
-    });
+            )
+        : subscriptions.map(
+            (s) =>
+              ({
+                id: s.pitcher.id,
+                name: s.pitcher.name,
+                teamId: s.pitcher.teamId,
+                subscription: {
+                  id: s.id,
+                  pitcherId: s.pitcherId,
+                  userId: s.userId,
+                },
+              } as Pitcher & { subscription?: Subscription })
+          )) || []
+    );
+  }
+
+  if (subscribedAndAvailablePitchers.length > 0) {
+    subscribedAndAvailablePitchers.unshift("Subscribed");
   }
 
   if (searchFilter) {
-    subscribedAndAvailablePitchers.push({
-      title: "Available",
-      data: pitchers?.filter((p) => !p.subscription) || [],
-    });
+    subscribedAndAvailablePitchers.push("Available");
+    subscribedAndAvailablePitchers.push.apply(
+      subscribedAndAvailablePitchers,
+      pitchers?.filter((p) => !p.subscription) || []
+    );
   }
+
   return (
     <ScreenLayout>
-      <SectionList
+      <Animated.FlatList
+        // @ts-ignore - there is a type bug in Reanimated 2.9.x
+        itemLayoutAnimation={Layout}
+        keyExtractor={(item) => {
+          if (typeof item === "string") {
+            return item;
+          }
+          return String(item.id);
+        }}
         contentContainerStyle={tw`px-3 pt-9 pb-12`}
-        sections={subscribedAndAvailablePitchers}
+        data={subscribedAndAvailablePitchers}
         keyboardShouldPersistTaps="handled"
-        renderSectionHeader={({ section: { title, data } }) => (
-          <>
-            {data && data.length > 0 && (
-              <Animated.View
-                entering={FadeIn}
-                exiting={FadeOut}
-                style={tw`flex-row justify-between mb-1.5 mx-3`}
-              >
-                <SecondaryText style={tw`uppercase text-sm`}>
-                  {title}
-                </SecondaryText>
-                <ActivityIndicator
-                  size="small"
-                  hidesWhenStopped
-                  animating={
-                    isFetching ||
-                    (!isSuccess && !!searchFilter) ||
-                    mutationTracker.isMutating()
-                  }
-                />
+        renderItem={({ index, item }) => {
+          if (typeof item === "string") {
+            return (
+              <Animated.View entering={FadeIn} exiting={FadeOut}>
+                <View style={tw`flex-row justify-between mb-1.5 mx-3`}>
+                  <SecondaryText style={tw`uppercase text-sm`}>
+                    {item}
+                  </SecondaryText>
+                  {index === 0 && (
+                    <ActivityIndicator
+                      size="small"
+                      hidesWhenStopped
+                      animating={
+                        isFetching ||
+                        (!isSuccess && !!searchFilter) ||
+                        mutationTracker.isMutating() ||
+                        subscriptionsFetching
+                      }
+                    />
+                  )}
+                </View>
               </Animated.View>
-            )}
-            {!data ||
-              (data.length === 0 && title === "Available" && isInitialLoading && (
-                <Animated.View entering={FadeIn} exiting={FadeOut}>
-                  <ActivityIndicator
-                    size="large"
-                    color={String(tw.style(specialTextColor).color)}
-                  />
-                </Animated.View>
-              ))}
-          </>
-        )}
-        renderItem={({ index, item, section }) => (
-          <Animated.View entering={FadeIn.delay(200)} exiting={FadeOut}>
-            <ThemedView
-              style={tw.style(
-                "border-b-2",
-                index === 0 ? "rounded-t-xl" : undefined,
-                index + 1 === section.data.length
-                  ? "border-b-0 rounded-b-xl mb-6"
-                  : undefined
-              )}
-            >
-              <PrimaryText style={tw`flex-1 pr-2.5`} numberOfLines={1}>
-                {item.name}
-              </PrimaryText>
-              {item.subscription &&
-                item.subscription.userId !== "loading" &&
-                !mutationTracker.isMutating() &&
-                !isFetching &&
-                (isSuccess || !searchFilter) && (
-                  <Animated.View
-                    style={tw`absolute right-0 py-4 pl-4 pr-3`}
-                    entering={FadeIn}
-                    exiting={FadeOut}
-                  >
+            );
+          } else {
+            return (
+              <Animated.View entering={FadeIn} exiting={FadeOut}>
+                <ThemedView
+                  style={tw.style(
+                    "border-b-2",
+                    typeof subscribedAndAvailablePitchers[index - 1] ===
+                      "string"
+                      ? "rounded-t-xl"
+                      : undefined,
+                    !subscribedAndAvailablePitchers[index + 1] ||
+                      typeof subscribedAndAvailablePitchers[index + 1] ===
+                        "string"
+                      ? "border-b-0 rounded-b-xl mb-6"
+                      : undefined
+                  )}
+                >
+                  <PrimaryText style={tw`flex-1 pr-2.5`} numberOfLines={1}>
+                    {item.name}
+                  </PrimaryText>
+                  {item.subscription && (
                     <ButtonContainer
+                      style={tw`-my-3 -mr-3 py-3 pl-3 pr-3`}
                       onPress={() => {
                         unsubscribe(item.subscription!.id);
                       }}
                       accessibilityLabel={""}
+                      disabled={
+                        item.subscription.userId === "loading" ||
+                        mutationTracker.isMutating() ||
+                        isFetching ||
+                        (!isSuccess && !!searchFilter) ||
+                        !subscriptionsFetched ||
+                        subscriptionsFetching
+                      }
                     >
-                      <AlertText>
+                      <AlertText
+                        style={tw`${
+                          item.subscription.userId === "loading" ||
+                          mutationTracker.isMutating() ||
+                          isFetching ||
+                          (!isSuccess && !!searchFilter) ||
+                          !subscriptionsFetched ||
+                          subscriptionsFetching
+                            ? "opacity-20"
+                            : "opacity-100"
+                        }`}
+                      >
                         <AntDesign name="minuscircle" size={20} />
                       </AlertText>
                     </ButtonContainer>
-                  </Animated.View>
-                )}
-              {!item.subscription &&
-                !mutationTracker.isMutating() &&
-                !isFetching &&
-                isSuccess && (
-                  <Animated.View
-                    style={tw`absolute right-0 py-4 pl-4 pr-3`}
-                    entering={FadeIn}
-                    exiting={FadeOut}
-                  >
+                  )}
+                  {!item.subscription && (
                     <ButtonContainer
+                      style={tw`-my-3 -mr-3 py-3 pl-3 pr-3`}
                       onPress={async () => {
                         if (pushStatus === PermissionStatus.DENIED) {
                           alert(
@@ -262,16 +282,28 @@ export const Subscribe = () => {
                           pitcherId: item.id,
                         });
                       }}
+                      disabled={
+                        mutationTracker.isMutating() || isFetching || !isSuccess
+                      }
                     >
-                      <SpecialText>
+                      <SpecialText
+                        style={tw`${
+                          mutationTracker.isMutating() ||
+                          isFetching ||
+                          !isSuccess
+                            ? "opacity-20"
+                            : "opacity-100"
+                        }`}
+                      >
                         <AntDesign name="pluscircle" size={20} />
                       </SpecialText>
                     </ButtonContainer>
-                  </Animated.View>
-                )}
-            </ThemedView>
-          </Animated.View>
-        )}
+                  )}
+                </ThemedView>
+              </Animated.View>
+            );
+          }
+        }}
         ListHeaderComponent={
           <SearchInput
             style={tw`mb-6`}
@@ -279,50 +311,6 @@ export const Subscribe = () => {
               setSearchFilter(text);
             }}
           />
-        }
-        ListEmptyComponent={
-          <>
-            {isSuccess && (
-              <Animated.View entering={FadeIn.delay(150)} exiting={FadeOut}>
-                <SecondaryText
-                  style={tw`mb-9 mx-3 text-sm`}
-                  accessibilityRole="summary"
-                >
-                  No pitchers found. Try changing your search.
-                </SecondaryText>
-              </Animated.View>
-            )}
-            {isInitialLoading ? (
-              <Animated.View entering={FadeIn} exiting={FadeOut}>
-                <ActivityIndicator
-                  size="large"
-                  color={String(tw.style(specialTextColor).color)}
-                />
-              </Animated.View>
-            ) : (
-              !isSuccess && (
-                <Animated.View entering={FadeIn} exiting={FadeOut}>
-                  <SecondaryText
-                    style={tw`mb-9 mx-3 text-sm`}
-                    accessibilityRole="summary"
-                  >
-                    Enter a players name to perform a search.
-                  </SecondaryText>
-                </Animated.View>
-              )
-            )}
-            {isError && (
-              <Animated.View entering={FadeIn.delay(150)} exiting={FadeOut}>
-                <AlertText
-                  style={tw`mb-9 mx-3 text-sm`}
-                  accessibilityRole="alert"
-                >
-                  An error occurred while performing your search. Please try
-                  again later.
-                </AlertText>
-              </Animated.View>
-            )}
-          </>
         }
       />
     </ScreenLayout>
