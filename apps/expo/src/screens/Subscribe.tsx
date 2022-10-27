@@ -14,6 +14,7 @@ import {
   PrimaryText,
   SecondaryText,
   SpecialText,
+  specialTextColor,
   ThemedView,
 } from "../components/Themed";
 import { trpc } from "../components/TRPCProvider";
@@ -124,18 +125,15 @@ export const Subscribe = () => {
     setPushStatus(status);
   });
 
-  // const subscribedAndAvailablePitchers: {
-  //   title: string;
-  //   data: (Pitcher & { subscription?: Subscription })[];
-  // }[] = [];
+  // Why not just use section list? It doesn't have support from Reanimated's "itemLayoutAnimation"
+  // prop, which we are depending on below for the cool layout transitions.
   const subscribedAndAvailablePitchers: (
     | string
     | (Pitcher & { subscription?: Subscription })
   )[] = [];
 
   if (subscriptions) {
-    subscribedAndAvailablePitchers.push.apply(
-      subscribedAndAvailablePitchers,
+    const subscribedPitchers =
       (searchFilter
         ? pitchers
             ?.filter((p) => p.subscription)
@@ -164,20 +162,20 @@ export const Subscribe = () => {
                   userId: s.userId,
                 },
               } as Pitcher & { subscription?: Subscription })
-          )) || []
-    );
-  }
-
-  if (subscribedAndAvailablePitchers.length > 0) {
-    subscribedAndAvailablePitchers.unshift("Subscribed");
+          )) || [];
+    if (!!subscribedPitchers.length) {
+      subscribedAndAvailablePitchers.push("Subscribed");
+      subscribedAndAvailablePitchers.push(...subscribedPitchers);
+    }
   }
 
   if (searchFilter) {
-    subscribedAndAvailablePitchers.push("Available");
-    subscribedAndAvailablePitchers.push.apply(
-      subscribedAndAvailablePitchers,
-      pitchers?.filter((p) => !p.subscription) || []
-    );
+    const availablePitchers =
+      pitchers?.filter((p) => !p.subscription) || [] || [];
+    if (!!availablePitchers.length) {
+      subscribedAndAvailablePitchers.push("Available");
+      subscribedAndAvailablePitchers.push(...availablePitchers);
+    }
   }
 
   return (
@@ -311,6 +309,50 @@ export const Subscribe = () => {
               setSearchFilter(text);
             }}
           />
+        }
+        ListEmptyComponent={
+          <>
+            {isSuccess && (
+              <Animated.View entering={FadeIn.delay(150)} exiting={FadeOut}>
+                <SecondaryText
+                  style={tw`mb-9 mx-3 text-sm`}
+                  accessibilityRole="summary"
+                >
+                  No pitchers found. Try changing your search.
+                </SecondaryText>
+              </Animated.View>
+            )}
+            {isInitialLoading ? (
+              <Animated.View entering={FadeIn} exiting={FadeOut}>
+                <ActivityIndicator
+                  size="large"
+                  color={String(tw.style(specialTextColor).color)}
+                />
+              </Animated.View>
+            ) : (
+              !isSuccess && (
+                <Animated.View entering={FadeIn} exiting={FadeOut}>
+                  <SecondaryText
+                    style={tw`mb-9 mx-3 text-sm`}
+                    accessibilityRole="summary"
+                  >
+                    Enter a players name to perform a search.
+                  </SecondaryText>
+                </Animated.View>
+              )
+            )}
+            {isError && (
+              <Animated.View entering={FadeIn.delay(150)} exiting={FadeOut}>
+                <AlertText
+                  style={tw`mb-9 mx-3 text-sm`}
+                  accessibilityRole="alert"
+                >
+                  An error occurred while performing your search. Please try
+                  again later.
+                </AlertText>
+              </Animated.View>
+            )}
+          </>
         }
       />
     </ScreenLayout>
