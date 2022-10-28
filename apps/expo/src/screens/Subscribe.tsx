@@ -192,6 +192,14 @@ export const Subscribe = () => {
         contentContainerStyle={tw`px-3 pt-9 pb-12`}
         data={subscribedAndAvailablePitchers}
         keyboardShouldPersistTaps="handled"
+        ListHeaderComponent={
+          <SearchInput
+            style={tw`mb-9`}
+            onChange={(text) => {
+              setSearchFilter(text);
+            }}
+          />
+        }
         renderItem={({ index, item }) => {
           if (typeof item === "string") {
             return (
@@ -302,14 +310,6 @@ export const Subscribe = () => {
             );
           }
         }}
-        ListHeaderComponent={
-          <SearchInput
-            style={tw`mb-6`}
-            onChange={(text) => {
-              setSearchFilter(text);
-            }}
-          />
-        }
         ListEmptyComponent={
           <>
             {isSuccess && (
