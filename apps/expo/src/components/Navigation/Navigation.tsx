@@ -58,6 +58,7 @@ export default function Navigation() {
     });
 
   const trpcContext = trpc.useContext();
+
   const { mutate: registerDevice } = trpc.device.create.useMutation({
     onError: (err) => {
       Sentry.Native.captureException(err);
@@ -85,6 +86,12 @@ export default function Navigation() {
       }
     }
   }, [device, deviceFetched, expoPushToken]);
+
+  if (status === "authenticated") {
+    trpcContext.subscription.byUserId.prefetch();
+    trpcContext.user.settings.prefetch();
+    trpcContext.account.byUserId.prefetch();
+  }
 
   return (
     <View style={tw`flex-1 bg-slate-50 dark:bg-black`}>
