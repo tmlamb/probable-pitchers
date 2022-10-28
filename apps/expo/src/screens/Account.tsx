@@ -17,7 +17,9 @@ import tw from "../tailwind";
 
 export const Account = () => {
   const { data: accounts, isSuccess: accountsFetched } =
-    trpc.account.byUserId.useQuery();
+    trpc.account.byUserId.useQuery(undefined, {
+      staleTime: Infinity,
+    });
 
   const provider = accounts
     ?.map(
