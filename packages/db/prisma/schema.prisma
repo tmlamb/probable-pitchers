@@ -75,20 +75,33 @@ model Pitcher {
 }
 
 model Game {
-  id            Int      @id
+  id            Int            @id
   date          DateTime
-  homePitcher   Pitcher? @relation("HomePitcher", fields: [homePitcherId], references: [id])
+  homePitcher   Pitcher?       @relation("HomePitcher", fields: [homePitcherId], references: [id])
   homePitcherId Int?
-  awayPitcher   Pitcher? @relation("AwayPitcher", fields: [awayPitcherId], references: [id])
+  awayPitcher   Pitcher?       @relation("AwayPitcher", fields: [awayPitcherId], references: [id])
   awayPitcherId Int?
+  Notification  Notification[]
 }
 
 model Subscription {
-  id        Int     @id @default(autoincrement())
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String
-  pitcher   Pitcher @relation(fields: [pitcherId], references: [id], onDelete: Cascade)
-  pitcherId Int
+  id           Int            @id @default(autoincrement())
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String
+  pitcher      Pitcher        @relation(fields: [pitcherId], references: [id], onDelete: Cascade)
+  pitcherId    Int
+  Notification Notification[]
 
   @@unique([userId, pitcherId])
+}
+
+model Notification {
+  id             Int          @id @default(autoincrement())
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id])
+  subscriptionId Int
+  game           Game         @relation(fields: [gameId], references: [id])
+  gameId         Int
+  sentOn         DateTime
+
+  @@unique([subscriptionId, gameId])
 }

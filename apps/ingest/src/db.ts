@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { add } from "date-fns";
 
 export const prisma = new PrismaClient({
   log: ["query"],
@@ -9,27 +10,26 @@ export const client = {
     byId: (id: number) => {
       return prisma.team.findUnique({ where: { id } });
     },
-    create: (id: number, name: string) => {
-      return prisma.team.create({ data: { id, name } });
-    },
-    update: (id: number, name: string) => {
-      return prisma.team.update({
+    upsert: (id: number, name: string) => {
+      return prisma.team.upsert({
         where: { id },
-        data: { id, name },
+        create: { id, name },
+        update: { name },
       });
     },
   },
   pitcher: {
+    byName: (name: string) => {
+      return prisma.pitcher.findMany({ where: { name } });
+    },
     byId: (id: number) => {
       return prisma.pitcher.findUnique({ where: { id } });
     },
-    create: (id: number, name: string, teamId: number) => {
-      return prisma.pitcher.create({ data: { id, name, teamId } });
-    },
-    update: (id: number, name: string, teamId: number) => {
-      return prisma.pitcher.update({
+    upsert: (id: number, name: string, teamId: number) => {
+      return prisma.pitcher.upsert({
         where: { id },
-        data: { id, name, teamId },
+        create: { id, name, teamId },
+        update: { id, name, teamId },
       });
     },
   },
@@ -37,25 +37,26 @@ export const client = {
     byId: (id: number) => {
       return prisma.game.findUnique({ where: { id } });
     },
-    create: (
-      id: number,
-      date: Date,
-      homePitcherId?: number,
-      awayPitcherId?: number
-    ) => {
-      return prisma.game.create({
-        data: { id, date, homePitcherId, awayPitcherId },
+    today: () => {
+      return prisma.game.findMany({
+        where: {
+          date: {
+            gte: new Date(),
+            lte: add(new Date(), { days: 1 }),
+          },
+        },
       });
     },
-    update: (
+    upsert: (
       id: number,
       date: Date,
       homePitcherId?: number,
       awayPitcherId?: number
     ) => {
-      return prisma.game.update({
+      return prisma.game.upsert({
         where: { id },
-        data: { id, date, homePitcherId, awayPitcherId },
+        create: { id, date, homePitcherId, awayPitcherId },
+        update: { id, date, homePitcherId, awayPitcherId },
       });
     },
   },
@@ -70,7 +71,25 @@ export const client = {
     byId: (id: string) => {
       return prisma.user.findUnique({
         where: { id },
-        include: { devices: true },
+      });
+    },
+  },
+  notification: {
+    bySubscriptionAndGame: (subscriptionId: number, gameId: number) => {
+      return prisma.notification.findUnique({
+        where: { subscriptionId_gameId: { subscriptionId, gameId } },
+      });
+    },
+    create: (subscriptionId: number, gameId: number) => {
+      return prisma.notification.create({
+        data: { subscriptionId, gameId, sentOn: new Date() },
+      });
+    },
+  },
+  device: {
+    byUserId: (userId: string) => {
+      return prisma.device.findMany({
+        where: { userId },
       });
     },
   },

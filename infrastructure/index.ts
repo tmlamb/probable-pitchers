@@ -179,7 +179,7 @@ const seedJob = new k8s.batch.v1.CronJob(
                     },
                     {
                       name: "INGEST_JOBS",
-                      value: "seed-season",
+                      value: "teams,players",
                     },
                   ],
                 },
@@ -196,10 +196,55 @@ const seedJob = new k8s.batch.v1.CronJob(
   }
 );
 
-const ingestLabels = { app: `probable-ingest-${env}` };
+const playerLabels = { app: `probable-player-${env}` };
 
-const cronjob = new k8s.batch.v1.CronJob(
-  ingestLabels.app,
+const playerJob = new k8s.batch.v1.CronJob(
+  playerLabels.app,
+  {
+    metadata: {
+      namespace: namespaceName,
+    },
+    spec: {
+      schedule: "0 6 * * *",
+      jobTemplate: {
+        spec: {
+          template: {
+            spec: {
+              imagePullSecrets: [
+                { name: regcred.metadata.apply((m) => m.name) },
+              ],
+              containers: [
+                {
+                  name: playerLabels.app,
+
+                  image: `ghcr.io/tmlamb/probable-pitchers-ingest:${imageTag}`,
+                  env: [
+                    {
+                      name: "DATABASE_URL",
+                      value: config.requireSecret("dbUrl"),
+                    },
+                    {
+                      name: "INGEST_JOBS",
+                      value: "players",
+                    },
+                  ],
+                },
+              ],
+              restartPolicy: "OnFailure",
+            },
+          },
+        },
+      },
+    },
+  },
+  {
+    provider: clusterProvider,
+  }
+);
+const notifyLabels = { app: `probable-notify-${env}` };
+
+const notifyJob = new k8s.batch.v1.CronJob(
+  notifyLabels.app,
   {
     metadata: {
       namespace: namespaceName,
@@ -215,7 +260,7 @@ const cronjob = new k8s.batch.v1.CronJob(
               ],
               containers: [
                 {
-                  name: ingestLabels.app,
+                  name: notifyLabels.app,
 
                   image: `ghcr.io/tmlamb/probable-pitchers-ingest:${imageTag}`,
                   env: [
@@ -225,7 +270,7 @@ const cronjob = new k8s.batch.v1.CronJob(
                     },
                     {
                       name: "INGEST_JOBS",
-                      value: "daily-games",
+                      value: "games,notifications",
                     },
                   ],
                 },
