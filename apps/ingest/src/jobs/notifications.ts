@@ -18,23 +18,39 @@ export async function processNotifications() {
   } = {};
 
   for (const game of gamesToday) {
+    console.log("Processing Game for Notifications: ", game);
     [game.awayPitcherId, game.homePitcherId].forEach(async (pitcherId) => {
+      console.log("Processing Pitcher for Notifications: ", pitcherId);
       if (pitcherId) {
         const subscriptions = await client.subscription.byPitcherId(pitcherId);
-        subscriptions.forEach(async (subscription) => {
+        for (const subscription of subscriptions) {
+          console.log(
+            "Processing Subscription for Notifications: ",
+            subscription
+          );
           const existingNotification =
             await client.notification.bySubscriptionAndGame(
               subscription.id,
               game.id
             );
+          console.log("Existing Notification: ", existingNotification);
+
           if (!existingNotification) {
             const user = await client.user.byId(subscription.userId);
+            console.log("User for subscription: ", user);
             if (user?.notificationsEnabled) {
               const pitcher = await client.pitcher.byId(pitcherId);
+              console.log("Pitcher for subscription: ", pitcher);
               if (pitcher) {
-                if (!userNotifications[user.id]) {
+                if (!(user.id in userNotifications)) {
+                  console.log("Adding user to notifications: ", user.id);
                   userNotifications[user.id] = [];
                 }
+                console.log("Adding notification for user: ", {
+                  pitcher,
+                  subscription,
+                  game,
+                });
                 userNotifications[user.id]?.push({
                   pitcher,
                   subscription,
@@ -45,14 +61,17 @@ export async function processNotifications() {
               }
             }
           }
-        });
+        }
       }
     });
   }
 
   for (const [userId, notifications] of Object.entries(userNotifications)) {
+    console.log("Sending notifications for user: ", userId);
+    console.log("Notifications: ", notifications);
     const devices = await client.device.byUserId(userId);
     for (const device of devices) {
+      console.log("Sending notifications to device: ", device);
       if (notifications.length === 1 && notifications[0]) {
         const localizedGameTime = formatInTimeZone(
           notifications[0].game.date,
