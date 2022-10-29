@@ -66,7 +66,7 @@ export async function processNotifications() {
     });
   }
 
-  console.log("User Notifications: ", userNotifications);
+  console.log("User Notifications: ", JSON.stringify(userNotifications));
 
   for (const [userId, notifications] of Object.entries(userNotifications)) {
     console.log("Sending notifications for user: ", userId);
