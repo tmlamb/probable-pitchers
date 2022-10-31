@@ -8,8 +8,10 @@ import {
   isTomorrow,
   min,
 } from "date-fns";
+import { Subscription as ExpoSubscription } from "expo-modules-core";
+import * as ExpoNotifications from "expo-notifications";
 import _ from "lodash";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, SectionList } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import HeaderLeftContainer from "../components/HeaderLeftContainer";
@@ -31,6 +33,37 @@ import tw from "../tailwind";
 export const Home = ({
   navigation: { navigate },
 }: RootStackScreenProps<"Home">) => {
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef<ExpoSubscription>();
+  const responseListener = useRef<ExpoSubscription>();
+
+  useEffect(() => {
+    // This listener is fired whenever a notification is received while the app is foregrounded
+    notificationListener.current =
+      ExpoNotifications.addNotificationReceivedListener((notification) => {
+        setNotification(!!notification);
+      });
+
+    // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
+    responseListener.current =
+      ExpoNotifications.addNotificationResponseReceivedListener((response) => {
+        navigate("Home");
+      });
+
+    return () => {
+      if (notificationListener?.current) {
+        ExpoNotifications.removeNotificationSubscription(
+          notificationListener.current
+        );
+      }
+      if (responseListener?.current) {
+        ExpoNotifications.removeNotificationSubscription(
+          responseListener.current
+        );
+      }
+    };
+  }, []);
+
   const {
     data: subscriptions,
     isSuccess,
