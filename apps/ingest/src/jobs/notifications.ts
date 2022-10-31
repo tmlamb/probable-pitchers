@@ -84,10 +84,10 @@ export async function processNotifications() {
         sendPushNotification(
           device.pushToken,
           "Probable Pitcher Alert",
-          `${notifications[0].pitcher.name} is pitching today at ${localizedGameTime}`
+          `${notifications[0].pitcher.name} pitches today at ${localizedGameTime}`
         );
       } else {
-        let message = "Some of your favorite players are pitching today:\n";
+        let message = "";
         for (const notification of notifications) {
           const localizedGameTime = formatInTimeZone(
             notification.game.date,
@@ -102,6 +102,13 @@ export async function processNotifications() {
           message
         );
       }
+    }
+
+    for (const notification of notifications) {
+      await client.notification.create(
+        notification.subscription.id,
+        notification.game.id
+      );
     }
   }
 }
