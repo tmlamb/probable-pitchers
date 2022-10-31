@@ -19,7 +19,7 @@ export async function processNotifications() {
 
   for (const game of gamesToday) {
     console.log("Processing Game for Notifications: ", game);
-    [game.awayPitcherId, game.homePitcherId].forEach(async (pitcherId) => {
+    for (const pitcherId of [game.awayPitcherId, game.homePitcherId]) {
       console.log("Processing Pitcher for Notifications: ", pitcherId);
       if (pitcherId) {
         const subscriptions = await client.subscription.byPitcherId(pitcherId);
@@ -63,7 +63,7 @@ export async function processNotifications() {
           }
         }
       }
-    });
+    }
   }
 
   console.log("User Notifications: ", JSON.stringify(userNotifications));
