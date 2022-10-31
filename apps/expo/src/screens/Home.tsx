@@ -1,6 +1,14 @@
 import { AntDesign } from "@expo/vector-icons";
 import { Game, Pitcher, Subscription } from "@prisma/client";
-import { add, isBefore, isFuture, maxTime, min } from "date-fns";
+import {
+  format,
+  formatDistanceToNowStrict,
+  isFuture,
+  isToday,
+  isTomorrow,
+  min,
+} from "date-fns";
+import _ from "lodash";
 import React from "react";
 import { ActivityIndicator, SectionList } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
@@ -30,32 +38,35 @@ export const Home = ({
     isError,
   } = trpc.subscription.byUserId.useQuery();
 
-  const pitchingToday = subscriptions?.filter((s) =>
-    isBefore(nextGameDate(s.pitcher) || maxTime, add(new Date(), { hours: 24 }))
-  );
-  const unscheduled = subscriptions?.filter(
-    (s) =>
-      !isBefore(
-        nextGameDate(s.pitcher) || maxTime,
-        add(new Date(), { hours: 24 })
-      )
-  );
-  const pitcherSubscriptions: {
-    title: string;
+  const subscriptionsSchedule: {
+    nextGameDay: string;
     data: (Subscription & {
       pitcher: Pitcher & {
         homeGames: Game[];
         awayGames: Game[];
       };
     })[];
-  }[] = [];
-
-  if (!!pitchingToday?.length) {
-    pitcherSubscriptions.push({ title: "Pitching Today", data: pitchingToday });
-  }
-  if (!!unscheduled?.length) {
-    pitcherSubscriptions.push({ title: "Unscheduled", data: unscheduled });
-  }
+  }[] = _(subscriptions)
+    .orderBy((sub) => nextGameDate(sub.pitcher))
+    .groupBy((sub) => {
+      const date = nextGameDate(sub.pitcher) || undefined;
+      if (date) {
+        const dateForSection = format(date, "EEE, MMM d");
+        if (isToday(date)) {
+          return `Pitching Today (${dateForSection})`;
+        } else if (isTomorrow(date)) {
+          return `Pitching Tomorrow (${dateForSection})`;
+        } else {
+          return `Pitching in ${formatDistanceToNowStrict(
+            date
+          )} (${dateForSection})`;
+        }
+      } else {
+        return "Unscheduled";
+      }
+    })
+    .map((data, nextGameDay) => ({ nextGameDay, data }))
+    .value();
 
   return (
     <ScreenLayout>
@@ -84,7 +95,7 @@ export const Home = ({
       <SectionList
         contentContainerStyle={tw`px-3 pt-9 pb-12`}
         bounces={false}
-        sections={pitcherSubscriptions}
+        sections={subscriptionsSchedule}
         ListHeaderComponent={
           <PrimaryText
             style={tw`text-4xl font-bold tracking-tight mb-9`}
@@ -93,9 +104,9 @@ export const Home = ({
             Probable Pitcher
           </PrimaryText>
         }
-        renderSectionHeader={({ section: { title } }) => (
+        renderSectionHeader={({ section: { nextGameDay } }) => (
           <SecondaryText style={tw`ml-3 mb-1.5 uppercase text-sm`}>
-            {title}
+            {nextGameDay}
           </SecondaryText>
         )}
         renderItem={({ index, item, section }) => (

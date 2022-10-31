@@ -5,7 +5,7 @@ import { getGames } from "../services/mlbstats.js";
 import { processPitcher } from "./pitchers.js";
 
 export async function processGames() {
-  const [today, tomorrow, dayAfter] = await Promise.all([
+  const schedule = await Promise.all([
     getGames(formatISO(new Date(), { representation: "date" })),
 
     getGames(
@@ -14,9 +14,15 @@ export async function processGames() {
     getGames(
       formatISO(add(new Date(), { days: 2 }), { representation: "date" })
     ),
+    getGames(
+      formatISO(add(new Date(), { days: 3 }), { representation: "date" })
+    ),
+    getGames(
+      formatISO(add(new Date(), { days: 4 }), { representation: "date" })
+    ),
   ]);
 
-  for (const game of [...today, ...tomorrow, ...dayAfter]) {
+  for (const game of schedule.flat()) {
     console.log("Processing Game: ", game);
 
     [game.teams.away, game.teams.home].forEach(async (team) => {
