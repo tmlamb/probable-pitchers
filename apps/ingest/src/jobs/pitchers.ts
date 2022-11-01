@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { client } from "../services/db.js";
+import { client } from "../db/db.js";
 import { getPitchers } from "../services/mlbstats.js";
 
 export async function processPitcher(pitcher: {
@@ -32,8 +32,6 @@ export async function processPitchers() {
   const season = format(new Date(), "yyyy");
 
   const pitchers = await getPitchers(season);
-  console.log("Pitchers found: ", pitchers);
-
   for (const pitcher of pitchers) {
     processPitcher(pitcher);
   }

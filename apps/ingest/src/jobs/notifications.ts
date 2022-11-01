@@ -1,6 +1,6 @@
 import { Pitcher } from "@prisma/client";
 import pkg from "date-fns-tz";
-import { client } from "../services/db.js";
+import { client } from "../db/db.js";
 import { sendPushNotification } from "../services/push.js";
 const { formatInTimeZone } = pkg;
 
@@ -50,11 +50,7 @@ export async function sendNotifications() {
 
       for (const device of user.devices) {
         let message = "Pitching Today:\n";
-        const fulfilled: {
-          id: number;
-          subscriptionId: number;
-          gameId: number;
-        }[] = [];
+        const fulfilled: number[] = [];
         for (const notification of notifications) {
           const localizedGameTime = formatInTimeZone(
             notification.game.date,
@@ -63,14 +59,14 @@ export async function sendNotifications() {
           );
 
           message += `${notification.subscription.pitcher.name} - ${localizedGameTime}\n`;
-          fulfilled.push(notification);
+          fulfilled.push(notification.id);
         }
         sendPushNotification(
           device.pushToken,
           "Probable Pitcher Alert",
           message
         );
-        for (const { id, subscriptionId, gameId } of fulfilled) {
+        for (const id of fulfilled) {
           await client.notification.complete(id, new Date());
         }
       }

@@ -1,9 +1,5 @@
-import { prisma } from "@probable/db";
 import { add } from "date-fns";
-
-// export const prisma = new PrismaClient({
-//   log: ["query"],
-// });
+import prisma from "./client.js";
 
 export const client = {
   team: {
@@ -29,7 +25,7 @@ export const client = {
       return prisma.pitcher.upsert({
         where: { id },
         create: { id, name, teamId },
-        update: { id, name, teamId },
+        update: { name, teamId },
       });
     },
   },
@@ -57,10 +53,10 @@ export const client = {
       homePitcherId?: number,
       awayPitcherId?: number
     ) => {
-      return prisma.game.upsert({
+      prisma.game.upsert({
         where: { id },
         create: { id, date, homePitcherId, awayPitcherId },
-        update: { id, date, homePitcherId, awayPitcherId },
+        update: { date, homePitcherId, awayPitcherId },
       });
     },
   },
