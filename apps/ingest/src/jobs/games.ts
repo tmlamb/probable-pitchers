@@ -1,6 +1,6 @@
 import { add } from "date-fns";
 import formatISO from "date-fns/formatISO/index.js";
-import { client } from "../db.js";
+import { client } from "../services/db.js";
 import { getGames } from "../services/mlbstats.js";
 import { processPitcher } from "./pitchers.js";
 

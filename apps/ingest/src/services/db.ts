@@ -1,9 +1,9 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@probable/db";
 import { add } from "date-fns";
 
-export const prisma = new PrismaClient({
-  log: ["query"],
-});
+// export const prisma = new PrismaClient({
+//   log: ["query"],
+// });
 
 export const client = {
   team: {
@@ -45,6 +45,10 @@ export const client = {
             lte: add(new Date(), { days: 1 }),
           },
         },
+        include: {
+          awayPitcher: true,
+          homePitcher: true,
+        },
       });
     },
     upsert: (
@@ -73,16 +77,63 @@ export const client = {
         where: { id },
       });
     },
+    withUnsentNotificationsForFutureGames: () => {
+      return prisma.user.findMany({
+        include: {
+          subscriptions: {
+            include: {
+              notifications: {
+                include: {
+                  game: true,
+                  subscription: {
+                    include: {
+                      pitcher: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+          devices: true,
+        },
+        where: {
+          subscriptions: {
+            some: {
+              notifications: {
+                some: {
+                  AND: [
+                    { sentOn: null },
+                    {
+                      game: {
+                        date: { gte: new Date() },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        },
+      });
+    },
   },
   notification: {
-    bySubscriptionAndGame: (subscriptionId: number, gameId: number) => {
+    byRelations: (subscriptionId: number, gameId: number) => {
       return prisma.notification.findUnique({
-        where: { subscriptionId_gameId: { subscriptionId, gameId } },
+        where: {
+          subscriptionId_gameId: { subscriptionId, gameId },
+        },
       });
     },
     create: (subscriptionId: number, gameId: number) => {
       return prisma.notification.create({
-        data: { subscriptionId, gameId, sentOn: new Date() },
+        data: { subscriptionId, gameId },
+      });
+    },
+    complete: (id: number, sentOn: Date) => {
+      return prisma.notification.update({
+        where: { id },
+        data: { sentOn },
       });
     },
   },

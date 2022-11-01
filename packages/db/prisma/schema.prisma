@@ -81,16 +81,16 @@ model Game {
   homePitcherId Int?
   awayPitcher   Pitcher?       @relation("AwayPitcher", fields: [awayPitcherId], references: [id])
   awayPitcherId Int?
-  Notification  Notification[]
+  notifications Notification[]
 }
 
 model Subscription {
-  id           Int            @id @default(autoincrement())
-  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId       String
-  pitcher      Pitcher        @relation(fields: [pitcherId], references: [id], onDelete: Cascade)
-  pitcherId    Int
-  Notification Notification[]
+  id            Int            @id @default(autoincrement())
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String
+  pitcher       Pitcher        @relation(fields: [pitcherId], references: [id], onDelete: Cascade)
+  pitcherId     Int
+  notifications Notification[]
 
   @@unique([userId, pitcherId])
 }
@@ -101,7 +101,7 @@ model Notification {
   subscriptionId Int
   game           Game         @relation(fields: [gameId], references: [id])
   gameId         Int
-  sentOn         DateTime
+  sentOn         DateTime?
 
   @@unique([subscriptionId, gameId])
 }

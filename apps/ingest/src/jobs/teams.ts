@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { client } from "../db.js";
+import { client } from "../services/db.js";
 import { getTeams } from "../services/mlbstats.js";
 
 export async function processTeams() {

@@ -1,6 +1,9 @@
 // import { processGames } from "./jobs/daily-games.js";
 import { processGames } from "./jobs/games.js";
-import { processNotifications } from "./jobs/notifications.js";
+import {
+  processNotifications,
+  sendNotifications,
+} from "./jobs/notifications.js";
 import { processPitchers } from "./jobs/pitchers.js";
 import { processTeams } from "./jobs/teams.js";
 
@@ -21,5 +24,6 @@ if (jobConfig) {
 
   if (jobConfig.includes("notifications")) {
     await processNotifications();
+    await sendNotifications();
   }
 }

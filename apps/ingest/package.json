@@ -6,8 +6,10 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "daily": "INGEST_JOBS=daily-games ts-node-esm ./src/index.ts",
-    "seed": "INGEST_JOBS=seed-season ts-node-esm ./src/index.ts"
+    "games": "INGEST_JOBS=games ts-node-esm ./src/index.ts",
+    "pitchers": "INGEST_JOBS=pitchers ts-node-esm ./src/index.ts",
+    "notifications": "INGEST_JOBS=notifications ts-node-esm ./src/index.ts",
+    "teams": "INGEST_JOBS=teams ts-node-esm ./src/index.ts"
   },
   "dependencies": {
     "@prisma/client": "^4.2.1",
