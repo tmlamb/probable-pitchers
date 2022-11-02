@@ -28,7 +28,7 @@ export async function processPitcher(pitcher: {
   }
 }
 
-export async function processPitchers() {
+export async function ingestPitchers() {
   const season = format(new Date(), "yyyy");
 
   const pitchers = await getPitchers(season);

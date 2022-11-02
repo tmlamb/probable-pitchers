@@ -34,11 +34,12 @@ export const client = {
       return prisma.game.findUnique({ where: { id } });
     },
     today: () => {
+      const now = new Date();
       return prisma.game.findMany({
         where: {
           date: {
-            gte: new Date(),
-            lte: add(new Date(), { days: 1 }),
+            gte: now,
+            lte: add(now, { days: 1 }),
           },
         },
         include: {
@@ -53,7 +54,7 @@ export const client = {
       homePitcherId?: number,
       awayPitcherId?: number
     ) => {
-      prisma.game.upsert({
+      return prisma.game.upsert({
         where: { id },
         create: { id, date, homePitcherId, awayPitcherId },
         update: { date, homePitcherId, awayPitcherId },

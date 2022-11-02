@@ -3,7 +3,7 @@ import { mockReset } from "jest-mock-extended";
 import { MlbGame } from "../services/mlbstats";
 import { fullSchedule } from "../test/fixtures";
 import { mlbstatsMock, prismaMock } from "../test/mocks";
-import { processGames } from "./games";
+import { ingestGames } from "./games";
 import { processPitcher } from "./pitchers";
 
 jest.mock("./pitchers", () => ({
@@ -14,7 +14,7 @@ beforeEach(() => {
   mockReset(processPitcher);
 });
 
-test("should create one new game ", async () => {
+test("should create one new game", async () => {
   const mlbGame: MlbGame = {
     gamePk: 123,
     gameDate: "2022-11-01:20:15:00Z",
@@ -45,7 +45,7 @@ test("should create one new game ", async () => {
   mlbstatsMock.getGames.mockResolvedValueOnce([mlbGame]);
   mlbstatsMock.getGames.mockResolvedValue([]);
 
-  await processGames();
+  await ingestGames();
 
   expect(mlbstatsMock.getGames).toHaveBeenCalledTimes(5);
   expect(prismaMock.game.upsert).toHaveBeenCalledTimes(1);
@@ -82,14 +82,14 @@ test("should create one new game ", async () => {
   });
 });
 
-test("should create a full schedule ", async () => {
+test("should create a full schedule", async () => {
   mlbstatsMock.getGames.mockResolvedValueOnce(fullSchedule[0] || []);
   mlbstatsMock.getGames.mockResolvedValueOnce(fullSchedule[1] || []);
   mlbstatsMock.getGames.mockResolvedValueOnce(fullSchedule[2] || []);
   mlbstatsMock.getGames.mockResolvedValueOnce(fullSchedule[3] || []);
   mlbstatsMock.getGames.mockResolvedValueOnce(fullSchedule[4] || []);
 
-  await processGames();
+  await ingestGames();
 
   expect(mlbstatsMock.getGames).toHaveBeenCalledTimes(5);
   expect(prismaMock.game.upsert).toHaveBeenCalledTimes(64);

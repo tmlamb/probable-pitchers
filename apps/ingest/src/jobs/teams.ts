@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import { client } from "../db/db.js";
 import { getTeams } from "../services/mlbstats.js";
 
-export async function processTeams() {
+export async function ingestTeams() {
   const season = format(new Date(), "yyyy");
 
   const teams = await getTeams(season);

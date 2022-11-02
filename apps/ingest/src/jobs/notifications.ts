@@ -4,30 +4,25 @@ import { client } from "../db/db.js";
 import { sendPushNotification } from "../services/push.js";
 const { formatInTimeZone } = pkg;
 
-const TIME_FORMAT = "hh:mm aaa";
+const TIME_FORMAT = "h:mm aaa";
 
-export async function processNotifications() {
+export async function ingestNotifications() {
   const gamesToday = await client.game.today();
 
   for (const game of gamesToday) {
-    console.log("Processing Game: ", game);
-
-    const pitchers = [game.awayPitcher, game.homePitcher].filter(
+    const pitchers = [game.homePitcher, game.awayPitcher].filter(
       (pitcher) => !!pitcher
     ) as Pitcher[];
 
     for (const pitcher of pitchers) {
-      console.log("Processing Pitcher: ", pitcher);
       const subscriptions = await client.subscription.byPitcherId(pitcher.id);
       for (const subscription of subscriptions) {
-        console.log("Processing Subscription: ", subscription);
         const existingNotification = await client.notification.byRelations(
           subscription.id,
           game.id
         );
 
         if (!existingNotification) {
-          console.log("Creating Notification: ", subscription.id, game.id);
           await client.notification.create(subscription.id, game.id);
         }
       }
@@ -48,9 +43,9 @@ export async function sendNotifications() {
         (subscription) => subscription.notifications
       );
 
+      const fulfilled = new Set<number>();
       for (const device of user.devices) {
         let message = "Pitching Today:\n";
-        const fulfilled: number[] = [];
         for (const notification of notifications) {
           const localizedGameTime = formatInTimeZone(
             notification.game.date,
@@ -59,16 +54,16 @@ export async function sendNotifications() {
           );
 
           message += `${notification.subscription.pitcher.name} - ${localizedGameTime}\n`;
-          fulfilled.push(notification.id);
+          fulfilled.add(notification.id);
         }
         sendPushNotification(
           device.pushToken,
           "Probable Pitcher Alert",
           message
         );
-        for (const id of fulfilled) {
-          await client.notification.complete(id, new Date());
-        }
+      }
+      for (const id of fulfilled) {
+        await client.notification.complete(id, new Date());
       }
     } catch (e) {
       console.error("Error processing notifications for user: ", user, e);

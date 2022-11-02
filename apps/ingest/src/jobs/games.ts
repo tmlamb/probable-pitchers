@@ -4,7 +4,7 @@ import { client } from "../db/db.js";
 import { getGames } from "../services/mlbstats.js";
 import { processPitcher } from "./pitchers.js";
 
-export async function processGames() {
+export async function ingestGames() {
   const today = new Date();
   const schedule = await Promise.all([
     getGames(formatISO(today, { representation: "date" })),
@@ -15,9 +15,9 @@ export async function processGames() {
   ]);
 
   for (const game of schedule.flat()) {
-    [game.teams.away, game.teams.home].forEach(async (team) => {
+    for (const team of [game.teams.away, game.teams.home]) {
       if (team.probablePitcher) {
-        processPitcher({
+        await processPitcher({
           fullName: team.probablePitcher.fullName,
           id: team.probablePitcher.id,
           currentTeam: {
@@ -25,8 +25,8 @@ export async function processGames() {
           },
         });
       }
-    });
-    client.game.upsert(
+    }
+    await client.game.upsert(
       game.gamePk,
       new Date(game.gameDate),
       game.teams.home.probablePitcher?.id,

@@ -1,29 +1,29 @@
 // import { processGames } from "./jobs/daily-games.js";
-import { processGames } from "./jobs/games.js";
+import { ingestGames } from "./jobs/games.js";
 import {
-  processNotifications,
+  ingestNotifications,
   sendNotifications,
 } from "./jobs/notifications.js";
-import { processPitchers } from "./jobs/pitchers.js";
-import { processTeams } from "./jobs/teams.js";
+import { ingestPitchers } from "./jobs/pitchers.js";
+import { ingestTeams } from "./jobs/teams.js";
 
 const jobConfig = process.env.INGEST_JOBS;
 
 if (jobConfig) {
   if (jobConfig.includes("teams")) {
-    await processTeams();
+    await ingestTeams();
   }
 
   if (jobConfig.includes("pitchers")) {
-    await processPitchers();
+    await ingestPitchers();
   }
 
   if (jobConfig.includes("games")) {
-    await processGames();
+    await ingestGames();
   }
 
   if (jobConfig.includes("notifications")) {
-    await processNotifications();
+    await ingestNotifications();
     await sendNotifications();
   }
 }

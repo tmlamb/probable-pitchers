@@ -1,9 +1,9 @@
 import { test } from "@jest/globals";
 import { mlbTeams } from "../test/fixtures";
 import { mlbstatsMock, prismaMock } from "../test/mocks";
-import { processTeams } from "./teams";
+import { ingestTeams } from "./teams";
 
-test("should upsert one team ", async () => {
+test("should upsert one team", async () => {
   mlbstatsMock.getTeams.mockResolvedValueOnce(mlbTeams);
 
   prismaMock.team.findUnique.mockResolvedValueOnce({
@@ -18,7 +18,7 @@ test("should upsert one team ", async () => {
     );
   }
 
-  await processTeams();
+  await ingestTeams();
 
   expect(mlbstatsMock.getTeams).toHaveBeenCalledTimes(1);
   expect(prismaMock.team.findUnique).toHaveBeenCalledTimes(30);
