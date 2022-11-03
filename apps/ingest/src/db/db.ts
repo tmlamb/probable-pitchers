@@ -1,4 +1,4 @@
-import { add } from "date-fns";
+import { endOfToday } from "date-fns";
 import prisma from "./client.js";
 
 export const client = {
@@ -34,12 +34,14 @@ export const client = {
       return prisma.game.findUnique({ where: { id } });
     },
     today: () => {
-      const now = new Date();
+      const start = new Date();
+      const end = endOfToday();
+      console.info(`Looking for games between ${start} and ${end}`);
       return prisma.game.findMany({
         where: {
           date: {
-            gte: now,
-            lte: add(now, { days: 1 }),
+            gte: start,
+            lte: end,
           },
         },
         include: {
@@ -75,9 +77,33 @@ export const client = {
       });
     },
     withUnsentNotificationsForFutureGames: () => {
+      const start = new Date();
+      const end = endOfToday();
+      console.info(`Looking for notifications between ${start} and ${end}`);
       return prisma.user.findMany({
-        include: {
+        select: {
+          id: true,
+          notificationsEnabled: true,
           subscriptions: {
+            where: {
+              notifications: {
+                some: {
+                  AND: [
+                    {
+                      sentOn: null,
+                    },
+                    {
+                      game: {
+                        date: {
+                          gte: start,
+                          lte: end,
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
             include: {
               notifications: {
                 include: {
@@ -102,7 +128,10 @@ export const client = {
                     { sentOn: null },
                     {
                       game: {
-                        date: { gte: new Date() },
+                        date: {
+                          gte: start,
+                          lte: end,
+                        },
                       },
                     },
                   ],

@@ -14,6 +14,10 @@ export async function ingestGames() {
     getGames(formatISO(add(today, { days: 4 }), { representation: "date" })),
   ]);
 
+  console.info(
+    `Found ${schedule.flat().length} games: ${JSON.stringify(schedule.flat())}`
+  );
+
   for (const game of schedule.flat()) {
     for (const team of [game.teams.away, game.teams.home]) {
       if (team.probablePitcher) {

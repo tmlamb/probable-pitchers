@@ -241,3 +241,50 @@ test("should trigger notifications for users", async () => {
     data: { sentOn: expect.any(Date) },
   });
 });
+
+test("should recover after error", async () => {
+  prismaMock.user.findMany.mockResolvedValueOnce(pendingNotifications);
+
+  prismaMock.notification.update.mockRejectedValueOnce(new Error("oops"));
+  prismaMock.notification.update.mockResolvedValue({
+    id: -1,
+    subscriptionId: -1,
+    gameId: -1,
+    sentOn: new Date(),
+  });
+
+  await sendNotifications();
+
+  expect(prismaMock.user.findMany).toHaveBeenCalledTimes(1);
+
+  expect(sendPushNotification).toHaveBeenCalledTimes(3);
+
+  expect(sendPushNotification).toHaveBeenNthCalledWith(
+    1,
+    "PUSH_TOKEN_A",
+    "Probable Pitcher Alert",
+    "Pitching Today:\nGreg Maddux - 11:05 am\nBabe Ruth - 1:20 pm\n"
+  );
+  expect(sendPushNotification).toHaveBeenNthCalledWith(
+    2,
+    "PUSH_TOKEN_B",
+    "Probable Pitcher Alert",
+    "Pitching Today:\nJoe Jackson - 6:00 pm\n"
+  );
+  expect(sendPushNotification).toHaveBeenNthCalledWith(
+    3,
+    "PUSH_TOKEN_B2",
+    "Probable Pitcher Alert",
+    "Pitching Today:\nJoe Jackson - 5:00 pm\n"
+  );
+
+  expect(prismaMock.notification.update).toHaveBeenCalledTimes(2);
+  expect(prismaMock.notification.update).toHaveBeenNthCalledWith(1, {
+    where: { id: 11 },
+    data: { sentOn: expect.any(Date) },
+  });
+  expect(prismaMock.notification.update).toHaveBeenNthCalledWith(2, {
+    where: { id: 33 },
+    data: { sentOn: expect.any(Date) },
+  });
+});

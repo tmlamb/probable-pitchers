@@ -8,7 +8,7 @@ const TIME_FORMAT = "h:mm aaa";
 
 export async function ingestNotifications() {
   const gamesToday = await client.game.today();
-
+  console.info("Found games today:", JSON.stringify(gamesToday));
   for (const game of gamesToday) {
     const pitchers = [game.homePitcher, game.awayPitcher].filter(
       (pitcher) => !!pitcher
@@ -17,13 +17,22 @@ export async function ingestNotifications() {
     for (const pitcher of pitchers) {
       const subscriptions = await client.subscription.byPitcherId(pitcher.id);
       for (const subscription of subscriptions) {
-        const existingNotification = await client.notification.byRelations(
-          subscription.id,
-          game.id
-        );
+        try {
+          const existingNotification = await client.notification.byRelations(
+            subscription.id,
+            game.id
+          );
 
-        if (!existingNotification) {
-          await client.notification.create(subscription.id, game.id);
+          if (!existingNotification) {
+            await client.notification.create(subscription.id, game.id);
+          }
+        } catch (e) {
+          console.error(
+            "Error ingesting notifications for subscription: ",
+            subscription,
+            e
+          );
+          continue;
         }
       }
     }
@@ -33,7 +42,11 @@ export async function ingestNotifications() {
 export async function sendNotifications() {
   const usersWithNotifications =
     await client.user.withUnsentNotificationsForFutureGames();
-
+  console.info(
+    `Found ${
+      usersWithNotifications.length
+    } users with notifications: ${JSON.stringify(usersWithNotifications)}`
+  );
   for (const user of usersWithNotifications) {
     try {
       if (!user?.notificationsEnabled) {
@@ -43,9 +56,15 @@ export async function sendNotifications() {
         (subscription) => subscription.notifications
       );
 
+      console.info(
+        `User ${user.id} has ${
+          notifications.length
+        } notifications: ${JSON.stringify(notifications)}`
+      );
+
       const fulfilled = new Set<number>();
       for (const device of user.devices) {
-        let message = "Pitching Today:\n";
+        let message = "Pitching Today:";
         for (const notification of notifications) {
           const localizedGameTime = formatInTimeZone(
             notification.game.date,
@@ -53,7 +72,7 @@ export async function sendNotifications() {
             TIME_FORMAT
           );
 
-          message += `${notification.subscription.pitcher.name} - ${localizedGameTime}\n`;
+          message += `\n${notification.subscription.pitcher.name} - ${localizedGameTime}`;
           fulfilled.add(notification.id);
         }
         sendPushNotification(
