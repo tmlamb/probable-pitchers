@@ -41,7 +41,7 @@ export const pendingNotifications = [
         id: 11,
         sentOn: null,
         game: {
-          date: new Date(2022, 11, 2, 10, 5, 0, 0),
+          date: new Date("2022-11-02T15:05:00Z"),
         },
         pitcher: {
           name: "Greg Maddux",
@@ -51,7 +51,7 @@ export const pendingNotifications = [
         id: 22,
         sentOn: null,
         game: {
-          date: new Date(2022, 11, 2, 12, 20, 0, 0),
+          date: new Date("2022-11-02T17:20:00Z"),
         },
         pitcher: {
           name: "Babe Ruth",
@@ -72,7 +72,7 @@ export const pendingNotifications = [
         id: 33,
         sentOn: null,
         game: {
-          date: new Date(2022, 11, 2, 17, 0, 0, 0),
+          date: new Date("2022-11-02T22:00:00Z"),
         },
         pitcher: {
           name: "Joe Jackson",
