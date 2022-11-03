@@ -41,10 +41,10 @@ model User {
   accounts             Account[]
   sessions             Session[]
   devices              Device[]
+  notifications        Notification[]
   notificationsEnabled Boolean        @default(true)
   email                String?        @unique
   emailVerified        DateTime?
-  // The following are never used, but required by NextAuth and it's Prisma Adapter.
   image                String?
 }
 
@@ -70,6 +70,7 @@ model Pitcher {
   homeGames     Game[]         @relation("HomePitcher")
   awayGames     Game[]         @relation("AwayPitcher")
   subscriptions Subscription[]
+  notifications Notification[]
 
   @@fulltext([name])
 }
@@ -85,23 +86,24 @@ model Game {
 }
 
 model Subscription {
-  id            Int            @id @default(autoincrement())
-  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId        String
-  pitcher       Pitcher        @relation(fields: [pitcherId], references: [id], onDelete: Cascade)
-  pitcherId     Int
-  notifications Notification[]
+  id        Int     @id @default(autoincrement())
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  pitcher   Pitcher @relation(fields: [pitcherId], references: [id], onDelete: Cascade)
+  pitcherId Int
 
   @@unique([userId, pitcherId])
 }
 
 model Notification {
-  id             Int          @id @default(autoincrement())
-  subscription   Subscription @relation(fields: [subscriptionId], references: [id])
-  subscriptionId Int
-  game           Game         @relation(fields: [gameId], references: [id])
-  gameId         Int
-  sentOn         DateTime?
+  id        Int       @id @default(autoincrement())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  game      Game      @relation(fields: [gameId], references: [id])
+  gameId    Int
+  pitcher   Pitcher   @relation(fields: [pitcherId], references: [id])
+  pitcherId Int
+  sentOn    DateTime?
 
-  @@unique([subscriptionId, gameId])
+  @@unique([userId, gameId, pitcherId])
 }

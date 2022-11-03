@@ -14,7 +14,7 @@ export async function ingestGames() {
     getGames(formatISO(add(today, { days: 4 }), { representation: "date" })),
   ]);
 
-  console.info(
+  console.debug(
     `Found ${schedule.flat().length} games: ${JSON.stringify(schedule.flat())}`
   );
 

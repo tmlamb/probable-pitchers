@@ -36,41 +36,26 @@ export const mlbTeams: MlbTeam[] = [
 export const pendingNotifications = [
   {
     id: "A",
-    notificationsEnabled: true,
-    subscriptions: [
+    notifications: [
       {
-        id: 1,
-        notifications: [
-          {
-            id: 11,
-            sentOn: null,
-            game: {
-              date: new Date(2022, 11, 2, 10, 5, 0, 0),
-            },
-            subscription: {
-              pitcher: {
-                name: "Greg Maddux",
-              },
-            },
-          },
-        ],
+        id: 11,
+        sentOn: null,
+        game: {
+          date: new Date(2022, 11, 2, 10, 5, 0, 0),
+        },
+        pitcher: {
+          name: "Greg Maddux",
+        },
       },
       {
-        id: 2,
-        notifications: [
-          {
-            id: 22,
-            sentOn: null,
-            game: {
-              date: new Date(2022, 11, 2, 12, 20, 0, 0),
-            },
-            subscription: {
-              pitcher: {
-                name: "Babe Ruth",
-              },
-            },
-          },
-        ],
+        id: 22,
+        sentOn: null,
+        game: {
+          date: new Date(2022, 11, 2, 12, 20, 0, 0),
+        },
+        pitcher: {
+          name: "Babe Ruth",
+        },
       },
     ],
     devices: [
@@ -82,24 +67,16 @@ export const pendingNotifications = [
   } as any,
   {
     id: "B",
-    notificationsEnabled: true,
-    subscriptions: [
+    notifications: [
       {
-        id: 3,
-        notifications: [
-          {
-            id: 33,
-            sentOn: null,
-            game: {
-              date: new Date(2022, 11, 2, 17, 0, 0, 0),
-            },
-            subscription: {
-              pitcher: {
-                name: "Joe Jackson",
-              },
-            },
-          },
-        ],
+        id: 33,
+        sentOn: null,
+        game: {
+          date: new Date(2022, 11, 2, 17, 0, 0, 0),
+        },
+        pitcher: {
+          name: "Joe Jackson",
+        },
       },
     ],
     devices: [
@@ -110,35 +87,6 @@ export const pendingNotifications = [
       {
         timezone: "America/Chicago",
         pushToken: "PUSH_TOKEN_B2",
-      },
-    ],
-  } as any,
-  {
-    id: "C",
-    notificationsEnabled: false,
-    subscriptions: [
-      {
-        id: 4,
-        notifications: [
-          {
-            id: 44,
-            sentOn: null,
-            game: {
-              date: new Date(),
-            },
-            subscription: {
-              pitcher: {
-                name: "Pedro Martinez",
-              },
-            },
-          },
-        ],
-      },
-    ],
-    devices: [
-      {
-        timezone: "America/New_York",
-        pushToken: "PUSH_TOKEN_C",
       },
     ],
   } as any,

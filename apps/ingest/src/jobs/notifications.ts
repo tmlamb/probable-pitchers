@@ -1,4 +1,4 @@
-import { Pitcher } from "@prisma/client";
+import { Pitcher, Prisma } from "@prisma/client";
 import pkg from "date-fns-tz";
 import { client } from "../db/db.js";
 import { sendPushNotification } from "../services/push.js";
@@ -8,7 +8,7 @@ const TIME_FORMAT = "h:mm aaa";
 
 export async function ingestNotifications() {
   const gamesToday = await client.game.today();
-  console.info("Found games today:", JSON.stringify(gamesToday));
+  console.debug("Found games today:", JSON.stringify(gamesToday));
   for (const game of gamesToday) {
     const pitchers = [game.homePitcher, game.awayPitcher].filter(
       (pitcher) => !!pitcher
@@ -18,20 +18,23 @@ export async function ingestNotifications() {
       const subscriptions = await client.subscription.byPitcherId(pitcher.id);
       for (const subscription of subscriptions) {
         try {
-          const existingNotification = await client.notification.byRelations(
-            subscription.id,
-            game.id
+          await client.notification.create(
+            subscription.userId,
+            game.id,
+            pitcher.id
           );
-
-          if (!existingNotification) {
-            await client.notification.create(subscription.id, game.id);
-          }
         } catch (e) {
-          console.error(
-            "Error ingesting notifications for subscription: ",
-            subscription,
-            e
-          );
+          if (
+            e instanceof Prisma.PrismaClientKnownRequestError &&
+            e.code === "P2002" // unique constraint violation, notification already ingested
+          ) {
+            console.info("Duplicate notification cannot be created: ", e);
+          } else {
+            console.error(
+              "Unknown error ingesting notifications for subscription: ",
+              e
+            );
+          }
           continue;
         }
       }
@@ -42,37 +45,30 @@ export async function ingestNotifications() {
 export async function sendNotifications() {
   const usersWithNotifications =
     await client.user.withUnsentNotificationsForFutureGames();
-  console.info(
+  console.debug(
     `Found ${
       usersWithNotifications.length
     } users with notifications: ${JSON.stringify(usersWithNotifications)}`
   );
   for (const user of usersWithNotifications) {
     try {
-      if (!user?.notificationsEnabled) {
-        continue;
-      }
-      const notifications = user.subscriptions.flatMap(
-        (subscription) => subscription.notifications
-      );
-
-      console.info(
+      console.debug(
         `User ${user.id} has ${
-          notifications.length
-        } notifications: ${JSON.stringify(notifications)}`
+          user.notifications.length
+        } notifications: ${JSON.stringify(user.notifications)}`
       );
 
       const fulfilled = new Set<number>();
       for (const device of user.devices) {
         let message = "Pitching Today:";
-        for (const notification of notifications) {
+        for (const notification of user.notifications) {
           const localizedGameTime = formatInTimeZone(
             notification.game.date,
             device.timezone,
             TIME_FORMAT
           );
 
-          message += `\n${notification.subscription.pitcher.name} - ${localizedGameTime}`;
+          message += `\n${notification.pitcher.name} - ${localizedGameTime}`;
           fulfilled.add(notification.id);
         }
         sendPushNotification(

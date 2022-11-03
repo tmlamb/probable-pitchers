@@ -79,64 +79,35 @@ export const client = {
     withUnsentNotificationsForFutureGames: () => {
       const start = new Date();
       const end = endOfToday();
-      console.info(`Looking for notifications between ${start} and ${end}`);
+      console.info(
+        `Looking for users with unsent notifications between ${start} and ${end}`
+      );
       return prisma.user.findMany({
         select: {
           id: true,
-          notificationsEnabled: true,
-          subscriptions: {
-            where: {
-              notifications: {
-                some: {
-                  AND: [
-                    {
-                      sentOn: null,
-                    },
-                    {
-                      game: {
-                        date: {
-                          gte: start,
-                          lte: end,
-                        },
-                      },
-                    },
-                  ],
-                },
-              },
-            },
+          notifications: {
             include: {
-              notifications: {
-                include: {
-                  game: true,
-                  subscription: {
-                    include: {
-                      pitcher: true,
-                    },
-                  },
-                },
-              },
+              game: true,
+              pitcher: true,
             },
           },
           devices: true,
         },
         where: {
-          subscriptions: {
+          notificationsEnabled: true,
+          notifications: {
             some: {
-              notifications: {
-                some: {
-                  AND: [
-                    { sentOn: null },
-                    {
-                      game: {
-                        date: {
-                          gte: start,
-                          lte: end,
-                        },
-                      },
+              AND: [
+                { sentOn: null },
+                {
+                  game: {
+                    date: {
+                      gte: start,
+                      lte: end,
                     },
-                  ],
+                  },
                 },
-              },
+              ],
             },
           },
         },
@@ -144,16 +115,9 @@ export const client = {
     },
   },
   notification: {
-    byRelations: (subscriptionId: number, gameId: number) => {
-      return prisma.notification.findUnique({
-        where: {
-          subscriptionId_gameId: { subscriptionId, gameId },
-        },
-      });
-    },
-    create: (subscriptionId: number, gameId: number) => {
+    create: (userId: string, gameId: number, pitcherId: number) => {
       return prisma.notification.create({
-        data: { subscriptionId, gameId },
+        data: { userId, gameId, pitcherId },
       });
     },
     complete: (id: number, sentOn: Date) => {

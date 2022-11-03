@@ -1,4 +1,5 @@
 import { beforeEach, jest, test } from "@jest/globals";
+import { Prisma } from "@prisma/client";
 import { mockReset } from "jest-mock-extended";
 import { sendPushNotification } from "../services/push";
 import { pendingNotifications } from "../test/fixtures";
@@ -38,17 +39,17 @@ test("should ignore existing notification", async () => {
     },
   ]);
 
-  prismaMock.notification.findUnique.mockResolvedValueOnce({
-    id: 9,
-    subscriptionId: 7,
-    gameId: 1,
-    sentOn: null,
-  });
-  prismaMock.notification.findUnique.mockResolvedValueOnce(null);
-
+  prismaMock.notification.create.mockRejectedValueOnce(
+    new Prisma.PrismaClientKnownRequestError(
+      "Unique constraint violation",
+      "P2002",
+      "1"
+    )
+  );
   prismaMock.notification.create.mockResolvedValueOnce({
     id: 10,
-    subscriptionId: 8,
+    userId: "B",
+    pitcherId: 2,
     gameId: 1,
     sentOn: null,
   });
@@ -62,19 +63,19 @@ test("should ignore existing notification", async () => {
     where: { pitcherId: 2 },
   });
 
-  expect(prismaMock.notification.findUnique).toHaveBeenCalledTimes(2);
-  expect(prismaMock.notification.findUnique).toHaveBeenNthCalledWith(1, {
-    where: { subscriptionId_gameId: { subscriptionId: 7, gameId: 1 } },
-  });
-  expect(prismaMock.notification.findUnique).toHaveBeenNthCalledWith(2, {
-    where: { subscriptionId_gameId: { subscriptionId: 8, gameId: 1 } },
-  });
-
-  expect(prismaMock.notification.create).toHaveBeenCalledTimes(1);
+  expect(prismaMock.notification.create).toHaveBeenCalledTimes(2);
   expect(prismaMock.notification.create).toHaveBeenCalledWith({
     data: {
-      subscriptionId: 8,
+      userId: "A",
       gameId: 1,
+      pitcherId: 2,
+    },
+  });
+  expect(prismaMock.notification.create).toHaveBeenCalledWith({
+    data: {
+      userId: "B",
+      gameId: 1,
+      pitcherId: 2,
     },
   });
 });
@@ -121,24 +122,25 @@ test("should ingest multiple game notifications", async () => {
   ]);
   prismaMock.subscription.findMany.mockResolvedValueOnce([]);
 
-  prismaMock.notification.findUnique.mockResolvedValue(null);
-
   prismaMock.notification.create.mockResolvedValueOnce({
     id: 11111,
-    subscriptionId: 1111,
+    userId: "A",
     gameId: 1,
+    pitcherId: 11,
     sentOn: null,
   });
   prismaMock.notification.create.mockResolvedValueOnce({
     id: 22222,
-    subscriptionId: 2222,
+    userId: "B",
     gameId: 1,
+    pitcherId: 11,
     sentOn: null,
   });
   prismaMock.notification.create.mockResolvedValueOnce({
     id: 33333,
-    subscriptionId: 3333,
+    userId: "C",
     gameId: 2,
+    pitcherId: 33,
     sentOn: null,
   });
 
@@ -160,34 +162,26 @@ test("should ingest multiple game notifications", async () => {
     where: { pitcherId: 44 },
   });
 
-  expect(prismaMock.notification.findUnique).toHaveBeenCalledTimes(3);
-  expect(prismaMock.notification.findUnique).toHaveBeenNthCalledWith(1, {
-    where: { subscriptionId_gameId: { subscriptionId: 1111, gameId: 1 } },
-  });
-  expect(prismaMock.notification.findUnique).toHaveBeenNthCalledWith(2, {
-    where: { subscriptionId_gameId: { subscriptionId: 2222, gameId: 1 } },
-  });
-  expect(prismaMock.notification.findUnique).toHaveBeenNthCalledWith(3, {
-    where: { subscriptionId_gameId: { subscriptionId: 3333, gameId: 2 } },
-  });
-
   expect(prismaMock.notification.create).toHaveBeenCalledTimes(3);
   expect(prismaMock.notification.create).toHaveBeenCalledWith({
     data: {
-      subscriptionId: 1111,
+      userId: "A",
       gameId: 1,
+      pitcherId: 11,
     },
   });
   expect(prismaMock.notification.create).toHaveBeenCalledWith({
     data: {
-      subscriptionId: 2222,
+      userId: "B",
       gameId: 1,
+      pitcherId: 11,
     },
   });
   expect(prismaMock.notification.create).toHaveBeenCalledWith({
     data: {
-      subscriptionId: 3333,
+      userId: "C",
       gameId: 2,
+      pitcherId: 33,
     },
   });
 });
@@ -197,8 +191,9 @@ test("should trigger notifications for users", async () => {
 
   prismaMock.notification.update.mockResolvedValue({
     id: -1,
-    subscriptionId: -1,
+    userId: "A",
     gameId: -1,
+    pitcherId: -1,
     sentOn: new Date(),
   });
 
@@ -212,19 +207,19 @@ test("should trigger notifications for users", async () => {
     1,
     "PUSH_TOKEN_A",
     "Probable Pitcher Alert",
-    "Pitching Today:\nGreg Maddux - 11:05 am\nBabe Ruth - 1:20 pm\n"
+    "Pitching Today:\nGreg Maddux - 11:05 am\nBabe Ruth - 1:20 pm"
   );
   expect(sendPushNotification).toHaveBeenNthCalledWith(
     2,
     "PUSH_TOKEN_B",
     "Probable Pitcher Alert",
-    "Pitching Today:\nJoe Jackson - 6:00 pm\n"
+    "Pitching Today:\nJoe Jackson - 6:00 pm"
   );
   expect(sendPushNotification).toHaveBeenNthCalledWith(
     3,
     "PUSH_TOKEN_B2",
     "Probable Pitcher Alert",
-    "Pitching Today:\nJoe Jackson - 5:00 pm\n"
+    "Pitching Today:\nJoe Jackson - 5:00 pm"
   );
 
   expect(prismaMock.notification.update).toHaveBeenCalledTimes(3);
@@ -248,8 +243,9 @@ test("should recover after error", async () => {
   prismaMock.notification.update.mockRejectedValueOnce(new Error("oops"));
   prismaMock.notification.update.mockResolvedValue({
     id: -1,
-    subscriptionId: -1,
+    userId: "A",
     gameId: -1,
+    pitcherId: -1,
     sentOn: new Date(),
   });
 
@@ -263,19 +259,19 @@ test("should recover after error", async () => {
     1,
     "PUSH_TOKEN_A",
     "Probable Pitcher Alert",
-    "Pitching Today:\nGreg Maddux - 11:05 am\nBabe Ruth - 1:20 pm\n"
+    "Pitching Today:\nGreg Maddux - 11:05 am\nBabe Ruth - 1:20 pm"
   );
   expect(sendPushNotification).toHaveBeenNthCalledWith(
     2,
     "PUSH_TOKEN_B",
     "Probable Pitcher Alert",
-    "Pitching Today:\nJoe Jackson - 6:00 pm\n"
+    "Pitching Today:\nJoe Jackson - 6:00 pm"
   );
   expect(sendPushNotification).toHaveBeenNthCalledWith(
     3,
     "PUSH_TOKEN_B2",
     "Probable Pitcher Alert",
-    "Pitching Today:\nJoe Jackson - 5:00 pm\n"
+    "Pitching Today:\nJoe Jackson - 5:00 pm"
   );
 
   expect(prismaMock.notification.update).toHaveBeenCalledTimes(2);

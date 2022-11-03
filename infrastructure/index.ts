@@ -179,7 +179,7 @@ const seedJob = new k8s.batch.v1.CronJob(
                     },
                     {
                       name: "INGEST_JOBS",
-                      value: "teams,players",
+                      value: "teams,pitchers",
                     },
                   ],
                 },
@@ -225,7 +225,7 @@ const playerJob = new k8s.batch.v1.CronJob(
                     },
                     {
                       name: "INGEST_JOBS",
-                      value: "players",
+                      value: "pitchers",
                     },
                   ],
                 },
@@ -250,7 +250,7 @@ const notifyJob = new k8s.batch.v1.CronJob(
       namespace: namespaceName,
     },
     spec: {
-      schedule: "0,30 12,13,14 * * *",
+      schedule: "0,30 13,14,15,16,17,18,19,20,21,22 * * *",
       jobTemplate: {
         spec: {
           template: {

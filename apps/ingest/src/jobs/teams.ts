@@ -6,6 +6,7 @@ export async function ingestTeams() {
   const season = format(new Date(), "yyyy");
 
   const teams = await getTeams(season);
+  console.debug("Found teams: ", teams);
 
   for (const team of teams) {
     const existingTeam = await client.team.byId(team.id);
