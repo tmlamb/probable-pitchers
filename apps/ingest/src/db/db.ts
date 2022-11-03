@@ -1,4 +1,4 @@
-import { endOfToday } from "date-fns";
+import { add, endOfToday } from "date-fns";
 import prisma from "./client.js";
 
 export const client = {
@@ -35,7 +35,7 @@ export const client = {
     },
     today: () => {
       const start = new Date();
-      const end = endOfToday();
+      const end = add(endOfToday(), { hours: 6 });
       console.info(`Looking for games between ${start} and ${end}`);
       return prisma.game.findMany({
         where: {
@@ -78,7 +78,7 @@ export const client = {
     },
     withUnsentNotificationsForFutureGames: () => {
       const start = new Date();
-      const end = endOfToday();
+      const end = add(endOfToday(), { hours: 6 });
       console.info(
         `Looking for users with unsent notifications between ${start} and ${end}`
       );
