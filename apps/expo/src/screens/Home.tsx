@@ -14,6 +14,7 @@ import _ from "lodash";
 import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, SectionList } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+import * as Sentry from "sentry-expo";
 import HeaderLeftContainer from "../components/HeaderLeftContainer";
 import HeaderRightContainer from "../components/HeaderRightContainer";
 import LinkButton from "../components/LinkButton";
@@ -69,7 +70,14 @@ export const Home = ({
     isSuccess,
     isLoading,
     isError,
+    error,
   } = trpc.subscription.byUserId.useQuery();
+
+  if (isError) {
+    Sentry.Native.captureException(
+      `Error fetching subscriptions on homepage: ${error}`
+    );
+  }
 
   const subscriptionsSchedule: {
     nextGameDay: string;
