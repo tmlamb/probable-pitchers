@@ -21,12 +21,12 @@ config:
   probable-pitchers:dbUrl:
     secure: AAABAI7PEZ7qo3RSB/es2FeIUM9aWn0SyuPkeq6Qx/9Sc6dZ5bMhzLzMNj7zyMJ185bkpF3pYd4yRyawUc8wWMNcZZCJca9UoL91TjtftrXGNfcNaP2/38PayGhc6LSCeLIwn7xMj+WcJIjznOh8jsxk7FZ9keU931SNUVlSQ5OCTc4WLSJ0WvnhwrVPusvd/8gia3HFYPOojB1pbwQoTcbBT7OQLPNVnvnh8GZHUFY=
   probable-pitchers:domains:
-  - www.probablepitchers.net
-  - probablepitchers.net
+    - www.probablepitchers.net
+    - probablepitchers.net
   probable-pitchers:nextAuthExpoUrl:
     secure: AAABAIunubZ3vVEv+9ZDyzJA+HjEgn9E5Xiyr8Jt0QUY2U0X+228yTMm/GYRF0sNuNkWMOV2bl9Wpv5zvqsJOgWmkMqZJvgHYRQgNCWK
   probable-pitchers:nextAuthSecret:
     secure: AAABAChsoNi91oSFQwjCYiKA/4t898wSbFssaoWM55whHKzdSv0hhB4Qlz1NdRMRxTjN4eTwLQ7fa3PhfQjzii3UXbnIPPkfc9dYAw==
   probable-pitchers:nextAuthUrl:
     secure: AAABAGPx5/e+RwFVRM9lcmcgxfbhV6dmt82KexeZGLAoJ4ZxPaH35Xr8sE1IjWSfQrsgOlrKB1N/k/l/
-  probable-pitchers:nextjsReplicas: "3"
+  probable-pitchers:nextjsReplicas: "1"
