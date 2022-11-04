@@ -2,7 +2,7 @@ config:
   gcp:project: probable-pitchers-prod
   gcp:region: us-central1
   probable-pitchers:appleClientId:
-    secure: AAABAFvvMYel4rj2Rcllmnye8drxI/VLhGIrZUUNZn60axllx6J2ywis06RHHe/EJF1Xd9MbWu9wYJY=
+    secure: AAABAMUJ5h08x3RNtICO07PjHF/3QNTdorVxgB87GMfcn89mL9LCOP0avi2MiJFKrrnrLVz31yW1u3LsV1P0jA==
   probable-pitchers:appleClientSecret:
     secure: AAABABsp2PK2isI5V+NwbKgv609AkJrD+AefZ9AlLy1RUeoMCdWK9cfdun4YIiBzVBrhu1bBwKkup9CS/EVy22NAV4hEWBDboiQQalDQOOfKcGKp/aGV88bn6YZlw9uBkKkvZ4L4QXt5CoBLGf67joopGRcVnQcRm884AB/D97vjajZN2tscy/WhEv+iWfIH3gIY/afomxg6C5vSagBQHgoeqtiu79fEj6tV8H4S+lIGkkQiWQrG77C/VDibq5MVWiBVY/t2RiEjCNgt/tEy2aQhjcAecX9Cu4ahxZTdLCUipyWRILrtjfdnLoHo5/JFKGelc49fM5KvSoeT7NSqW2O39cdj26kIQC9p73Gxg+w5pDFBUJKGMBAVUxfwz317a3pz7OKl1cPPbrWOpO4AJO+7aeCSaHl30/PKHVB0YNDZ+m5aQzmG8Ai3hQ3X80pj1Lo=
   probable-pitchers:authGoogleClientId:
