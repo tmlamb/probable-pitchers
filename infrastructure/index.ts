@@ -54,6 +54,143 @@ const regcred = new k8s.core.v1.Secret(
   { provider: clusterProvider }
 );
 
+const seedLabels = { app: `probable-seed-${env}` };
+
+const seedJob = new k8s.batch.v1.CronJob(
+  seedLabels.app,
+  {
+    metadata: {
+      namespace: namespaceName,
+    },
+    spec: {
+      schedule: "0 0 1 2,3,4 *",
+      jobTemplate: {
+        spec: {
+          template: {
+            spec: {
+              imagePullSecrets: [
+                { name: regcred.metadata.apply((m) => m.name) },
+              ],
+              containers: [
+                {
+                  name: seedLabels.app,
+
+                  image: `ghcr.io/tmlamb/probable-pitchers-ingest:${imageTag}`,
+                  env: [
+                    {
+                      name: "DATABASE_URL",
+                      value: config.requireSecret("dbUrl"),
+                    },
+                    {
+                      name: "INGEST_JOBS",
+                      value: "teams,pitchers",
+                    },
+                  ],
+                },
+              ],
+              restartPolicy: "OnFailure",
+            },
+          },
+        },
+      },
+    },
+  },
+  {
+    provider: clusterProvider,
+  }
+);
+
+const playerLabels = { app: `probable-player-${env}` };
+
+const playerJob = new k8s.batch.v1.CronJob(
+  playerLabels.app,
+  {
+    metadata: {
+      namespace: namespaceName,
+    },
+    spec: {
+      schedule: "0 6 * 3,4,5,6,7,8,9,10,11 *",
+      jobTemplate: {
+        spec: {
+          template: {
+            spec: {
+              imagePullSecrets: [
+                { name: regcred.metadata.apply((m) => m.name) },
+              ],
+              containers: [
+                {
+                  name: playerLabels.app,
+
+                  image: `ghcr.io/tmlamb/probable-pitchers-ingest:${imageTag}`,
+                  env: [
+                    {
+                      name: "DATABASE_URL",
+                      value: config.requireSecret("dbUrl"),
+                    },
+                    {
+                      name: "INGEST_JOBS",
+                      value: "pitchers",
+                    },
+                  ],
+                },
+              ],
+              restartPolicy: "OnFailure",
+            },
+          },
+        },
+      },
+    },
+  },
+  {
+    provider: clusterProvider,
+  }
+);
+const notifyLabels = { app: `probable-notify-${env}` };
+
+const notifyJob = new k8s.batch.v1.CronJob(
+  notifyLabels.app,
+  {
+    metadata: {
+      namespace: namespaceName,
+    },
+    spec: {
+      schedule: "0,30 13,14,15,16,17,18,19,20,21,22 * 3,4,5,6,7,8,9,10,11 *",
+      jobTemplate: {
+        spec: {
+          template: {
+            spec: {
+              imagePullSecrets: [
+                { name: regcred.metadata.apply((m) => m.name) },
+              ],
+              containers: [
+                {
+                  name: notifyLabels.app,
+
+                  image: `ghcr.io/tmlamb/probable-pitchers-ingest:${imageTag}`,
+                  env: [
+                    {
+                      name: "DATABASE_URL",
+                      value: config.requireSecret("dbUrl"),
+                    },
+                    {
+                      name: "INGEST_JOBS",
+                      value: "games,notifications",
+                    },
+                  ],
+                },
+              ],
+              restartPolicy: "OnFailure",
+            },
+          },
+        },
+      },
+    },
+  },
+  {
+    provider: clusterProvider,
+  }
+);
+
 const appLabels = { app: `probable-nextjs-${env}` };
 
 const deployment = new k8s.apps.v1.Deployment(
@@ -150,143 +287,6 @@ const service = new k8s.core.v1.Service(
   }
 );
 
-const seedLabels = { app: `probable-seed-${env}` };
-
-const seedJob = new k8s.batch.v1.CronJob(
-  seedLabels.app,
-  {
-    metadata: {
-      namespace: namespaceName,
-    },
-    spec: {
-      schedule: "0 0 1 2 *",
-      jobTemplate: {
-        spec: {
-          template: {
-            spec: {
-              imagePullSecrets: [
-                { name: regcred.metadata.apply((m) => m.name) },
-              ],
-              containers: [
-                {
-                  name: seedLabels.app,
-
-                  image: `ghcr.io/tmlamb/probable-pitchers-ingest:${imageTag}`,
-                  env: [
-                    {
-                      name: "DATABASE_URL",
-                      value: config.requireSecret("dbUrl"),
-                    },
-                    {
-                      name: "INGEST_JOBS",
-                      value: "teams,pitchers",
-                    },
-                  ],
-                },
-              ],
-              restartPolicy: "OnFailure",
-            },
-          },
-        },
-      },
-    },
-  },
-  {
-    provider: clusterProvider,
-  }
-);
-
-const playerLabels = { app: `probable-player-${env}` };
-
-const playerJob = new k8s.batch.v1.CronJob(
-  playerLabels.app,
-  {
-    metadata: {
-      namespace: namespaceName,
-    },
-    spec: {
-      schedule: "0 6 * * *",
-      jobTemplate: {
-        spec: {
-          template: {
-            spec: {
-              imagePullSecrets: [
-                { name: regcred.metadata.apply((m) => m.name) },
-              ],
-              containers: [
-                {
-                  name: playerLabels.app,
-
-                  image: `ghcr.io/tmlamb/probable-pitchers-ingest:${imageTag}`,
-                  env: [
-                    {
-                      name: "DATABASE_URL",
-                      value: config.requireSecret("dbUrl"),
-                    },
-                    {
-                      name: "INGEST_JOBS",
-                      value: "pitchers",
-                    },
-                  ],
-                },
-              ],
-              restartPolicy: "OnFailure",
-            },
-          },
-        },
-      },
-    },
-  },
-  {
-    provider: clusterProvider,
-  }
-);
-const notifyLabels = { app: `probable-notify-${env}` };
-
-const notifyJob = new k8s.batch.v1.CronJob(
-  notifyLabels.app,
-  {
-    metadata: {
-      namespace: namespaceName,
-    },
-    spec: {
-      schedule: "0,30 13,14,15,16,17,18,19,20,21,22 * * *",
-      jobTemplate: {
-        spec: {
-          template: {
-            spec: {
-              imagePullSecrets: [
-                { name: regcred.metadata.apply((m) => m.name) },
-              ],
-              containers: [
-                {
-                  name: notifyLabels.app,
-
-                  image: `ghcr.io/tmlamb/probable-pitchers-ingest:${imageTag}`,
-                  env: [
-                    {
-                      name: "DATABASE_URL",
-                      value: config.requireSecret("dbUrl"),
-                    },
-                    {
-                      name: "INGEST_JOBS",
-                      value: "games,notifications",
-                    },
-                  ],
-                },
-              ],
-              restartPolicy: "OnFailure",
-            },
-          },
-        },
-      },
-    },
-  },
-  {
-    provider: clusterProvider,
-  }
-);
-
 const ipAddress = new gcp.compute.GlobalAddress(`probable-ip-${env}`, {
   project: gcp.config.project,
   addressType: "EXTERNAL",
@@ -361,11 +361,52 @@ const ingress = new k8s.networking.v1.Ingress(
                   },
                 },
               },
+              {
+                path: "/api/metrics",
+                pathType: "Exact",
+                backend: {
+                  service: {
+                    name: "default-http-backend",
+                    namespaceName: "kube-system",
+                    port: {
+                      number: 80,
+                    },
+                  },
+                },
+              },
             ],
           },
         };
         return rule;
       }),
+    },
+  },
+  {
+    provider: clusterProvider,
+  }
+);
+
+const podMon = new k8s.apiextensions.CustomResource(
+  `probable-pod-mon-${env}`,
+  {
+    apiVersion: "monitoring.googleapis.com/v1",
+    kind: "PodMonitoring",
+    metadata: {
+      namespace: namespaceName,
+    },
+    spec: {
+      selector: {
+        matchLabels: {
+          app: service.metadata.apply((m) => m.name),
+        },
+      },
+      endpoints: [
+        {
+          port: 80,
+          path: "/api/metrics",
+          interval: "30s",
+        },
+      ],
     },
   },
   {
