@@ -206,20 +206,20 @@ test("should trigger notifications for users", async () => {
   expect(sendPushNotification).toHaveBeenNthCalledWith(
     1,
     "PUSH_TOKEN_A",
-    "Probable Pitcher Alert",
-    "Pitching Today:\nGreg Maddux - 11:05 am\nBabe Ruth - 1:20 pm"
+    "Probable Pitchers Today",
+    "Greg Maddux - 11:05 am\nBabe Ruth - 1:20 pm"
   );
   expect(sendPushNotification).toHaveBeenNthCalledWith(
     2,
     "PUSH_TOKEN_B",
-    "Probable Pitcher Alert",
-    "Pitching Today:\nJoe Jackson - 6:00 pm"
+    "Probable Pitcher Today",
+    "Joe Jackson - 6:00 pm"
   );
   expect(sendPushNotification).toHaveBeenNthCalledWith(
     3,
     "PUSH_TOKEN_B2",
-    "Probable Pitcher Alert",
-    "Pitching Today:\nJoe Jackson - 5:00 pm"
+    "Probable Pitcher Today",
+    "Joe Jackson - 5:00 pm"
   );
 
   expect(prismaMock.notification.update).toHaveBeenCalledTimes(3);
@@ -258,20 +258,20 @@ test("should recover after error", async () => {
   expect(sendPushNotification).toHaveBeenNthCalledWith(
     1,
     "PUSH_TOKEN_A",
-    "Probable Pitcher Alert",
-    "Pitching Today:\nGreg Maddux - 11:05 am\nBabe Ruth - 1:20 pm"
+    "Probable Pitchers Today",
+    "Greg Maddux - 11:05 am\nBabe Ruth - 1:20 pm"
   );
   expect(sendPushNotification).toHaveBeenNthCalledWith(
     2,
     "PUSH_TOKEN_B",
-    "Probable Pitcher Alert",
-    "Pitching Today:\nJoe Jackson - 6:00 pm"
+    "Probable Pitcher Today",
+    "Joe Jackson - 6:00 pm"
   );
   expect(sendPushNotification).toHaveBeenNthCalledWith(
     3,
     "PUSH_TOKEN_B2",
-    "Probable Pitcher Alert",
-    "Pitching Today:\nJoe Jackson - 5:00 pm"
+    "Probable Pitcher Today",
+    "Joe Jackson - 5:00 pm"
   );
 
   expect(prismaMock.notification.update).toHaveBeenCalledTimes(2);

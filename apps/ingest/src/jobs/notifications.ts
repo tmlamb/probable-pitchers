@@ -60,7 +60,7 @@ export async function sendNotifications() {
 
       const fulfilled = new Set<number>();
       for (const device of user.devices) {
-        let message = "Pitching Today:";
+        let messages: string[] = [];
         for (const notification of user.notifications) {
           const localizedGameTime = formatInTimeZone(
             notification.game.date,
@@ -68,13 +68,13 @@ export async function sendNotifications() {
             TIME_FORMAT
           );
 
-          message += `\n${notification.pitcher.name} - ${localizedGameTime}`;
+          messages.push(`${notification.pitcher.name} - ${localizedGameTime}`);
           fulfilled.add(notification.id);
         }
         sendPushNotification(
           device.pushToken,
-          "Probable Pitcher Alert",
-          message
+          `Probable Pitcher${messages.length > 1 ? "s" : ""} Today`,
+          messages.join("\n")
         );
       }
       for (const id of fulfilled) {
