@@ -293,7 +293,7 @@ const ipAddress = new gcp.compute.GlobalAddress(`probable-ip-${env}`, {
 });
 
 const managedCertificate = new k8s.apiextensions.CustomResource(
-  `probable-cert-${env}`,
+  `probable-certificate-${env}`,
   {
     apiVersion: "networking.gke.io/v1",
     kind: "ManagedCertificate",
