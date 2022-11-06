@@ -82,6 +82,21 @@ export const client = {
       console.info(
         `Looking for users with unsent notifications between ${start} and ${end}`
       );
+      const notifyCondition = {
+        AND: [
+          {
+            sentOn: null,
+          },
+          {
+            game: {
+              date: {
+                gte: start,
+                lte: end,
+              },
+            },
+          },
+        ],
+      };
       return prisma.user.findMany({
         select: {
           id: true,
@@ -90,25 +105,14 @@ export const client = {
               game: true,
               pitcher: true,
             },
+            where: notifyCondition,
           },
           devices: true,
         },
         where: {
           notificationsEnabled: true,
           notifications: {
-            some: {
-              AND: [
-                { sentOn: null },
-                {
-                  game: {
-                    date: {
-                      gte: start,
-                      lte: end,
-                    },
-                  },
-                },
-              ],
-            },
+            some: notifyCondition,
           },
         },
       });
