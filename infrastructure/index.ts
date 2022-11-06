@@ -351,7 +351,7 @@ const ingress = new k8s.networking.v1.Ingress(
             paths: [
               {
                 path: "/api/metrics",
-                pathType: "Exact",
+                pathType: "Prefix",
                 backend: {
                   service: {
                     name: "default-http-backend",
@@ -386,30 +386,30 @@ const ingress = new k8s.networking.v1.Ingress(
   }
 );
 
-const podMon = new k8s.apiextensions.CustomResource(
-  `probable-pod-mon-${env}`,
-  {
-    apiVersion: "monitoring.googleapis.com/v1",
-    kind: "PodMonitoring",
-    metadata: {
-      namespace: namespaceName,
-    },
-    spec: {
-      selector: {
-        matchLabels: {
-          app: service.metadata.apply((m) => m.name),
-        },
-      },
-      endpoints: [
-        {
-          port: 80,
-          path: "/api/metrics",
-          interval: "30s",
-        },
-      ],
-    },
-  },
-  {
-    provider: clusterProvider,
-  }
-);
+// const podMon = new k8s.apiextensions.CustomResource(
+//   `probable-pod-mon-${env}`,
+//   {
+//     apiVersion: "monitoring.googleapis.com/v1",
+//     kind: "PodMonitoring",
+//     metadata: {
+//       namespace: namespaceName,
+//     },
+//     spec: {
+//       selector: {
+//         matchLabels: {
+//           app: service.metadata.apply((m) => m.name),
+//         },
+//       },
+//       endpoints: [
+//         {
+//           port: 80,
+//           path: "/api/metrics",
+//           interval: "30s",
+//         },
+//       ],
+//     },
+//   },
+//   {
+//     provider: clusterProvider,
+//   }
+// );
