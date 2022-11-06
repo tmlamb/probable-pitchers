@@ -1,5 +1,8 @@
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
+import { useState } from "react";
+import Modal from "./Modal";
+import SignIn from "./SignIn";
 
 // The approach used in this component shows how to build a sign in and sign out
 // component that works on pages which support both client and server side
@@ -7,7 +10,7 @@ import Link from "next/link";
 export default function Header() {
   const { data: session, status } = useSession();
   const loading = status === "loading";
-
+  const [showSignIn, setShowSignIn] = useState(false);
   return (
     <header>
       <div>
@@ -16,17 +19,12 @@ export default function Header() {
         >
           {!session && (
             <>
-              <span className={``}>You are not signed in</span>
-              <a
-                href={`/api/auth/signin`}
-                className={``}
-                onClick={(e) => {
-                  e.preventDefault();
-                  signIn();
-                }}
-              >
-                Sign in
-              </a>
+              <button onClick={() => setShowSignIn(true)}>
+                <span className={``}>Sign In</span>
+              </button>
+              <Modal open={showSignIn} setOpen={setShowSignIn}>
+                <SignIn />
+              </Modal>
             </>
           )}
           {session?.user && (

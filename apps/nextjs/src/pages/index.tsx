@@ -12,6 +12,7 @@ const Home: NextPage = () => {
           content="Get notified when your favorite pitchers are scheduled to pitch."
         />
         <link rel="icon" href="/favicon.ico" />
+        <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
       </Head>
       <Layout>
         <main className="container flex flex-col items-center justify-center min-h-screen p-4 mx-auto">
