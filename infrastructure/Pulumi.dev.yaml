@@ -21,7 +21,7 @@ config:
   probable-pitchers:dbUrl:
     secure: AAABANyHjR2GOw31Zw0s/Mvh0hFM1cy7K/JbZCJsaJSLy3b2bJSsdf9ZdLkOJV8WOOvMlYechXUBzRzla9SngNw3G+Le2xQ+7/szg79KOaOe9AhfnCznnHOUhetoYSU1NQ8+LTQMC1eCtPF/6mDcO8LT5yF3G4RXh4+8nFJqS033v49XHr/3DuaF7qhwKDE1JXA8kU0dULJzFyhNcwbytlY3KUx874MuRYjfGEBS+20=
   probable-pitchers:domains:
-  - dev.probablepitchers.net
+    - dev.probablepitcher.com
   probable-pitchers:nextAuthExpoUrl:
     secure: AAABAFSCPf51LJAu6rrAyHRPkxMJ04ZuJgvr9HtMCsWvN56XKSbhBwHjoOWrpr+Q8eJP4qfOzbx2Mvnfp9EUlNkimGevxVd6Tg5EjsJg
   probable-pitchers:nextAuthSecret:
