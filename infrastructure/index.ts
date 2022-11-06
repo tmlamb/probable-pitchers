@@ -350,18 +350,6 @@ const ingress = new k8s.networking.v1.Ingress(
           http: {
             paths: [
               {
-                path: "/",
-                pathType: "Prefix",
-                backend: {
-                  service: {
-                    name: service.metadata.apply((m) => m.name),
-                    port: {
-                      number: service.spec.ports[0].apply((p) => p.port),
-                    },
-                  },
-                },
-              },
-              {
                 path: "/api/metrics",
                 pathType: "Exact",
                 backend: {
@@ -370,6 +358,18 @@ const ingress = new k8s.networking.v1.Ingress(
                     namespaceName: "kube-system",
                     port: {
                       number: 80,
+                    },
+                  },
+                },
+              },
+              {
+                path: "/",
+                pathType: "Prefix",
+                backend: {
+                  service: {
+                    name: service.metadata.apply((m) => m.name),
+                    port: {
+                      number: service.spec.ports[0].apply((p) => p.port),
                     },
                   },
                 },
