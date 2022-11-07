@@ -1,3 +1,4 @@
+import * as gcp from "@pulumi/gcp";
 import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
 import { containerRegistry } from "./config";
@@ -286,10 +287,10 @@ const service = new k8s.core.v1.Service(
   }
 );
 
-// const ipAddress = new gcp.compute.GlobalAddress(`probable-ip-${env}`, {
-//   project: gcp.config.project,
-//   addressType: "EXTERNAL",
-// });
+const ipAddress = new gcp.compute.GlobalAddress(`probable-address-${env}`, {
+  project: gcp.config.project,
+  addressType: "EXTERNAL",
+});
 
 // const managedCertificate = new k8s.apiextensions.CustomResource(
 //   `probable-certificate-${env}`,
