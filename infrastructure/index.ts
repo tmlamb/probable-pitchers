@@ -292,99 +292,99 @@ const ipAddress = new gcp.compute.GlobalAddress(`probable-address-${env}`, {
   addressType: "EXTERNAL",
 });
 
-// const managedCertificate = new k8s.apiextensions.CustomResource(
-//   `probable-certificate-${env}`,
-//   {
-//     apiVersion: "networking.gke.io/v1",
-//     kind: "ManagedCertificate",
-//     metadata: {
-//       namespace: namespaceName,
-//     },
-//     spec: {
-//       domains: domains,
-//     },
-//   },
-//   {
-//     provider: clusterProvider,
-//   }
-// );
+const managedCertificate = new k8s.apiextensions.CustomResource(
+  `probable-certificate-${env}`,
+  {
+    apiVersion: "networking.gke.io/v1",
+    kind: "ManagedCertificate",
+    metadata: {
+      namespace: namespaceName,
+    },
+    spec: {
+      domains: domains,
+    },
+  },
+  {
+    provider: clusterProvider,
+  }
+);
 
-// const httpsRedirect = new k8s.apiextensions.CustomResource(
-//   `probable-https-redirect-${env}`,
-//   {
-//     apiVersion: "networking.gke.io/v1beta1",
-//     kind: "FrontendConfig",
-//     metadata: {
-//       namespace: namespaceName,
-//     },
-//     spec: {
-//       redirectToHttps: {
-//         enabled: true,
-//         responseCodeName: "MOVED_PERMANENTLY_DEFAULT",
-//       },
-//     },
-//   },
-//   {
-//     provider: clusterProvider,
-//   }
-// );
+const httpsRedirect = new k8s.apiextensions.CustomResource(
+  `probable-https-redirect-${env}`,
+  {
+    apiVersion: "networking.gke.io/v1beta1",
+    kind: "FrontendConfig",
+    metadata: {
+      namespace: namespaceName,
+    },
+    spec: {
+      redirectToHttps: {
+        enabled: true,
+        responseCodeName: "MOVED_PERMANENTLY_DEFAULT",
+      },
+    },
+  },
+  {
+    provider: clusterProvider,
+  }
+);
 
-// const ingress = new k8s.networking.v1.Ingress(
-//   `probable-ingress-${env}`,
-//   {
-//     metadata: {
-//       namespace: namespaceName,
-//       annotations: {
-//         "kubernetes.io/ingress.class": "gce",
-//         "kubernetes.io/ingress.global-static-ip-name": ipAddress.name,
-//         // "networking.gke.io/managed-certificates":
-//         //   managedCertificate.metadata.apply((m) => m.name),
-//         // "networking.gke.io/v1beta1.FrontendConfig":
-//         //   httpsRedirect.metadata.apply((m) => m.name),
-//       },
-//     },
-//     spec: {
-//       rules: domains.map((domain) => {
-//         const rule = {
-//           host: domain,
-//           http: {
-//             paths: [
-//               // {
-//               //   path: "/api/metrics",
-//               //   pathType: "Prefix",
-//               //   backend: {
-//               //     service: {
-//               //       name: "default-http-backend",
-//               //       namespaceName: "kube-system",
-//               //       port: {
-//               //         number: 80,
-//               //       },
-//               //     },
-//               //   },
-//               // },
-//               {
-//                 path: "/",
-//                 pathType: "Prefix",
-//                 backend: {
-//                   service: {
-//                     name: service.metadata.apply((m) => m.name),
-//                     port: {
-//                       number: service.spec.ports[0].apply((p) => p.port),
-//                     },
-//                   },
-//                 },
-//               },
-//             ],
-//           },
-//         };
-//         return rule;
-//       }),
-//     },
-//   },
-//   {
-//     provider: clusterProvider,
-//   }
-// );
+const ingress = new k8s.networking.v1.Ingress(
+  `probable-ingress-${env}`,
+  {
+    metadata: {
+      namespace: namespaceName,
+      annotations: {
+        "kubernetes.io/ingress.class": "gce",
+        "kubernetes.io/ingress.global-static-ip-name": ipAddress.name,
+        "networking.gke.io/managed-certificates":
+          managedCertificate.metadata.apply((m) => m.name),
+        // "networking.gke.io/v1beta1.FrontendConfig":
+        //   httpsRedirect.metadata.apply((m) => m.name),
+      },
+    },
+    spec: {
+      rules: domains.map((domain) => {
+        const rule = {
+          host: domain,
+          http: {
+            paths: [
+              // {
+              //   path: "/api/metrics",
+              //   pathType: "Prefix",
+              //   backend: {
+              //     service: {
+              //       name: "default-http-backend",
+              //       namespaceName: "kube-system",
+              //       port: {
+              //         number: 80,
+              //       },
+              //     },
+              //   },
+              // },
+              {
+                path: "/",
+                pathType: "Prefix",
+                backend: {
+                  service: {
+                    name: service.metadata.apply((m) => m.name),
+                    port: {
+                      number: service.spec.ports[0].apply((p) => p.port),
+                    },
+                  },
+                },
+              },
+            ],
+          },
+        };
+        return rule;
+      }),
+    },
+  },
+  {
+    provider: clusterProvider,
+  }
+);
 
 // const podMon = new k8s.apiextensions.CustomResource(
 //   `probable-pod-mon-${env}`,
