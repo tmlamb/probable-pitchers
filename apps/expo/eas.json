@@ -24,8 +24,8 @@
       "channel": "production",
       "env": {
         "APP_ENV": "production",
-        "API_BASE_URL": "https://probablepitchers.net",
-        "NEXTAUTH_URL": "https://probablepitchers.net"
+        "API_BASE_URL": "https://probablepitcher.com",
+        "NEXTAUTH_URL": "https://probablepitcher.com"
       },
       "autoIncrement": true
     }
