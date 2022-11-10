@@ -16,8 +16,8 @@
       "channel": "preview",
       "env": {
         "APP_ENV": "preview",
-        "API_BASE_URL": "https://dev.probablepitchers.net",
-        "NEXTAUTH_URL": "https://dev.probablepitchers.net"
+        "API_BASE_URL": "https://dev.probablepitcher.com",
+        "NEXTAUTH_URL": "https://dev.probablepitcher.com"
       }
     },
     "production": {
