@@ -20,7 +20,7 @@ React Native app using expo managed workflow, for distribution of "Probable Pitc
 
 ### [nextjs](apps/nextjs)
 
-Web application for probablepitchers.net, providing users access to the subscription management online.
+Web application for probablepitcher.com, providing users access to the subscription management online.
 
 ### [ingest](apps/ingest)
 

@@ -18,7 +18,7 @@ const Privacy: NextPage = () => {
         </h1>
         <p>
           Probable Pitcher operates the iOS/Android mobile apps and
-          probablepitchers.net website, which provide the SERVICE.
+          probablepitcher.com website, which provide the SERVICE.
         </p>
         <p>
           This page is used to inform mobile app users and website visitors
