@@ -4,7 +4,7 @@ import AppleProvider from "next-auth/providers/apple";
 import GoogleProvider from "next-auth/providers/google";
 
 import { prisma } from "@probable/db";
-import { isValidProvider, nativeProviders } from "./providers";
+import { isValidProvider, nativeProviders, providerPairs } from "./providers";
 
 const adapter = PrismaAdapter(prisma);
 export const authOptions: NextAuthOptions = {
@@ -77,7 +77,7 @@ export const authOptions: NextAuthOptions = {
       if (!userByAccount) {
         const provider = account.provider;
         if (isValidProvider(provider)) {
-          const counterpart = nativeProviders[provider];
+          const counterpart = providerPairs[provider];
           const userByAccount = await adapter.getUserByAccount({
             providerAccountId: account.providerAccountId,
             provider: counterpart,
