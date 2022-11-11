@@ -44,7 +44,7 @@ const Privacy: NextPage = () => {
           We want to inform you that whenever you visit our Service, we collect
           information that your browser or device sends to us that is called Log
           Data. This Log Data may include information such as your
-          computer&apos;s Internet Protocol (&dbquo;IP&dbquo;) address, browser
+          computer&apos;s Internet Protocol (&quot;IP&quot;) address, browser
           version, pages of our Service that you visit, the time and date of
           your visit, the time spent on those pages, and other statistics.
         </p>
@@ -56,11 +56,11 @@ const Privacy: NextPage = () => {
           and are stored on your computer&apos;s hard drive.
         </p>
         <p>
-          Our service uses these &dbquo;cookies&dbquo; to collect information
-          and to improve our Service. You have the option to either accept or
-          refuse these cookies, and know when a cookie is being sent to your
-          computer. If you choose to refuse our cookies, you may not be able to
-          use some portions of our Service.
+          Our service uses these &quot;cookies&quot; to collect information and
+          to improve our Service. You have the option to either accept or refuse
+          these cookies, and know when a cookie is being sent to your computer.
+          If you choose to refuse our cookies, you may not be able to use some
+          portions of our Service.
         </p>
         <h3 className="pt-4 text-2xl">Service Providers</h3>
         <p>
