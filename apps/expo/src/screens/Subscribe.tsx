@@ -336,7 +336,7 @@ export const Subscribe = () => {
                     style={tw`mb-9 mx-3 text-sm`}
                     accessibilityRole="summary"
                   >
-                    Enter a players name to perform a search.
+                    Enter a player's name to perform a search.
                   </SecondaryText>
                 </Animated.View>
               )
