@@ -21,12 +21,9 @@ export const Account = () => {
       staleTime: Infinity,
     });
 
-  const provider = accounts
-    ?.map(
-      (account) =>
-        providerLabels[account.provider as keyof typeof providerLabels]
-    )
-    .join(", ");
+  const provider = accounts?.map(
+    (account) => providerLabels[account.provider as keyof typeof providerLabels]
+  )[0];
 
   const { mutate: deleteAccount } = trpc.user.delete.useMutation({});
 
