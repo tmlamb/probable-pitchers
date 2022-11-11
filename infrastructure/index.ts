@@ -243,6 +243,14 @@ const deployment = new k8s.apps.v1.Deployment(
                   value: config.requireSecret("appleClientSecret"),
                 },
                 {
+                  name: "APPLE_WEB_CLIENT_ID",
+                  value: config.requireSecret("appleWebClientId"),
+                },
+                {
+                  name: "APPLE_WEB_CLIENT_SECRET",
+                  value: config.requireSecret("appleWebClientSecret"),
+                },
+                {
                   name: "NEXTAUTH_SECRET",
                   value: config.requireSecret("nextAuthSecret"),
                 },

@@ -5,6 +5,10 @@ config:
     secure: AAABAMUJ5h08x3RNtICO07PjHF/3QNTdorVxgB87GMfcn89mL9LCOP0avi2MiJFKrrnrLVz31yW1u3LsV1P0jA==
   probable-pitchers:appleClientSecret:
     secure: AAABABsp2PK2isI5V+NwbKgv609AkJrD+AefZ9AlLy1RUeoMCdWK9cfdun4YIiBzVBrhu1bBwKkup9CS/EVy22NAV4hEWBDboiQQalDQOOfKcGKp/aGV88bn6YZlw9uBkKkvZ4L4QXt5CoBLGf67joopGRcVnQcRm884AB/D97vjajZN2tscy/WhEv+iWfIH3gIY/afomxg6C5vSagBQHgoeqtiu79fEj6tV8H4S+lIGkkQiWQrG77C/VDibq5MVWiBVY/t2RiEjCNgt/tEy2aQhjcAecX9Cu4ahxZTdLCUipyWRILrtjfdnLoHo5/JFKGelc49fM5KvSoeT7NSqW2O39cdj26kIQC9p73Gxg+w5pDFBUJKGMBAVUxfwz317a3pz7OKl1cPPbrWOpO4AJO+7aeCSaHl30/PKHVB0YNDZ+m5aQzmG8Ai3hQ3X80pj1Lo=
+  probable-pitchers:appleWebClientId:
+    secure: AAABAFnjfxWRT+9+khozN7Nr2A+SwyY5ON+GkLC07uANQMcC55CQcFJ4lJjPSyS9ND5l
+  probable-pitchers:appleWebClientSecret:
+    secure: AAABAKLDyLYX/HTIXKTumtjt8G7UdDgGxV2SVvkrwvAiex/U3PsCP6JBaLVcsSG3KQ5sPVtLs7XWL4wqbORTeRI/iJ5LOKulcss9rIVRAErXpiLu3CDGkDzSi9TAVW+4/JJ7wkHHn/x/PoYAQOpbAO/SNavl2dZ1ccJ/gg2zT4gR9XbtldFRq+6eGwG/1OnzF959lMydWJgdznW2e4p6180l9AadPQMHyqlPodMfhyUCb3JWTbaNlyY3ofc7gqS99xJop/Tpb9a+HRXX5a7m/DVDE2r6ff809bex+FnrafDGnsugifTk2hy1oCVqrX1+nS+17aBvzWH0tGXm0IhhxRFOAOKwyhsjv5kWFpvFascwt+mKcCbW3cSWFE6MmBNHs51kQ6BxoErPHTPmbkLcL2EenKsMI3kLS7RpLP31MSVC
   probable-pitchers:authGoogleClientId:
     secure: AAABABURCgDr1O0IOiNwK2ZmRqAYn/syG1rabKVeWtVuP+OLDgQGypLcbtTvySvcoFPSHJCvE9tRgcwqS9leBPjrSawFs5SBzjJv7idmzf3e2bpt1P3D9J/pR6PLg77y6U2ski1r2+I=
   probable-pitchers:authGoogleClientSecret:
@@ -21,8 +25,8 @@ config:
   probable-pitchers:dbUrl:
     secure: AAABAI7PEZ7qo3RSB/es2FeIUM9aWn0SyuPkeq6Qx/9Sc6dZ5bMhzLzMNj7zyMJ185bkpF3pYd4yRyawUc8wWMNcZZCJca9UoL91TjtftrXGNfcNaP2/38PayGhc6LSCeLIwn7xMj+WcJIjznOh8jsxk7FZ9keU931SNUVlSQ5OCTc4WLSJ0WvnhwrVPusvd/8gia3HFYPOojB1pbwQoTcbBT7OQLPNVnvnh8GZHUFY=
   probable-pitchers:domains:
-    - www.probablepitcher.com
-    - probablepitcher.com
+  - www.probablepitcher.com
+  - probablepitcher.com
   probable-pitchers:nextAuthExpoUrl:
     secure: AAABAIunubZ3vVEv+9ZDyzJA+HjEgn9E5Xiyr8Jt0QUY2U0X+228yTMm/GYRF0sNuNkWMOV2bl9Wpv5zvqsJOgWmkMqZJvgHYRQgNCWK
   probable-pitchers:nextAuthSecret:

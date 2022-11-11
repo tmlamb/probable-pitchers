@@ -11,8 +11,8 @@ export const authOptions: NextAuthOptions = {
   adapter,
   providers: [
     AppleProvider({
-      clientId: process.env.APPLE_CLIENT_ID as string,
-      clientSecret: process.env.APPLE_CLIENT_SECRET as string,
+      clientId: process.env.APPLE_WEB_CLIENT_ID as string,
+      clientSecret: process.env.APPLE_WEB_CLIENT_SECRET as string,
       authorization: {
         params: {
           scope: "openid email",

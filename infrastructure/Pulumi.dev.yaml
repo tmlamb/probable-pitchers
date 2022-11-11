@@ -5,6 +5,10 @@ config:
     secure: AAABAKRb2xym9Igt8mgEKNa/3ZmVLR25pns5Qtz8hjeji+NvcC9PtUIF3KWt0EVeJ2gSw5mUU24dKM5wRC5r+w==
   probable-pitchers:appleClientSecret:
     secure: AAABAG29bhpRxUK+kXI/AHg2mGaE1DJ0foBSHmBNlvkVG36Q5iFC336XujgUPZ9ZTx+NMMxfJuhefaniZ80t+07MVh2HEomuyhVgRkjd/Oj+52/jCqlBcYWOmgwd0qt55tmN+ZhbKS3L6D+tmc3g5KVsUS5wDERfdPwtHuQdDznWn844UZ1TBE3ffG5PwKZh6BhJ8BjTjSke9kgNl7PfXQIWcEN50Qs4w7L3NWb9Z8X0/qIxjrtEARxKM6KcbU5uMAHSQUI7XMRN5pEr4BYlZ9dALklmwIKryC0BUEenzadu6J9o3JQ+fNpzo6G45AZIPhbtrnwxZUHM4bNuLUAkPwEqJTOqp5ddySMM2HLL8WMVko8abAD9k199lxxT2qI/W/1nbrAgx+xoMBOa98hBTdWiejI/RRxAeRmeeYWS4gSAfzoGIHHR/JujHD9pWqAUHs0=
+  probable-pitchers:appleWebClientId:
+    secure: AAABAOf//82X85DbNETVmQ7Va1ug+bxlZat+FKMVG9GR30EpHDxYtdrqa6arWHigqBSh
+  probable-pitchers:appleWebClientSecret:
+    secure: AAABADuJsBSWxyNX7WiuP4VQo9lSEGyVSlxXVboGYme/HQnr1I9Gs12SuqlmdpqeBVGvVc04J0av5LyavvLCljn8E4hX1WStVi2Zs+qmxKmaY8ntnv8/F3slu+mUduRoKBc24rqnG6GplTGnmMjxsn5WikWsm/N2sUbnZjEFDFHds9FItri7eWXEYh96sjqJAiEOOjvYtKJn+FmhMBJHdY4reUaWf8BkbPhLLDUl+dnmU5NBYqtZ9LF/Wl+mI1j0+LEzV1frm1DLZuB1dxm9QT3DcBKASfeOTUohiAy2jGvGmux9MKq7GTSyMv5sm+zJl7eVPN/TAPHADeCfkEwA/I+WY+phFVJYHt9BGKUlkifkoPA3ZDLg0sLgGUkJ5HhwNN/FsvOlYoxsQ7VTw9Nc07z4LQpT04XMOtXCehku8TL6
   probable-pitchers:authGoogleClientId:
     secure: AAABAP0LUEHU31UhUuFqL585gAyVddrlwCESzUWDvKd9X93HxGpyrWlDymC75HbVYFbFhYJmVnpL7utEnUOZuowxFpylw9IGKE5jurQjoDiMQzNFJIp6Cehco3UgtyWDEPuFEIYdwA==
   probable-pitchers:authGoogleClientSecret:
@@ -21,7 +25,7 @@ config:
   probable-pitchers:dbUrl:
     secure: AAABANyHjR2GOw31Zw0s/Mvh0hFM1cy7K/JbZCJsaJSLy3b2bJSsdf9ZdLkOJV8WOOvMlYechXUBzRzla9SngNw3G+Le2xQ+7/szg79KOaOe9AhfnCznnHOUhetoYSU1NQ8+LTQMC1eCtPF/6mDcO8LT5yF3G4RXh4+8nFJqS033v49XHr/3DuaF7qhwKDE1JXA8kU0dULJzFyhNcwbytlY3KUx874MuRYjfGEBS+20=
   probable-pitchers:domains:
-    - dev.probablepitcher.com
+  - dev.probablepitcher.com
   probable-pitchers:nextAuthExpoUrl:
     secure: AAABAFSCPf51LJAu6rrAyHRPkxMJ04ZuJgvr9HtMCsWvN56XKSbhBwHjoOWrpr+Q8eJP4qfOzbx2Mvnfp9EUlNkimGevxVd6Tg5EjsJg
   probable-pitchers:nextAuthSecret:
