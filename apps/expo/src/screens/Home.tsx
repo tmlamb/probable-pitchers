@@ -129,7 +129,7 @@ export const Home = ({
           accessibilityLabel="Navigate to subscription management screen"
         >
           <SpecialText>
-            <AntDesign name="plus" size={24} />
+            <AntDesign name="edit" size={24} />
           </SpecialText>
         </LinkButton>
       </HeaderRightContainer>
