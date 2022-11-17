@@ -3,6 +3,7 @@ import { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { AppType } from "next/dist/shared/lib/utils";
 import Head from "next/head";
+import Layout from "../components/Layout";
 import "../styles/globals.css";
 import { trpc } from "../utils/trpc";
 
@@ -22,7 +23,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
       </Head>
       <SessionProvider session={pageProps.session}>
-        <Component {...pageProps} />
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
       </SessionProvider>
     </>
   );

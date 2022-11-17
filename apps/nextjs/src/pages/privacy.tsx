@@ -96,7 +96,8 @@ const Privacy: NextPage = () => {
       <h3 className="pt-4 text-2xl">Contact Us</h3>
       <p>
         If you have any questions or suggestions about our Privacy Policy, do
-        not hesitate to contact us.
+        not hesitate to contact us:
+        <span className="block pt-2 text-sm">contact@probablepitcher.com</span>
       </p>
     </main>
   );

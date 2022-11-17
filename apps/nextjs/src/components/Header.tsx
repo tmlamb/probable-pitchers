@@ -58,7 +58,9 @@ export default function Header() {
               </div>
               <div className="flex flex-1 items-center justify-center sm:justify-start">
                 <div className="flex flex-shrink-0 items-center">
-                  <Image src="/logo.png" alt="" height={40} width={40} />
+                  <a href="/">
+                    <Image src="/logo.png" alt="" height={40} width={40} />
+                  </a>
                 </div>
                 <div className="hidden sm:ml-6 sm:block">
                   {session?.user && (
@@ -121,6 +123,19 @@ export default function Header() {
                               )}
                             >
                               Settings
+                            </a>
+                          )}
+                        </Menu.Item>
+                        <Menu.Item>
+                          {({ active }) => (
+                            <a
+                              href="/support"
+                              className={classNames(
+                                active ? "bg-gray-100" : "",
+                                "block px-4 py-2 text-sm text-gray-700"
+                              )}
+                            >
+                              Support
                             </a>
                           )}
                         </Menu.Item>

@@ -6,7 +6,6 @@ import type {
 } from "next";
 import { unstable_getServerSession } from "next-auth";
 import { useSession } from "next-auth/react";
-import Layout from "../components/Layout";
 import { trpc } from "../utils/trpc";
 
 const Settings: NextPage = () => {
@@ -18,23 +17,19 @@ const Settings: NextPage = () => {
 
   if (session) {
     return (
-      <>
-        <Layout>
-          <main className="container flex flex-col items-start justify-center min-h-screen space-y-4 max-w-5xl p-4 mx-auto">
-            <h1 className="text-5xl leading-normal font-extrabold text-gray-700">
-              Settings
-            </h1>
-            <div className="flex flex-row items-baseline justify-start">
-              <span className="text-2xl leading-normal font-extrabold mr-3 text-gray-700">
-                Notifications Enabled:
-              </span>
-              <span className="text-2xl">
-                {String(settings?.notificationsEnabled)}
-              </span>
-            </div>
-          </main>
-        </Layout>
-      </>
+      <main className="container flex flex-col items-start justify-center min-h-screen space-y-4 max-w-5xl p-4 mx-auto">
+        <h1 className="text-5xl leading-normal font-extrabold text-gray-700">
+          Settings
+        </h1>
+        <div className="flex flex-row items-baseline justify-start">
+          <span className="text-2xl leading-normal font-extrabold mr-3 text-gray-700">
+            Notifications Enabled:
+          </span>
+          <span className="text-2xl">
+            {String(settings?.notificationsEnabled)}
+          </span>
+        </div>
+      </main>
     );
   }
   return <p>Access Denied</p>;

@@ -7,7 +7,6 @@ import type {
 } from "next";
 import { unstable_getServerSession } from "next-auth";
 import { useSession } from "next-auth/react";
-import Layout from "../components/Layout";
 import { trpc } from "../utils/trpc";
 
 const Subscriptions: NextPage = () => {
@@ -24,23 +23,21 @@ const Subscriptions: NextPage = () => {
 
   if (session) {
     return (
-      <Layout>
-        <main className="container flex flex-col items-start justify-center min-h-screen space-y-4 max-w-5xl p-4 mx-auto">
-          <h1 className="text-5xl leading-normal font-extrabold text-gray-700">
-            Subscriptions
-          </h1>
-          {Object.entries(schedule).map(([nextGameDay, subscriptions]) => (
-            <div key={nextGameDay}>
-              <h2 className="text-2xl leading-normal font-extrabold text-gray-700">
-                {subscriptions.nextGameDay}
-              </h2>
-              {subscriptions.data.map((subscription) => (
-                <div key={subscription.id}>{subscription.pitcher.name}</div>
-              ))}
-            </div>
-          ))}
-        </main>
-      </Layout>
+      <main className="container flex flex-col items-start justify-center min-h-screen space-y-4 max-w-5xl p-4 mx-auto">
+        <h1 className="text-5xl leading-normal font-extrabold text-gray-700">
+          Subscriptions
+        </h1>
+        {Object.entries(schedule).map(([nextGameDay, subscriptions]) => (
+          <div key={nextGameDay}>
+            <h2 className="text-2xl leading-normal font-extrabold text-gray-700">
+              {subscriptions.nextGameDay}
+            </h2>
+            {subscriptions.data.map((subscription) => (
+              <div key={subscription.id}>{subscription.pitcher.name}</div>
+            ))}
+          </div>
+        ))}
+      </main>
     );
   }
   return <p>Access Denied</p>;
