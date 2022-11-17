@@ -1,4 +1,4 @@
-import { Game, Pitcher, Subscription } from "@prisma/client";
+import { Game, Pitcher, Subscription } from "@probable/db";
 import {
   format,
   formatDistanceToNowStrict,

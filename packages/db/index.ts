@@ -6,3 +6,5 @@ export const prisma = new PrismaClient({
       ? ["query", "info", "warn", "error"]
       : ["info", "warn", "error"],
 });
+
+export * from "@prisma/client";

@@ -1,6 +1,6 @@
 import { AntDesign } from "@expo/vector-icons";
-import { Game, Pitcher } from "@prisma/client";
 import { subscriptionSchedule } from "@probable/common";
+import { Game, Pitcher } from "@probable/db";
 import { isFuture, min } from "date-fns";
 import { formatInTimeZone } from "date-fns-tz";
 import * as Localization from "expo-localization";

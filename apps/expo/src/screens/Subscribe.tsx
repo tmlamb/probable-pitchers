@@ -1,5 +1,5 @@
 import { AntDesign } from "@expo/vector-icons";
-import { Pitcher, Subscription } from "@prisma/client";
+import { Pitcher, Subscription } from "@probable/db";
 import { PermissionStatus } from "expo-modules-core";
 import * as Notifications from "expo-notifications";
 import React, { useState } from "react";
