@@ -1,6 +1,6 @@
 import { BugAntIcon } from "@heroicons/react/24/outline";
 import type { NextPage } from "next";
-import Link from "../components/Link";
+import LinkButton from "../components/LinkButton";
 
 const Support: NextPage = () => {
   return (
@@ -13,10 +13,10 @@ const Support: NextPage = () => {
         open source project on the GitHub platform. If you have any questions or
         need help, please reach out over GitHub:
       </p>
-      <Link href="https://github.com/tmlamb/probable-pitchers/issues/new">
+      <LinkButton href="https://github.com/tmlamb/probable-pitchers/issues/new">
         <BugAntIcon className="h-6 w-6 mr-2 inline" aria-hidden="true" />
         Report Issue On Github
-      </Link>
+      </LinkButton>
       <h3 className="pt-4 text-2xl">FAQs</h3>
       <p className="font-bold">How does the Probable Pitcher service work?</p>
       <p>
