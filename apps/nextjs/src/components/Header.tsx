@@ -58,7 +58,7 @@ export default function Header() {
               </div>
               <div className="flex flex-1 items-center justify-center sm:justify-start">
                 <div className="flex flex-shrink-0 items-center">
-                  <Image src="/logo.png" alt="" height={30} width={30} />
+                  <Image src="/logo.png" alt="" height={40} width={40} />
                 </div>
                 <div className="hidden sm:ml-6 sm:block">
                   {session?.user && (
@@ -114,7 +114,7 @@ export default function Header() {
                         <Menu.Item>
                           {({ active }) => (
                             <a
-                              href="#"
+                              href="/settings"
                               className={classNames(
                                 active ? "bg-gray-100" : "",
                                 "block px-4 py-2 text-sm text-gray-700"
@@ -129,7 +129,7 @@ export default function Header() {
                             <button
                               onClick={(e) => {
                                 e.preventDefault();
-                                signOut();
+                                signOut({ redirect: true, callbackUrl: "/" });
                               }}
                               className={classNames(
                                 active ? "bg-gray-100" : "",
