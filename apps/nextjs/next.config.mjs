@@ -13,7 +13,7 @@ function defineNextConfig(config) {
   return config;
 }
 
-export default withTM(["@probable/api", "@probable/db"])(
+export default withTM(["@probable/api", "@probable/db", "@probable/common"])(
   defineNextConfig({
     reactStrictMode: true,
     swcMinify: true,

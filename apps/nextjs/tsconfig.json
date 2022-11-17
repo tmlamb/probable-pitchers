@@ -6,6 +6,6 @@
     "**/*.tsx",
     "**/*.cjs",
     "**/*.mjs",
-    "tailwind.config.js"
+    "tailwind.config.mjss"
   ]
 }

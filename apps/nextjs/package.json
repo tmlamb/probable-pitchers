@@ -13,6 +13,7 @@
     "@heroicons/react": "^2.0.13",
     "@probable/api": "*",
     "@probable/db": "*",
+    "@probable/common": "*",
     "@tanstack/react-query": "^4.2.3",
     "@trpc/client": "next",
     "@trpc/next": "next",
