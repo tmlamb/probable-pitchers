@@ -1,16 +1,11 @@
 import { AntDesign } from "@expo/vector-icons";
-import { Game, Pitcher, Subscription } from "@prisma/client";
-import {
-  format,
-  formatDistanceToNowStrict,
-  isFuture,
-  isToday,
-  isTomorrow,
-  min,
-} from "date-fns";
+import { Game, Pitcher } from "@prisma/client";
+import { subscriptionSchedule } from "@probable/common";
+import { isFuture, min } from "date-fns";
+import { formatInTimeZone } from "date-fns-tz";
+import * as Localization from "expo-localization";
 import { Subscription as ExpoSubscription } from "expo-modules-core";
 import * as ExpoNotifications from "expo-notifications";
-import _ from "lodash";
 import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, SectionList } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
@@ -79,35 +74,7 @@ export const Home = ({
     );
   }
 
-  const subscriptionsSchedule: {
-    nextGameDay: string;
-    data: (Subscription & {
-      pitcher: Pitcher & {
-        homeGames: Game[];
-        awayGames: Game[];
-      };
-    })[];
-  }[] = _(subscriptions)
-    .orderBy((sub) => nextGameDate(sub.pitcher))
-    .groupBy((sub) => {
-      const date = nextGameDate(sub.pitcher) || undefined;
-      if (date) {
-        const dateForSection = format(date, "EEE, MMM d");
-        if (isToday(date)) {
-          return `Pitching Today (${dateForSection})`;
-        } else if (isTomorrow(date)) {
-          return `Pitching Tomorrow (${dateForSection})`;
-        } else {
-          return `Pitching in ${formatDistanceToNowStrict(
-            date
-          )} (${dateForSection})`;
-        }
-      } else {
-        return "Unscheduled";
-      }
-    })
-    .map((data, nextGameDay) => ({ nextGameDay, data }))
-    .value();
+  const schedule = subscriptionSchedule(subscriptions);
 
   return (
     <ScreenLayout>
@@ -136,7 +103,7 @@ export const Home = ({
       <SectionList
         contentContainerStyle={tw`px-3 pt-9 pb-12`}
         bounces={false}
-        sections={subscriptionsSchedule}
+        sections={schedule}
         ListHeaderComponent={
           <PrimaryText
             style={tw`text-4xl font-bold tracking-tight mb-9`}
@@ -165,6 +132,15 @@ export const Home = ({
               <PrimaryText style={tw`flex-1`} numberOfLines={1}>
                 {item.pitcher.name}
               </PrimaryText>
+              {item.pitcher.nextGameDate && (
+                <SecondaryText style={tw`ml-1.5 text-sm`}>
+                  {formatInTimeZone(
+                    item.pitcher.nextGameDate,
+                    Localization.timezone,
+                    "h:mmaaaaa"
+                  )}
+                </SecondaryText>
+              )}
             </ThemedView>
           </Animated.View>
         )}

@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@probable/api": "*",
+    "@probable/common": "*",
     "@react-navigation/native": "^6.0.13",
     "@react-navigation/native-stack": "^6.9.0",
     "@sentry/react-native": "4.2.2",
