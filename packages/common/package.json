@@ -6,7 +6,8 @@
   "license": "MIT",
   "dependencies": {
     "@probable/db": "*",
-    "date-fns": "^2.29.3"
+    "date-fns": "^2.29.3",
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
     "typescript": "4.8.3"

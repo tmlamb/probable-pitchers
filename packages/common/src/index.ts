@@ -7,7 +7,6 @@ import {
   isTomorrow,
   min,
 } from "date-fns";
-
 import _ from "lodash";
 
 function nextGameDate(
