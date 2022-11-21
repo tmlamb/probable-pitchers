@@ -12,6 +12,7 @@ import { useRouter } from "next/router";
 import { Fragment, useEffect, useState } from "react";
 import { classNames } from "../utils/tailwind";
 import Button from "./Button";
+import LinkButton from "./LinkButton";
 import Modal from "./Modal";
 import SignIn from "./SignIn";
 
@@ -19,10 +20,6 @@ const navigation = [
   {
     name: "Subscriptions",
     href: "/subscriptions",
-    // TODO
-    // current: window.location.pathname === "/subscriptions",
-    //
-    current: true,
   },
 ];
 export default function Header() {
@@ -68,13 +65,9 @@ export default function Header() {
                   {session?.user && (
                     <div className="flex space-x-4">
                       {navigation.map((item) => (
-                        <Link
-                          key={item.name}
-                          href={item.href}
-                          aria-current={item.current ? "page" : undefined}
-                        >
+                        <LinkButton key={item.name} href={item.href}>
                           {item.name}
-                        </Link>
+                        </LinkButton>
                       ))}
                     </div>
                   )}
@@ -175,7 +168,6 @@ export default function Header() {
                   as="a"
                   href={item.href}
                   className="bg-blue text-white block px-3 py-2 rounded-md active:opacity-25 text-base font-medium"
-                  aria-current={item.current ? "page" : undefined}
                 >
                   {item.name}
                 </Disclosure.Button>
