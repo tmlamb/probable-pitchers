@@ -8,7 +8,7 @@ export default function SignIn() {
   const callbackUrl: string =
     router.query.callbackUrl && typeof router.query.callbackUrl === "string"
       ? router.query.callbackUrl
-      : "/";
+      : "/subscriptions";
 
   return (
     <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
