@@ -4,6 +4,12 @@ import { useRouter } from "next/router";
 
 export default function SignIn() {
   const router = useRouter();
+
+  const callbackUrl: string =
+    router.query.callbackUrl && typeof router.query.callbackUrl === "string"
+      ? router.query.callbackUrl
+      : "/";
+
   return (
     <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md flex flex-col items-center justify-between">
@@ -20,13 +26,13 @@ export default function SignIn() {
             type="button"
             className="mb-4 active:opacity-25"
             onClick={() =>
-              signIn("google", {
-                callbackUrl:
-                  router.query.callbackUrl &&
-                  typeof router.query.callbackUrl === "string"
-                    ? router.query.callbackUrl
-                    : "/",
-              })
+              signIn(
+                "google",
+                {
+                  callbackUrl,
+                }
+                // { redirect_uri: callbackUrl }
+              )
             }
           >
             <span className="sr-only">Sign in with Google</span>
@@ -42,13 +48,13 @@ export default function SignIn() {
             type="button"
             className="active:opacity-25"
             onClick={() =>
-              signIn("apple", {
-                callbackUrl:
-                  router.query.callbackUrl &&
-                  typeof router.query.callbackUrl === "string"
-                    ? router.query.callbackUrl
-                    : "/",
-              })
+              signIn(
+                "apple",
+                {
+                  callbackUrl,
+                }
+                // { redirect_uri: callbackUrl }
+              )
             }
           >
             <span className="sr-only">Sign in with Apple</span>

@@ -10,6 +10,17 @@ const adapter = PrismaAdapter(prisma);
 export const authOptions: NextAuthOptions = {
   debug: true,
   adapter,
+  cookies: {
+    callbackUrl: {
+      name: `__Secure-next-auth.callback-url`,
+      options: {
+        httpOnly: false,
+        sameSite: "none",
+        path: "/",
+        secure: true,
+      },
+    },
+  },
   providers: [
     AppleProvider({
       clientId: process.env.APPLE_WEB_CLIENT_ID as string,
@@ -17,6 +28,8 @@ export const authOptions: NextAuthOptions = {
       authorization: {
         params: {
           scope: "openid email",
+          response_mode: "form_post",
+          response_type: "code",
         },
       },
     }),
