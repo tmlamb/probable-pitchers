@@ -15,7 +15,7 @@ export default function SignIn() {
         </h2>
       </div>
       <div className="mt-8 mx-auto w-full max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 flex flex-col">
+        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 flex flex-col items-center">
           <button
             type="button"
             className="mb-4 active:opacity-25"
