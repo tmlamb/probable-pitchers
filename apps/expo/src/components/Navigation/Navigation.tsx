@@ -10,7 +10,6 @@ import * as Sentry from "sentry-expo";
 import {
   Account,
   Home,
-  Loading,
   Notifications,
   Settings,
   Subscriptions,
@@ -112,7 +111,7 @@ export default function Navigation() {
               }}
             />
           )}
-          {status === "authenticated" && (
+          {status !== "unauthenticated" && (
             <>
               <AppStack.Screen
                 name="Home"
@@ -120,6 +119,7 @@ export default function Navigation() {
                 options={{
                   headerTitle: "",
                   title: "Probable Pitcher",
+                  animation: "fade",
                 }}
               />
               <AppStack.Screen
@@ -156,15 +156,6 @@ export default function Navigation() {
                 }}
               />
             </>
-          )}
-          {status === "loading" && (
-            <AppStack.Screen
-              name="Loading"
-              component={Loading}
-              options={{
-                headerTitle: "",
-              }}
-            />
           )}
         </AppStack.Navigator>
       </NavigationContainer>
