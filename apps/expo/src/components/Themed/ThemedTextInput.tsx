@@ -123,7 +123,7 @@ export default function TextInput({
           }
           maxLength={maxLength}
           keyboardType={keyboardType}
-          textAlign={"right"}
+          textAlign={"left"}
           textAlignVertical="center"
           selectTextOnFocus={selectTextOnFocus}
           clearTextOnFocus={clearTextOnFocus}

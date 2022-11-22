@@ -1,5 +1,6 @@
 import { AntDesign } from "@expo/vector-icons";
 import { Pitcher, Subscription } from "@probable/db";
+import { useNavigation } from "@react-navigation/native";
 import { PermissionStatus } from "expo-modules-core";
 import * as Notifications from "expo-notifications";
 import React, { useState } from "react";
@@ -7,6 +8,7 @@ import { ActivityIndicator, View } from "react-native";
 import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
 import * as Sentry from "sentry-expo";
 import ButtonContainer from "../components/ButtonContainer";
+import { RootStackScreenProps } from "../components/Navigation";
 import ScreenLayout from "../components/ScreenLayout";
 import SearchInput from "../components/SearchInput";
 import {
@@ -21,7 +23,10 @@ import { trpc } from "../components/TRPCProvider";
 import { useTrackParallelMutations } from "../hooks/use-track-parallel-mutations";
 import tw from "../tailwind";
 
-export const Subscriptions = () => {
+export const Subscriptions = ({
+  navigation: { navigate },
+}: RootStackScreenProps<"Subscriptions">) => {
+  const navigation = useNavigation();
   const mutationTracker = useTrackParallelMutations();
 
   const {
@@ -180,181 +185,183 @@ export const Subscriptions = () => {
 
   return (
     <ScreenLayout>
-      <Animated.FlatList
-        // @ts-ignore - there is a type bug in Reanimated 2.9.x
-        itemLayoutAnimation={Layout}
-        keyExtractor={(item) => {
-          if (typeof item === "string") {
-            return item;
-          }
-          return String(item.id);
-        }}
-        contentContainerStyle={tw`px-3 pt-9 pb-12`}
-        data={subscribedAndAvailablePitchers}
-        keyboardShouldPersistTaps="handled"
-        ListHeaderComponent={
-          <SearchInput
-            style={tw`mb-9`}
-            onChange={(text) => {
-              setSearchFilter(text);
-            }}
-          />
-        }
-        renderItem={({ index, item }) => {
-          if (typeof item === "string") {
-            return (
-              <Animated.View entering={FadeIn} exiting={FadeOut}>
-                <View style={tw`flex-row justify-between mb-1.5 mx-3`}>
-                  <SecondaryText style={tw`uppercase text-sm`}>
-                    {item}
-                  </SecondaryText>
-                  {index === 0 && (
-                    <ActivityIndicator
-                      size="small"
-                      hidesWhenStopped
-                      animating={
-                        isFetching ||
-                        (!isSuccess && !!searchFilter) ||
-                        mutationTracker.isMutating() ||
-                        subscriptionsFetching
-                      }
-                    />
-                  )}
-                </View>
-              </Animated.View>
-            );
-          } else {
-            return (
-              <Animated.View entering={FadeIn} exiting={FadeOut}>
-                <ThemedView
-                  style={tw.style(
-                    "border-b-2",
-                    typeof subscribedAndAvailablePitchers[index - 1] ===
-                      "string"
-                      ? "rounded-t-xl"
-                      : undefined,
-                    !subscribedAndAvailablePitchers[index + 1] ||
-                      typeof subscribedAndAvailablePitchers[index + 1] ===
+      <Animated.View style={tw`pt-9 px-3`} layout={Layout.duration(1)}>
+        <SearchInput
+          style={tw.style(`mb-9`)}
+          onChange={(text) => {
+            setSearchFilter(text);
+          }}
+        />
+        <Animated.FlatList
+          // @ts-ignore - there is a type bug in Reanimated 2.9.x
+          itemLayoutAnimation={Layout}
+          keyExtractor={(item) => {
+            if (typeof item === "string") {
+              return item;
+            }
+            return String(item.id);
+          }}
+          contentContainerStyle={tw`pb-12`}
+          data={subscribedAndAvailablePitchers}
+          keyboardShouldPersistTaps="handled"
+          renderItem={({ index, item }) => {
+            if (typeof item === "string") {
+              return (
+                <Animated.View entering={FadeIn} exiting={FadeOut}>
+                  <View style={tw`flex-row justify-between mb-1.5 mx-3`}>
+                    <SecondaryText style={tw`uppercase text-sm`}>
+                      {item}
+                    </SecondaryText>
+                    {index === 0 && (
+                      <ActivityIndicator
+                        size="small"
+                        hidesWhenStopped
+                        animating={
+                          isFetching ||
+                          (!isSuccess && !!searchFilter) ||
+                          mutationTracker.isMutating() ||
+                          subscriptionsFetching
+                        }
+                      />
+                    )}
+                  </View>
+                </Animated.View>
+              );
+            } else {
+              return (
+                <Animated.View entering={FadeIn} exiting={FadeOut}>
+                  <ThemedView
+                    style={tw.style(
+                      "border-b-2",
+                      typeof subscribedAndAvailablePitchers[index - 1] ===
                         "string"
-                      ? "border-b-0 rounded-b-xl mb-6"
-                      : undefined
-                  )}
-                >
-                  <PrimaryText style={tw`flex-1 pr-2.5`} numberOfLines={1}>
-                    {item.name}
-                  </PrimaryText>
-                  {item.subscription && (
-                    <ButtonContainer
-                      style={tw`-my-3 -mr-3 py-3 pl-3 pr-3`}
-                      onPress={() => {
-                        unsubscribe(item.subscription!.id);
-                      }}
-                      accessibilityLabel={""}
-                      disabled={
-                        item.subscription.userId === "loading" ||
-                        mutationTracker.isMutating() ||
-                        isFetching ||
-                        (!isSuccess && !!searchFilter) ||
-                        !subscriptionsFetched ||
-                        subscriptionsFetching
-                      }
-                    >
-                      <AlertText
-                        style={tw`${
+                        ? "rounded-t-xl"
+                        : undefined,
+                      !subscribedAndAvailablePitchers[index + 1] ||
+                        typeof subscribedAndAvailablePitchers[index + 1] ===
+                          "string"
+                        ? "border-b-0 rounded-b-xl mb-3"
+                        : undefined
+                    )}
+                  >
+                    <PrimaryText style={tw`flex-1 pr-2.5`} numberOfLines={1}>
+                      {item.name}
+                    </PrimaryText>
+                    {item.subscription && (
+                      <ButtonContainer
+                        style={tw`-my-3 -mr-3 py-3 pl-3 pr-3`}
+                        onPress={() => {
+                          unsubscribe(item.subscription!.id);
+                        }}
+                        accessibilityLabel={""}
+                        disabled={
                           item.subscription.userId === "loading" ||
                           mutationTracker.isMutating() ||
                           isFetching ||
                           (!isSuccess && !!searchFilter) ||
                           !subscriptionsFetched ||
                           subscriptionsFetching
-                            ? "opacity-20"
-                            : "opacity-100"
-                        }`}
-                      >
-                        <AntDesign name="minuscircle" size={20} />
-                      </AlertText>
-                    </ButtonContainer>
-                  )}
-                  {!item.subscription && (
-                    <ButtonContainer
-                      style={tw`-my-3 -mr-3 py-3 pl-3 pr-3`}
-                      onPress={async () => {
-                        if (pushStatus === PermissionStatus.DENIED) {
-                          alert(
-                            "Permission for this application to send push notifications has been denied. To receive alerts, you must allow notifications for Probable Pitcher in your phone's application settings."
-                          );
                         }
-                        subscribe({
-                          pitcherId: item.id,
-                        });
-                      }}
-                      disabled={
-                        mutationTracker.isMutating() || isFetching || !isSuccess
-                      }
-                    >
-                      <SpecialText
-                        style={tw`${
+                      >
+                        <AlertText
+                          style={tw`${
+                            item.subscription.userId === "loading" ||
+                            mutationTracker.isMutating() ||
+                            isFetching ||
+                            (!isSuccess && !!searchFilter) ||
+                            !subscriptionsFetched ||
+                            subscriptionsFetching
+                              ? "opacity-20"
+                              : "opacity-100"
+                          }`}
+                        >
+                          <AntDesign name="minuscircle" size={20} />
+                        </AlertText>
+                      </ButtonContainer>
+                    )}
+                    {!item.subscription && (
+                      <ButtonContainer
+                        style={tw`-my-3 -mr-3 py-3 pl-3 pr-3`}
+                        onPress={async () => {
+                          if (pushStatus === PermissionStatus.DENIED) {
+                            alert(
+                              "Permission for this application to send push notifications has been denied. To receive alerts, you must allow notifications for Probable Pitcher in your phone's application settings."
+                            );
+                          }
+                          subscribe({
+                            pitcherId: item.id,
+                          });
+                        }}
+                        disabled={
                           mutationTracker.isMutating() ||
                           isFetching ||
                           !isSuccess
-                            ? "opacity-20"
-                            : "opacity-100"
-                        }`}
+                        }
                       >
-                        <AntDesign name="pluscircle" size={20} />
-                      </SpecialText>
-                    </ButtonContainer>
-                  )}
-                </ThemedView>
-              </Animated.View>
-            );
-          }
-        }}
-        ListEmptyComponent={
-          <>
-            {isSuccess && (
-              <Animated.View entering={FadeIn.delay(150)} exiting={FadeOut}>
-                <SecondaryText
-                  style={tw`mb-9 mx-3 text-sm`}
-                  accessibilityRole="summary"
-                >
-                  No pitchers found. Try changing your search.
-                </SecondaryText>
-              </Animated.View>
-            )}
-            {isInitialLoading ? (
-              <Animated.View entering={FadeIn} exiting={FadeOut}>
-                <ActivityIndicator
-                  size="large"
-                  color={String(tw.style(specialTextColor).color)}
-                />
-              </Animated.View>
-            ) : (
-              !isSuccess && (
-                <Animated.View entering={FadeIn} exiting={FadeOut}>
+                        <SpecialText
+                          style={tw`${
+                            mutationTracker.isMutating() ||
+                            isFetching ||
+                            !isSuccess
+                              ? "opacity-20"
+                              : "opacity-100"
+                          }`}
+                        >
+                          <AntDesign name="pluscircle" size={20} />
+                        </SpecialText>
+                      </ButtonContainer>
+                    )}
+                  </ThemedView>
+                </Animated.View>
+              );
+            }
+          }}
+          ListEmptyComponent={
+            <>
+              {isSuccess && (
+                <Animated.View entering={FadeIn.delay(150)} exiting={FadeOut}>
                   <SecondaryText
                     style={tw`mb-9 mx-3 text-sm`}
                     accessibilityRole="summary"
                   >
-                    Enter a player's name to perform a search.
+                    No pitchers found. Try changing your search.
                   </SecondaryText>
                 </Animated.View>
-              )
-            )}
-            {isError && (
-              <Animated.View entering={FadeIn.delay(150)} exiting={FadeOut}>
-                <AlertText
-                  style={tw`mb-9 mx-3 text-sm`}
-                  accessibilityRole="alert"
-                >
-                  An error occurred while performing your search. Please try
-                  again later.
-                </AlertText>
-              </Animated.View>
-            )}
-          </>
-        }
-      />
+              )}
+              {isInitialLoading ? (
+                <Animated.View entering={FadeIn} exiting={FadeOut}>
+                  <ActivityIndicator
+                    size="large"
+                    color={String(tw.style(specialTextColor).color)}
+                  />
+                </Animated.View>
+              ) : (
+                !isSuccess && (
+                  <Animated.View entering={FadeIn} exiting={FadeOut}>
+                    <SecondaryText
+                      style={tw`mb-9 mx-3 text-sm`}
+                      accessibilityRole="summary"
+                    >
+                      Enter a player's name to perform a search.
+                    </SecondaryText>
+                  </Animated.View>
+                )
+              )}
+              {isError && (
+                <Animated.View entering={FadeIn.delay(150)} exiting={FadeOut}>
+                  <AlertText
+                    style={tw`mb-9 mx-3 text-sm`}
+                    accessibilityRole="alert"
+                  >
+                    An error occurred while performing your search. Please try
+                    again later.
+                  </AlertText>
+                </Animated.View>
+              )}
+            </>
+          }
+        />
+      </Animated.View>
     </ScreenLayout>
   );
 };

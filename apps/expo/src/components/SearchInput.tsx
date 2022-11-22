@@ -59,7 +59,7 @@ export default function SearchInput({ onChange, style }: Props) {
           setSearchComponentWidth(roundedWidth);
           searchFilterWidth.value = withTiming(
             roundedWidth - (searchText ? cancelButtonWidth : 0),
-            { duration: 500 }
+            { duration: 250 }
           );
         }
       }}
@@ -69,45 +69,29 @@ export default function SearchInput({ onChange, style }: Props) {
           onFocus={() => {
             searchFilterWidth.value = withTiming(
               searchComponentWidth - cancelButtonWidth,
-              { duration: 500 }
+              { duration: 250 }
             );
-            searchComponentMarginTop.value = withTiming(-36, {
-              duration: 500,
+            searchComponentMarginTop.value = withTiming(-30, {
+              duration: 250,
             });
-            searchComponentMarginBottom.value = withTiming(24, {
-              duration: 500,
+            searchComponentMarginBottom.value = withTiming(12, {
+              duration: 250,
             });
             setShowCancelButton(true);
-            // searchFilterWidth.value = withTiming(
-            //   searchComponentWidth - cancelButtonWidth,
-            //   { duration: 500 }
-            // );
-            // searchComponentMarginTop.value = withTiming(0, { duration: 500 });
-            // searchComponentMarginBottom.value = withTiming(36, {
-            //   duration: 500,
-            // });
           }}
           onBlur={() => {
             if (!searchText) {
               searchFilterWidth.value = withTiming(searchComponentWidth, {
-                duration: 500,
+                duration: 250,
               });
               searchComponentMarginTop.value = withTiming(0, {
-                duration: 500,
+                duration: 250,
               });
               searchComponentMarginBottom.value = withTiming(36, {
-                duration: 500,
+                duration: 250,
               });
               setShowCancelButton(false);
             }
-            // searchFilterWidth.value = withTiming(
-            //   searchComponentWidth - cancelButtonWidth,
-            //   { duration: 500 }
-            // );
-            // searchComponentMarginTop.value = withTiming(0, { duration: 500 });
-            // searchComponentMarginBottom.value = withTiming(36, {
-            //   duration: 500,
-            // });
           }}
           onChangeText={(text) => {
             onChange(text);
@@ -121,7 +105,7 @@ export default function SearchInput({ onChange, style }: Props) {
       </Animated.View>
       {showCancelButton && (
         <Animated.View
-          entering={FadeInRight.delay(300)}
+          entering={FadeInRight.delay(0)}
           exiting={FadeOutRight.duration(100)}
           onLayout={(event) => {
             const roundedWidth = Math.round(event.nativeEvent.layout.width);
@@ -130,7 +114,7 @@ export default function SearchInput({ onChange, style }: Props) {
               searchFilterWidth.value = withTiming(
                 searchComponentWidth - roundedWidth,
                 {
-                  duration: 500,
+                  duration: 250,
                 }
               );
             }
@@ -139,13 +123,13 @@ export default function SearchInput({ onChange, style }: Props) {
           <ButtonContainer
             onPress={() => {
               searchFilterWidth.value = withTiming(searchComponentWidth, {
-                duration: 500,
+                duration: 250,
               });
               searchComponentMarginTop.value = withTiming(0, {
-                duration: 500,
+                duration: 250,
               });
               searchComponentMarginBottom.value = withTiming(36, {
-                duration: 500,
+                duration: 250,
               });
               onChange(undefined);
               setSearchText(undefined);
