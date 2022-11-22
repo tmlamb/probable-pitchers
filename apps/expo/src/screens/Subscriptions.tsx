@@ -35,6 +35,7 @@ export const Subscriptions = ({
     isFetching: subscriptionsFetching,
   } = trpc.subscription.byUserId.useQuery(undefined, {
     enabled: !mutationTracker.isMutating(),
+    refetchOnMount: false,
   });
 
   const [searchFilter, setSearchFilter] = useState<string>();
