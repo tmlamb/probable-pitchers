@@ -23,6 +23,9 @@ export const pitcherRouter = t.router({
             },
           ],
         },
+        orderBy: {
+          name: "asc",
+        },
       });
     }),
   all: t.procedure.query(({ ctx }) => {

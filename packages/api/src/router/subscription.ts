@@ -13,6 +13,7 @@ export const subscriptionRouter = t.router({
           },
         },
       },
+      orderBy: { pitcher: { name: "asc" } },
     });
   }),
   create: t.procedure
