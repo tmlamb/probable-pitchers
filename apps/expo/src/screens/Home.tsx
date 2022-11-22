@@ -19,8 +19,8 @@ import {
   AlertText,
   PrimaryText,
   SecondaryText,
+  secondaryTextColor,
   SpecialText,
-  specialTextColor,
   ThemedView,
 } from "../components/Themed";
 import { trpc } from "../components/TRPCProvider";
@@ -169,7 +169,7 @@ export const Home = ({
               <Animated.View entering={FadeIn} exiting={FadeOut}>
                 <ActivityIndicator
                   size="large"
-                  color={String(tw.style(specialTextColor).color)}
+                  color={String(tw.style(secondaryTextColor).color)}
                 />
               </Animated.View>
             )}

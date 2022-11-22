@@ -5,7 +5,6 @@ export type RootStackParamList = {
   Subscriptions: undefined;
   Welcome: undefined;
   Settings: undefined;
-  Loading: undefined;
   Account: undefined;
   Notifications: undefined;
 };
