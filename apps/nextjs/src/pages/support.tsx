@@ -37,6 +37,14 @@ const Support: NextPage = () => {
         Our service makes a best effort to send you notifications, but we cannot
         guarantee that you will receive them.
       </p>
+      <p className="font-bold">Where are my subscriptions? They are missing.</p>
+      <p>
+        Subscriptions are tied to the account linked with your identity manager,
+        like Google or Apple. So for instance, if you logged in previously with
+        your Google account and added subscriptions, then later accessed the
+        service with your Apple account, your Google account&apos;s
+        subscriptions will not be available.
+      </p>
       <h3 className="pt-4 text-2xl">Contact Us</h3>
       <p>
         The fastest way to receive support is to open an issue on our GitHub
