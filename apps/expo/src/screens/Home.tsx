@@ -6,7 +6,7 @@ import { Subscription as ExpoSubscription } from "expo-modules-core";
 import * as ExpoNotifications from "expo-notifications";
 import { useSession } from "next-auth/expo";
 import React, { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, SectionList, View } from "react-native";
+import { ActivityIndicator, SectionList } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import * as Sentry from "sentry-expo";
 import HeaderLeftContainer from "../components/HeaderLeftContainer";
@@ -81,12 +81,16 @@ export const Home = ({
   if (status !== "authenticated") {
     return (
       <ScreenLayout>
-        <View style={tw`h-full justify-center`}>
+        <Animated.View
+          style={tw`absolute w-screen h-screen justify-center`}
+          entering={FadeIn}
+          exiting={FadeOut}
+        >
           <ActivityIndicator
             size="large"
             color={String(tw.style(secondaryTextColor).color)}
           />
-        </View>
+        </Animated.View>
       </ScreenLayout>
     );
   }
@@ -181,7 +185,11 @@ export const Home = ({
               </Animated.View>
             )}
             {isLoading && (
-              <Animated.View entering={FadeIn} exiting={FadeOut}>
+              <Animated.View
+                style={tw`absolute w-screen h-screen justify-center`}
+                entering={FadeIn}
+                exiting={FadeOut}
+              >
                 <ActivityIndicator
                   size="large"
                   color={String(tw.style(secondaryTextColor).color)}

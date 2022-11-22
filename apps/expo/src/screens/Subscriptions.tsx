@@ -328,7 +328,11 @@ export const Subscriptions = ({
                 </Animated.View>
               )}
               {isInitialLoading ? (
-                <Animated.View entering={FadeIn} exiting={FadeOut}>
+                <Animated.View
+                  style={tw`pt-6`}
+                  entering={FadeIn}
+                  exiting={FadeOut}
+                >
                   <ActivityIndicator
                     size="large"
                     color={String(tw.style(specialTextColor).color)}
