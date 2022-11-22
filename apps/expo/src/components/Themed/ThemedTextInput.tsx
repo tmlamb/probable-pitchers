@@ -22,6 +22,7 @@ type Props = {
   onChangeText?: (text: string) => void;
   onChange?: (e: NativeSyntheticEvent<TextInputChangeEventData>) => void;
   onBlur?: (e: unknown) => void;
+  onFocus?: (e: unknown) => void;
   value?: string;
   style?: ViewStyle;
   textInputStyle?: ClassInput;
@@ -61,6 +62,7 @@ export default function TextInput({
   onChangeText,
   onChange,
   onBlur,
+  onFocus,
   value,
   style,
   textInputStyle,
@@ -107,11 +109,12 @@ export default function TextInput({
         <NativeTextInput
           onChangeText={handleChange}
           onChange={onChange}
+          onFocus={onFocus}
           onBlur={onBlur}
           value={value ? nbspReplace(value) : value}
           style={tw.style(
             primaryTextColor,
-            "w-full pb-[2.8px] pt-[2.5px] android:py-[.15px] z-20 pr-0 text-lg leading-tight tracking-tight",
+            "w-full pb-[2.8px] pt-[2.5px] android:py-[.15px] z-20 pr-0 text-lg leading-tight tracking-normal",
             textInputStyle
           )}
           placeholder={placeholder}
@@ -144,6 +147,7 @@ TextInput.defaultProps = {
   style: undefined,
   onChangeText: (text: string) => text,
   onChange: undefined,
+  onFocus: undefined,
   onBlur: undefined,
   textInputStyle: undefined,
   labelStyle: undefined,

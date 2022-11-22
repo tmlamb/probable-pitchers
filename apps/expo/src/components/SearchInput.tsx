@@ -1,5 +1,5 @@
 import React from "react";
-import { Keyboard, View } from "react-native";
+import { Dimensions, Keyboard } from "react-native";
 import Animated, {
   FadeInRight,
   FadeOutRight,
@@ -21,7 +21,7 @@ export default function SearchInput({ onChange, style }: Props) {
   const [searchText, setSearchText] = React.useState<string>();
   const [showCancelButton, setShowCancelButton] = React.useState(false);
   const [searchComponentWidth, setSearchComponentWidth] =
-    React.useState<number>(0);
+    React.useState<number>(Dimensions.get("window").width);
   const [cancelButtonWidth, setCancelButtonWidth] = React.useState<number>(0);
   const searchFilterWidth = useSharedValue(searchComponentWidth);
   const searchFilterStyle = useAnimatedStyle(
@@ -31,9 +31,28 @@ export default function SearchInput({ onChange, style }: Props) {
     [searchFilterWidth.value]
   );
 
+  const searchComponentMarginTop = useSharedValue(0);
+  const searchComponentMarginBottom = useSharedValue(36);
+  const searchComponentStyle = useAnimatedStyle(
+    () => ({
+      marginTop: searchComponentMarginTop.value,
+      marginBottom: searchComponentMarginBottom.value,
+      width: "100%",
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    }),
+    [searchComponentMarginTop.value]
+  );
+
   return (
-    <View
-      style={tw.style(`flex-row items-center justify-between w-full`, style)}
+    <Animated.View
+      style={tw.style(
+        `flex-row items-center justify-between w-full`,
+        style,
+        searchComponentStyle
+      )}
       onLayout={(event) => {
         const roundedWidth = Math.round(event.nativeEvent.layout.width);
         if (roundedWidth !== searchComponentWidth) {
@@ -47,14 +66,50 @@ export default function SearchInput({ onChange, style }: Props) {
     >
       <Animated.View style={searchFilterStyle}>
         <ThemedTextInput
-          onChangeText={(text) => {
+          onFocus={() => {
             searchFilterWidth.value = withTiming(
-              text?.length > 0
-                ? searchComponentWidth - cancelButtonWidth
-                : searchComponentWidth,
+              searchComponentWidth - cancelButtonWidth,
               { duration: 500 }
             );
-            setShowCancelButton(text?.length > 0);
+            searchComponentMarginTop.value = withTiming(-36, {
+              duration: 500,
+            });
+            searchComponentMarginBottom.value = withTiming(24, {
+              duration: 500,
+            });
+            setShowCancelButton(true);
+            // searchFilterWidth.value = withTiming(
+            //   searchComponentWidth - cancelButtonWidth,
+            //   { duration: 500 }
+            // );
+            // searchComponentMarginTop.value = withTiming(0, { duration: 500 });
+            // searchComponentMarginBottom.value = withTiming(36, {
+            //   duration: 500,
+            // });
+          }}
+          onBlur={() => {
+            if (!searchText) {
+              searchFilterWidth.value = withTiming(searchComponentWidth, {
+                duration: 500,
+              });
+              searchComponentMarginTop.value = withTiming(0, {
+                duration: 500,
+              });
+              searchComponentMarginBottom.value = withTiming(36, {
+                duration: 500,
+              });
+              setShowCancelButton(false);
+            }
+            // searchFilterWidth.value = withTiming(
+            //   searchComponentWidth - cancelButtonWidth,
+            //   { duration: 500 }
+            // );
+            // searchComponentMarginTop.value = withTiming(0, { duration: 500 });
+            // searchComponentMarginBottom.value = withTiming(36, {
+            //   duration: 500,
+            // });
+          }}
+          onChangeText={(text) => {
             onChange(text);
             setSearchText(text);
           }}
@@ -86,6 +141,12 @@ export default function SearchInput({ onChange, style }: Props) {
               searchFilterWidth.value = withTiming(searchComponentWidth, {
                 duration: 500,
               });
+              searchComponentMarginTop.value = withTiming(0, {
+                duration: 500,
+              });
+              searchComponentMarginBottom.value = withTiming(36, {
+                duration: 500,
+              });
               onChange(undefined);
               setSearchText(undefined);
               setShowCancelButton(false);
@@ -99,6 +160,6 @@ export default function SearchInput({ onChange, style }: Props) {
           </ButtonContainer>
         </Animated.View>
       )}
-    </View>
+    </Animated.View>
   );
 }
