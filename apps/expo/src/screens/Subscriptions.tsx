@@ -260,7 +260,6 @@ export const Subscriptions = ({
                           mutationTracker.isMutating() ||
                           isFetching ||
                           (!isSuccess && !!searchFilter) ||
-                          !subscriptionsFetched ||
                           subscriptionsFetching
                         }
                       >
@@ -270,7 +269,6 @@ export const Subscriptions = ({
                             mutationTracker.isMutating() ||
                             isFetching ||
                             (!isSuccess && !!searchFilter) ||
-                            !subscriptionsFetched ||
                             subscriptionsFetching
                               ? "opacity-20"
                               : "opacity-100"

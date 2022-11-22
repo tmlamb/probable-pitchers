@@ -1,13 +1,12 @@
 import { AntDesign } from "@expo/vector-icons";
 import { subscriptionSchedule } from "@probable/common";
-import { Game, Pitcher } from "@probable/db";
-import { isFuture, min } from "date-fns";
 import { formatInTimeZone } from "date-fns-tz";
 import * as Localization from "expo-localization";
 import { Subscription as ExpoSubscription } from "expo-modules-core";
 import * as ExpoNotifications from "expo-notifications";
+import { useSession } from "next-auth/expo";
 import React, { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, SectionList } from "react-native";
+import { ActivityIndicator, SectionList, View } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import * as Sentry from "sentry-expo";
 import HeaderLeftContainer from "../components/HeaderLeftContainer";
@@ -29,6 +28,7 @@ import tw from "../tailwind";
 export const Home = ({
   navigation: { navigate },
 }: RootStackScreenProps<"Home">) => {
+  const { status } = useSession();
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef<ExpoSubscription>();
   const responseListener = useRef<ExpoSubscription>();
@@ -66,7 +66,9 @@ export const Home = ({
     isLoading,
     isError,
     error,
-  } = trpc.subscription.byUserId.useQuery();
+  } = trpc.subscription.byUserId.useQuery(undefined, {
+    enabled: status === "authenticated",
+  });
 
   if (isError) {
     Sentry.Native.captureException(
@@ -75,6 +77,19 @@ export const Home = ({
   }
 
   const schedule = subscriptionSchedule(subscriptions);
+
+  if (status !== "authenticated") {
+    return (
+      <ScreenLayout>
+        <View style={tw`h-full justify-center`}>
+          <ActivityIndicator
+            size="large"
+            color={String(tw.style(secondaryTextColor).color)}
+          />
+        </View>
+      </ScreenLayout>
+    );
+  }
 
   return (
     <ScreenLayout>
@@ -190,17 +205,3 @@ export const Home = ({
     </ScreenLayout>
   );
 };
-
-function nextGameDate(
-  pitcher: Pitcher & {
-    homeGames: Game[];
-    awayGames: Game[];
-  }
-): Date | undefined {
-  const futureGames = [...pitcher.homeGames, ...pitcher.awayGames]
-    .filter((game) => isFuture(game.date))
-    .map((game) => game.date);
-  if (futureGames.length) {
-    return min(futureGames);
-  }
-}

@@ -95,8 +95,8 @@ export const Notifications = () => {
               style={tw`mx-3 mt-1.5 text-sm`}
               accessibilityRole="summary"
             >
-              Permission to receive notifications from this app have been denied
-              in this device's settings. To receive Probable Pitcher alerts,
+              Permission to receive notifications from this app has been denied
+              in your device's settings. To receive Probable Pitcher alerts,
               allow this app to send notifications.
             </SecondaryText>
             <ButtonContainer
