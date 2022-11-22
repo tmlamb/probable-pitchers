@@ -21,7 +21,7 @@ import { trpc } from "../components/TRPCProvider";
 import { useTrackParallelMutations } from "../hooks/use-track-parallel-mutations";
 import tw from "../tailwind";
 
-export const Subscribe = () => {
+export const Subscriptions = () => {
   const mutationTracker = useTrackParallelMutations();
 
   const {

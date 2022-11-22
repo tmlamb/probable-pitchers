@@ -13,7 +13,7 @@ import {
   Loading,
   Notifications,
   Settings,
-  Subscribe,
+  Subscriptions,
   Welcome,
 } from "../../screens/";
 import tw from "../../tailwind";
@@ -123,8 +123,8 @@ export default function Navigation() {
                 }}
               />
               <AppStack.Screen
-                name="Subscribe"
-                component={Subscribe}
+                name="Subscriptions"
+                component={Subscriptions}
                 options={{
                   title: "Manage Subscriptions",
                   headerBackTitle: "Home",

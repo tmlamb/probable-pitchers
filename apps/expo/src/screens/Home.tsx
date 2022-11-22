@@ -91,7 +91,7 @@ export const Home = ({
       </HeaderLeftContainer>
       <HeaderRightContainer>
         <LinkButton
-          to={{ screen: "Subscribe" }}
+          to={{ screen: "Subscriptions" }}
           style={tw`py-6 pl-8 pr-3 -my-6 -mr-4`}
           accessibilityLabel="Navigate to subscription management screen"
         >
@@ -156,7 +156,7 @@ export const Home = ({
                   pitcher.
                 </SecondaryText>
                 <LinkButton
-                  to={{ screen: "Subscribe" }}
+                  to={{ screen: "Subscriptions" }}
                   accessibilityLabel="Navigate to subscription management screen"
                 >
                   <ThemedView rounded>
