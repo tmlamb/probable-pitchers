@@ -1,14 +1,20 @@
 import { AntDesign } from "@expo/vector-icons";
 import { Pitcher, Subscription } from "@probable/db";
-import { useNavigation } from "@react-navigation/native";
 import { PermissionStatus } from "expo-modules-core";
 import * as Notifications from "expo-notifications";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
-import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
+import Animated, {
+  Easing,
+  FadeIn,
+  FadeOut,
+  Layout,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import * as Sentry from "sentry-expo";
 import ButtonContainer from "../components/ButtonContainer";
-import { RootStackScreenProps } from "../components/Navigation";
 import ScreenLayout from "../components/ScreenLayout";
 import SearchInput from "../components/SearchInput";
 import {
@@ -23,10 +29,38 @@ import { trpc } from "../components/TRPCProvider";
 import { useTrackParallelMutations } from "../hooks/use-track-parallel-mutations";
 import tw from "../tailwind";
 
-export const Subscriptions = ({
-  navigation: { navigate },
-}: RootStackScreenProps<"Subscriptions">) => {
-  const navigation = useNavigation();
+const SubscriptionButton = ({
+  onPress,
+  disabled,
+  children,
+}: {
+  onPress: () => void;
+  disabled: boolean;
+  children: React.ReactNode;
+}) => {
+  const opacity = useSharedValue(1);
+
+  useEffect(() => {
+    opacity.value = withTiming(disabled ? 0.4 : 1, {
+      duration: 150,
+      easing: Easing.linear,
+    });
+  }, [disabled]);
+
+  const style = useAnimatedStyle(() => ({ opacity: opacity.value }), []);
+  return (
+    <ButtonContainer
+      style={tw`-my-3 -mr-3 py-3 pl-3 pr-3`}
+      onPress={onPress}
+      accessibilityLabel={""}
+      disabled={disabled}
+    >
+      <Animated.View style={style}>{children}</Animated.View>
+    </ButtonContainer>
+  );
+};
+
+export const Subscriptions = () => {
   const mutationTracker = useTrackParallelMutations();
 
   const {
@@ -246,12 +280,10 @@ export const Subscriptions = ({
                       {item.name}
                     </PrimaryText>
                     {item.subscription && (
-                      <ButtonContainer
-                        style={tw`-my-3 -mr-3 py-3 pl-3 pr-3`}
+                      <SubscriptionButton
                         onPress={() => {
                           unsubscribe(item.subscription!.id);
                         }}
-                        accessibilityLabel={""}
                         disabled={
                           item.subscription.userId === "loading" ||
                           mutationTracker.isMutating() ||
@@ -260,24 +292,13 @@ export const Subscriptions = ({
                           subscriptionsFetching
                         }
                       >
-                        <AlertText
-                          style={tw`${
-                            item.subscription.userId === "loading" ||
-                            mutationTracker.isMutating() ||
-                            isFetching ||
-                            (!isSuccess && !!searchFilter) ||
-                            subscriptionsFetching
-                              ? "opacity-20"
-                              : "opacity-100"
-                          }`}
-                        >
+                        <AlertText>
                           <AntDesign name="minuscircle" size={20} />
                         </AlertText>
-                      </ButtonContainer>
+                      </SubscriptionButton>
                     )}
                     {!item.subscription && (
-                      <ButtonContainer
-                        style={tw`-my-3 -mr-3 py-3 pl-3 pr-3`}
+                      <SubscriptionButton
                         onPress={async () => {
                           if (pushStatus === PermissionStatus.DENIED) {
                             alert(
@@ -294,18 +315,10 @@ export const Subscriptions = ({
                           !isSuccess
                         }
                       >
-                        <SpecialText
-                          style={tw`${
-                            mutationTracker.isMutating() ||
-                            isFetching ||
-                            !isSuccess
-                              ? "opacity-20"
-                              : "opacity-100"
-                          }`}
-                        >
+                        <SpecialText>
                           <AntDesign name="pluscircle" size={20} />
                         </SpecialText>
-                      </ButtonContainer>
+                      </SubscriptionButton>
                     )}
                   </ThemedView>
                 </Animated.View>

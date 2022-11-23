@@ -5,7 +5,7 @@ import Animated, {
   FadeOutRight,
   useAnimatedStyle,
   useSharedValue,
-  withTiming,
+  withTiming
 } from "react-native-reanimated";
 import { ClassInput } from "twrnc/dist/esm/types";
 import tw from "../tailwind";
@@ -48,11 +48,7 @@ export default function SearchInput({ onChange, style }: Props) {
 
   return (
     <Animated.View
-      style={tw.style(
-        `flex-row items-center justify-between w-full`,
-        style,
-        searchComponentStyle
-      )}
+      style={tw.style(style, searchComponentStyle)}
       onLayout={(event) => {
         const roundedWidth = Math.round(event.nativeEvent.layout.width);
         if (roundedWidth !== searchComponentWidth) {
