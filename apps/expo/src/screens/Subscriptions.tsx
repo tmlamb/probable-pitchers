@@ -3,7 +3,7 @@ import { Pitcher, Subscription } from "@probable/db";
 import { PermissionStatus } from "expo-modules-core";
 import * as Notifications from "expo-notifications";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, StyleProp, View, ViewStyle } from "react-native";
 import Animated, {
   Easing,
   FadeIn,
@@ -33,21 +33,13 @@ const SubscriptionButton = ({
   onPress,
   disabled,
   children,
+  style,
 }: {
   onPress: () => void;
   disabled: boolean;
   children: React.ReactNode;
+  style: StyleProp<Animated.AnimateStyle<StyleProp<ViewStyle>>>;
 }) => {
-  const opacity = useSharedValue(1);
-
-  useEffect(() => {
-    opacity.value = withTiming(disabled ? 0.4 : 1, {
-      duration: 150,
-      easing: Easing.linear,
-    });
-  }, [disabled]);
-
-  const style = useAnimatedStyle(() => ({ opacity: opacity.value }), []);
   return (
     <ButtonContainer
       style={tw`-my-3 -mr-3 py-3 pl-3 pr-3`}
@@ -217,6 +209,21 @@ export const Subscriptions = () => {
       subscribedAndAvailablePitchers.push(...availablePitchers);
     }
   }
+  const pauseMutations =
+    mutationTracker.isMutating() ||
+    isFetching ||
+    (!isSuccess && !!searchFilter) ||
+    subscriptionsFetching;
+  const opacity = useSharedValue(1);
+
+  useEffect(() => {
+    opacity.value = withTiming(pauseMutations ? 0.4 : 1, {
+      duration: 150,
+      easing: Easing.linear,
+    });
+  }, [pauseMutations]);
+
+  const style = useAnimatedStyle(() => ({ opacity: opacity.value }), []);
 
   return (
     <ScreenLayout>
@@ -229,7 +236,7 @@ export const Subscriptions = () => {
         />
         <Animated.FlatList
           // @ts-ignore - there is a type bug in Reanimated 2.9.x
-          itemLayoutAnimation={Layout}
+          itemLayoutAnimation={Layout.duration(250)}
           keyExtractor={(item) => {
             if (typeof item === "string") {
               return item;
@@ -285,12 +292,10 @@ export const Subscriptions = () => {
                           unsubscribe(item.subscription!.id);
                         }}
                         disabled={
-                          item.subscription.userId === "loading" ||
-                          mutationTracker.isMutating() ||
-                          isFetching ||
-                          (!isSuccess && !!searchFilter) ||
-                          subscriptionsFetching
+                          // item.subscription.userId === "loading" ||
+                          pauseMutations
                         }
+                        style={style}
                       >
                         <AlertText>
                           <AntDesign name="minuscircle" size={20} />
@@ -309,11 +314,8 @@ export const Subscriptions = () => {
                             pitcherId: item.id,
                           });
                         }}
-                        disabled={
-                          mutationTracker.isMutating() ||
-                          isFetching ||
-                          !isSuccess
-                        }
+                        disabled={pauseMutations}
+                        style={style}
                       >
                         <SpecialText>
                           <AntDesign name="pluscircle" size={20} />
