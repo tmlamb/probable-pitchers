@@ -9,7 +9,7 @@ export default function LinkButton({
 }) {
   return (
     <Link href={href}>
-      <a className="rounded-xl bg-blue px-3 py-1.5 text-white hover:underline active:opacity-25">
+      <a className="rounded-xl bg-blue px-3 py-1.5 w-fit text-white hover:underline active:opacity-25">
         {children}
       </a>
     </Link>

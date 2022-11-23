@@ -23,7 +23,7 @@ const Subscriptions: NextPage = () => {
 
   if (session) {
     return (
-      <main className="container flex flex-col items-start justify-center min-h-screen space-y-4 max-w-5xl p-4 mx-auto">
+      <main className="container flex flex-col items-start justify-start min-h-screen space-y-4 max-w-7xl p-8 mx-auto">
         <h1 className="text-5xl leading-normal font-extrabold text-gray-700">
           Subscriptions
         </h1>
