@@ -213,18 +213,15 @@ export const Subscriptions = ({
                     <SecondaryText style={tw`uppercase text-sm`}>
                       {item}
                     </SecondaryText>
-                    {index === 0 && (
-                      <ActivityIndicator
-                        size="small"
-                        hidesWhenStopped
-                        animating={
-                          isFetching ||
-                          (!isSuccess && !!searchFilter) ||
-                          mutationTracker.isMutating() ||
-                          subscriptionsFetching
-                        }
-                      />
-                    )}
+                    {index === 0 &&
+                      (isFetching ||
+                        (!isSuccess && !!searchFilter) ||
+                        mutationTracker.isMutating() ||
+                        subscriptionsFetching) && (
+                        <Animated.View entering={FadeIn} exiting={FadeOut}>
+                          <ActivityIndicator size="small" />
+                        </Animated.View>
+                      )}
                   </View>
                 </Animated.View>
               );
