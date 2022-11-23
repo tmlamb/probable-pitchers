@@ -8,7 +8,6 @@ import { isValidProvider, nativeProviders, providerPairs } from "./providers";
 
 const adapter = PrismaAdapter(prisma);
 export const authOptions: NextAuthOptions = {
-  debug: true,
   adapter,
   cookies: {
     callbackUrl: {
