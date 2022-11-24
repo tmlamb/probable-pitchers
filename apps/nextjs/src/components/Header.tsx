@@ -56,7 +56,7 @@ export default function Header() {
               <div className="flex flex-1 items-center justify-center sm:justify-start">
                 <div className="flex flex-shrink-0 items-center">
                   <Link href="/">
-                    <a>
+                    <a className="flex items-center">
                       <Image src="/logo.png" alt="" height={40} width={40} />
                     </a>
                   </Link>
