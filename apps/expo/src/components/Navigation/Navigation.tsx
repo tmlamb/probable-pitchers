@@ -13,6 +13,7 @@ import {
   Notifications,
   Settings,
   Subscriptions,
+  Support,
   Welcome,
 } from "../../screens/";
 import tw from "../../tailwind";
@@ -153,6 +154,14 @@ export default function Navigation() {
                 component={Notifications}
                 options={{
                   title: "Notification Settings",
+                  headerBackTitle: "Back",
+                }}
+              />
+              <AppStack.Screen
+                name="Support"
+                component={Support}
+                options={{
+                  title: "Support",
                   headerBackTitle: "Back",
                 }}
               />

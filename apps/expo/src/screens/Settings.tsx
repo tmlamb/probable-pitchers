@@ -32,10 +32,21 @@ export const Settings = () => {
             to={{ screen: "Account" }}
             accessibilityLabel="Navigate to account settings screen"
           >
-            <ThemedView style={tw`rounded-b-xl`}>
+            <ThemedView style={tw`border-b-2`}>
               <PrimaryText>Account</PrimaryText>
               <SecondaryText>
                 <AntDesign name="user" size={24} />
+              </SecondaryText>
+            </ThemedView>
+          </LinkButton>
+          <LinkButton
+            to={{ screen: "Support" }}
+            accessibilityLabel="Navigate to support screen"
+          >
+            <ThemedView style={tw`rounded-b-xl`}>
+              <PrimaryText>Support</PrimaryText>
+              <SecondaryText>
+                <AntDesign name="customerservice" size={24} />
               </SecondaryText>
             </ThemedView>
           </LinkButton>
