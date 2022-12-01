@@ -218,6 +218,12 @@ const deployment = new k8s.apps.v1.Deployment(
               name: appLabels.app,
               image: `ghcr.io/tmlamb/probable-pitchers-nextjs:${imageTag}`,
               ports: [{ name: "http", containerPort: 3000 }],
+              resources: {
+                requests: {
+                  cpu: "250m",
+                  memory: "256Mi",
+                },
+              },
               livenessProbe: {
                 httpGet: { path: "/", port: "http" },
               },
