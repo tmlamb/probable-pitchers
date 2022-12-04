@@ -10,9 +10,9 @@ config:
   probable-pitchers:appleWebClientSecret:
     secure: AAABAEBS8zyx9dNDzFBt/B6hzdMJk1BEA8V0OHgpyYlAuRt6uag8ygl7Fjxqmk0b5IGKY9ws2hyKB8aW5L9ckTKoolb4j2iKnyT0vF0TKbjKzirrydAFBLlZrO41Tla6FVz+TTkaSmFYWtOxldCK4A5fH3u5gTWffFV4NZOG9z16J8SSJfJtemFY7zNDRhQU4bO9v+ppZZNGFRLFFQvC/JWd9WBMSDRwfwQiG3B4LrOJrflszWiYpOV4rcd4fNMHqaUuCjPM2q1oWPcx460tcybmR12vk//l96W1XH5IUKeqoajS/gw57Om/Y/ImOWagCNon/Fbo6Lirg9zXVQsooBrZc2Z74Aem0xkPw+yoBRQM3xsB86bLGmUqUdvQhZN/9sC7v25voosbLKeygVgHvvsfYs/jywg5TAkLSQTLW6nh+3cDkgYlp05lfMfIkYg8
   probable-pitchers:authGoogleClientId:
-    secure: AAABAEqF8Su/UFN+UQuBflhwKRTKwoZ2AfQnbUzQrFHVIbpnUBdU6yucq2McQ50vYw/cfaeR8x2F8oP/wH929zDcMs2YDqM8qcqL4E2ySIKPsayEYjZkjqd8jZYlQjPQx6gl62tiVA==
+    secure: AAABALZJsfuUUlOeUlbFj4zjhrSVtkgXcH60tI+ECwZBlFM2hAv22wOlj24ONxJHmO05mZnoQRpEcP1m1XN4JoEKYeifdehvWDQbXPbogveVF6QPCSIVBGm87gek3lfZiKkO9nB7lEc=
   probable-pitchers:authGoogleClientSecret:
-    secure: AAABAIrnw2x9vPd2pwxFmk2FxQqXpS5PqrSakA6kggBTDU3rr5gb3X5DBADY5x+bIi0UXEepPhc5E/vvxEuExGnugg==
+    secure: AAABACgr0VwKThXfjlf6tUeRJBMuiMhx1CXOPYGjck4W7U2GIkTDRrkWUuC2ypgzV7UAARJtEPtQrVQSs3mNk8EOhg==
   probable-pitchers:containerRegistry:
     email:
       secure: AAABAOJ+3gDOY5NwkeMh0XHDSS2jYky8u8frK7EcCQ5ZqkIsql9/uSt25jJBRVD+
