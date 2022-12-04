@@ -323,25 +323,25 @@ const managedCertificate = new k8s.apiextensions.CustomResource(
   }
 );
 
-// const httpsRedirect = new k8s.apiextensions.CustomResource(
-//   `probable-https-redirect-${env}`,
-//   {
-//     apiVersion: "networking.gke.io/v1beta1",
-//     kind: "FrontendConfig",
-//     metadata: {
-//       namespace: namespaceName,
-//     },
-//     spec: {
-//       redirectToHttps: {
-//         enabled: true,
-//         responseCodeName: "MOVED_PERMANENTLY_DEFAULT",
-//       },
-//     },
-//   },
-//   {
-//     provider: clusterProvider,
-//   }
-// );
+const httpsRedirect = new k8s.apiextensions.CustomResource(
+  `probable-https-redirect-${env}`,
+  {
+    apiVersion: "networking.gke.io/v1beta1",
+    kind: "FrontendConfig",
+    metadata: {
+      namespace: namespaceName,
+    },
+    spec: {
+      redirectToHttps: {
+        enabled: true,
+        responseCodeName: "MOVED_PERMANENTLY_DEFAULT",
+      },
+    },
+  },
+  {
+    provider: clusterProvider,
+  }
+);
 
 const ingress = new k8s.networking.v1.Ingress(
   `probable-ingress-${env}`,
@@ -353,8 +353,8 @@ const ingress = new k8s.networking.v1.Ingress(
         "kubernetes.io/ingress.global-static-ip-name": ipAddress.name,
         "networking.gke.io/managed-certificates":
           managedCertificate.metadata.apply((m) => m.name),
-        // "networking.gke.io/v1beta1.FrontendConfig":
-        //   httpsRedirect.metadata.apply((m) => m.name),
+        "networking.gke.io/v1beta1.FrontendConfig":
+          httpsRedirect.metadata.apply((m) => m.name),
       },
     },
     spec: {
