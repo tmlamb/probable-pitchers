@@ -5,7 +5,7 @@ import Animated, {
   FadeOutRight,
   useAnimatedStyle,
   useSharedValue,
-  withTiming
+  withTiming,
 } from "react-native-reanimated";
 import { ClassInput } from "twrnc/dist/esm/types";
 import tw from "../tailwind";
@@ -23,7 +23,7 @@ export default function SearchInput({ onChange, style }: Props) {
   const [searchComponentWidth, setSearchComponentWidth] =
     React.useState<number>(Dimensions.get("window").width);
   const [cancelButtonWidth, setCancelButtonWidth] = React.useState<number>(0);
-  const searchFilterWidth = useSharedValue(searchComponentWidth);
+  const searchFilterWidth = useSharedValue(searchComponentWidth - 24);
   const searchFilterStyle = useAnimatedStyle(
     () => ({
       width: searchFilterWidth.value,

@@ -130,6 +130,8 @@ export default function Navigation() {
                 options={{
                   title: "Manage Subscriptions",
                   headerBackTitle: "Home",
+                  animation: "fade",
+                  animationDuration: 300,
                 }}
               />
               <AppStack.Screen
