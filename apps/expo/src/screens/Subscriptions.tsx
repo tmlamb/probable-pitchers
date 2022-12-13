@@ -72,7 +72,7 @@ export const Subscriptions = () => {
     isInitialLoading,
     isFetching,
     isError,
-  } = trpc.pitcher.byNameSearch.useQuery(searchFilter || "", {
+  } = trpc.pitcher.byNameSearch.useQuery(searchFilter?.split(" ") || [], {
     enabled: !!searchFilter && subscriptionsFetched,
   });
 
@@ -227,9 +227,8 @@ export const Subscriptions = () => {
 
   return (
     <ScreenLayout>
-      <Animated.View style={tw`pt-9 px-3`} layout={Layout.duration(1)}>
+      <Animated.View style={tw`pt-9 px-3 flex-1`} layout={Layout.duration(1)}>
         <SearchInput
-          style={tw.style(`mb-9`)}
           onChange={(text) => {
             setSearchFilter(text);
           }}

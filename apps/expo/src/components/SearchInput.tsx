@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { Dimensions, Keyboard } from "react-native";
 import Animated, {
@@ -18,6 +19,7 @@ type Props = {
 };
 
 export default function SearchInput({ onChange, style }: Props) {
+  const navigation = useNavigation();
   const [searchText, setSearchText] = React.useState<string>();
   const [showCancelButton, setShowCancelButton] = React.useState(false);
   const [searchComponentWidth, setSearchComponentWidth] =
@@ -67,13 +69,16 @@ export default function SearchInput({ onChange, style }: Props) {
               searchComponentWidth - cancelButtonWidth,
               { duration: 250 }
             );
-            searchComponentMarginTop.value = withTiming(-30, {
+            searchComponentMarginTop.value = withTiming(26, {
               duration: 250,
             });
             searchComponentMarginBottom.value = withTiming(12, {
               duration: 250,
             });
             setShowCancelButton(true);
+            navigation.setOptions({
+              headerShown: false,
+            });
           }}
           onBlur={() => {
             if (!searchText) {
@@ -87,6 +92,9 @@ export default function SearchInput({ onChange, style }: Props) {
                 duration: 250,
               });
               setShowCancelButton(false);
+              navigation.setOptions({
+                headerShown: true,
+              });
             }
           }}
           onChangeText={(text) => {
@@ -130,6 +138,9 @@ export default function SearchInput({ onChange, style }: Props) {
               onChange(undefined);
               setSearchText(undefined);
               setShowCancelButton(false);
+              navigation.setOptions({
+                headerShown: true,
+              });
               Keyboard.dismiss();
             }}
             accessibilityLabel="Clear exercise filter"

@@ -5,17 +5,17 @@ import { isAuthed, t } from "../trpc";
 export const pitcherRouter = t.router({
   byNameSearch: t.procedure
     .use(isAuthed)
-    .input(z.string())
+    .input(z.array(z.string()))
     .query(async ({ ctx, input }) => {
-      const inputTokens = input.trim().split(" ");
+      const inputJoined = input.join(" ");
       const searchResult: Pitcher[] = await ctx.prisma.pitcher.findMany({
         where: {
           OR: [
             {
-              name: { search: inputTokens.join(" | ") },
+              name: { search: input.join(" | ") },
             },
             {
-              name: { contains: inputTokens.join(" ") },
+              name: { contains: inputJoined },
             },
           ],
         },
@@ -25,8 +25,10 @@ export const pitcherRouter = t.router({
       });
 
       return searchResult.sort((a, b) => {
-        if (a.name.startsWith(input) && !b.name.startsWith(input)) return -1;
-        if (!a.name.startsWith(input) && b.name.startsWith(input)) return 1;
+        const startsWithA = a.name.startsWith(inputJoined);
+        const startsWithB = b.name.startsWith(inputJoined);
+        if (startsWithA && !startsWithB) return -1;
+        if (!startsWithA && startsWithB) return 1;
         return 0;
       });
     }),
