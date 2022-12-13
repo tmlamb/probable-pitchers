@@ -1,0 +1,15 @@
+{
+  "name": "@probable/k6",
+  "version": "1.1.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "test": "k6 run index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/k6": "^0.41.0"
+  }
+}
