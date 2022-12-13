@@ -363,19 +363,19 @@ const ingress = new k8s.networking.v1.Ingress(
           host: domain,
           http: {
             paths: [
-              // {
-              //   path: "/api/metrics",
-              //   pathType: "Prefix",
-              //   backend: {
-              //     service: {
-              //       name: "default-http-backend",
-              //       namespaceName: "kube-system",
-              //       port: {
-              //         number: 80,
-              //       },
-              //     },
-              //   },
-              // },
+              {
+                path: "/api/metrics",
+                pathType: "Prefix",
+                backend: {
+                  service: {
+                    name: "default-http-backend",
+                    namespaceName: "kube-system",
+                    port: {
+                      number: 80,
+                    },
+                  },
+                },
+              },
               {
                 path: "/",
                 pathType: "Prefix",
