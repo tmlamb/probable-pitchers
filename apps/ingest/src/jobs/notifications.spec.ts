@@ -42,8 +42,10 @@ test("should ignore existing notification", async () => {
   prismaMock.notification.create.mockRejectedValueOnce(
     new Prisma.PrismaClientKnownRequestError(
       "Unique constraint violation",
-      "P2002",
-      "1"
+      {
+        code: "P2002", 
+        clientVersion: "1"
+      }
     )
   );
   prismaMock.notification.create.mockResolvedValueOnce({
