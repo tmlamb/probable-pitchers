@@ -2,7 +2,7 @@ import type { AppRouter } from "@probable/api";
 import { transformer } from "@probable/api/transformer";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
-import { createTRPCReact } from "@trpc/react";
+import { createTRPCReact } from "@trpc/react-query";
 import { useState } from "react";
 import { getBaseUrl } from "../api";
 

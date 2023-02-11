@@ -2,7 +2,19 @@
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", ".expo/**", "dist/**"]
+      "outputs": [".next/**", ".expo/**", "dist/**"],
+      "env": [
+        "DATABASE_URL",
+        "AUTH_GOOGLE_CLIENT_ID",
+        "AUTH_GOOGLE_CLIENT_SECRET",
+        "APPLE_CLIENT_ID",
+        "APPLE_CLIENT_SECRET",
+        "APPLE_WEB_CLIENT_ID",
+        "APPLE_WEB_CLIENT_SECRET",
+        "NEXTAUTH_SECRET",
+        "NEXTAUTH_URL",
+        "NEXTAUTH_EXPO_URL"
+      ]
     },
     "lint": {
       "outputs": []
@@ -14,5 +26,9 @@
     "test": {
       "outputs": []
     }
-  }
+  },
+  "globalDependencies": [
+      "tsconfig.json",
+      ".env"
+  ]
 }

@@ -1,4 +1,7 @@
-const { APP_ENV, API_BASE_URL, NEXTAUTH_URL, SENTRY_PUBLIC_DSN } = process.env;
+import * as dotenv from 'dotenv'
+dotenv.config({path: '../../.env'});
+
+const { APP_ENV, NEXTAUTH_URL, SENTRY_PUBLIC_DSN } = process.env;
 
 export default ({ config }) => {
   const appConfig = {
@@ -6,7 +9,7 @@ export default ({ config }) => {
     name: `${config.name}${APP_ENV !== "production" ? ` (${APP_ENV})` : ""}`,
     extra: {
       ...config.extra,
-      apiBaseUrl: API_BASE_URL,
+      apiBaseUrl: NEXTAUTH_URL,
       nextAuthUrl: NEXTAUTH_URL,
       sentryPublicDsn: SENTRY_PUBLIC_DSN,
       appEnv: APP_ENV,

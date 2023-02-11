@@ -92,6 +92,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Publish update
-        run: cd apps/expo && APP_ENV=preview API_BASE_URL="https://dev.probablepitcher.com" NEXTAUTH_URL="https://dev.probablepitcher.com" SENTRY_PUBLIC_DSN="${{ secrets.SENTRY_PUBLIC_DSN }}" eas update --branch preview --message "${{ github.event.head_commit.message }}"
+        run: cd apps/expo && APP_ENV=preview NEXTAUTH_URL="https://dev.probablepitcher.com" SENTRY_PUBLIC_DSN="${{ secrets.SENTRY_PUBLIC_DSN }}" eas update --branch preview --message "${{ github.event.head_commit.message }}"
       # - name: App Store Build
       #   run: cd apps/expo && eas build --profile preview --platform all --non-interactive

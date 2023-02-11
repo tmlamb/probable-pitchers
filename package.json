@@ -15,8 +15,11 @@
     "test": "turbo run test"
   },
   "devDependencies": {
+    "patch-package": "^6.4.7",
     "prettier": "latest",
-    "turbo": "latest",
-    "patch-package": "^6.4.7"
+    "turbo": "^1.7.4"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3"
   }
 }
