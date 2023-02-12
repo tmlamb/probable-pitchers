@@ -27,6 +27,7 @@ RUN \
 # Rebuild the source code only when needed
 # TODO: re-evaluate if emulation is still necessary on arm64 after moving to node 18
 FROM --platform=linux/amd64 node:16-alpine AS builder
+RUN apk add --no-cache libc6-compat openssl
 
 ARG INGEST_JOBS
 ARG DATABASE_URL
