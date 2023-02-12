@@ -12,6 +12,12 @@ export default ({ config }) => {
         APP_ENV !== 'production' ? `.${APP_ENV}` : ''
       }`
     },
+    android: {
+      ...config.android,
+      package: `${config.android.package}${
+        APP_ENV !== 'production' ? `.${APP_ENV}` : ''
+      }`
+    },
     name: `${config.name}${APP_ENV !== "production" ? ` (${APP_ENV})` : ""}`,
     extra: {
       ...config.extra,
