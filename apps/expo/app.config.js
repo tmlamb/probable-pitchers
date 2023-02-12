@@ -6,6 +6,12 @@ const { APP_ENV, NEXTAUTH_URL, SENTRY_PUBLIC_DSN } = process.env;
 export default ({ config }) => {
   const appConfig = {
     ...config,
+    ios: {
+      ...config.ios,
+      bundleIdentifier: `${config.ios.bundleIdentifier}${
+        APP_ENV !== 'production' ? `.${APP_ENV}` : ''
+      }`
+    },
     name: `${config.name}${APP_ENV !== "production" ? ` (${APP_ENV})` : ""}`,
     extra: {
       ...config.extra,
