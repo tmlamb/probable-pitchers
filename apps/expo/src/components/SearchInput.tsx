@@ -15,10 +15,12 @@ import { SpecialText, ThemedTextInput } from "./Themed";
 
 type Props = {
   onChange: (text?: string) => void;
+  onActive: () => void;
+  onCancel: () => void;
   style?: ClassInput;
 };
 
-export default function SearchInput({ onChange, style }: Props) {
+export default function SearchInput({ onChange, onActive, onCancel, style }: Props) {
   const navigation = useNavigation();
   const [searchText, setSearchText] = React.useState<string>();
   const [showCancelButton, setShowCancelButton] = React.useState(false);
@@ -79,6 +81,7 @@ export default function SearchInput({ onChange, style }: Props) {
             navigation.setOptions({
               headerShown: false,
             });
+            onActive();
           }}
           onBlur={() => {
             if (!searchText) {
@@ -95,6 +98,7 @@ export default function SearchInput({ onChange, style }: Props) {
               navigation.setOptions({
                 headerShown: true,
               });
+              onCancel();
             }
           }}
           onChangeText={(text) => {
@@ -141,6 +145,7 @@ export default function SearchInput({ onChange, style }: Props) {
               navigation.setOptions({
                 headerShown: true,
               });
+              onCancel();
               Keyboard.dismiss();
             }}
             accessibilityLabel="Clear exercise filter"

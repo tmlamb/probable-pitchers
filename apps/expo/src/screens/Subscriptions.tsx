@@ -65,6 +65,7 @@ export const Subscriptions = () => {
   });
 
   const [searchFilter, setSearchFilter] = useState<string>();
+  const [searchActive, setSearchActive] = useState<boolean>(false);
 
   const {
     data: pitchersFromSearch,
@@ -88,7 +89,7 @@ export const Subscriptions = () => {
     onMutate: ({ pitcherId }) => {
       mutationTracker.startOne();
       const previousSubscriptions = utils.subscription.byUserId.getData();
-      utils.subscription.byUserId.setData((old) => {
+      utils.subscription.byUserId.setData(undefined, (old) => {
         if (old) {
           const pitcher = pitchers?.find((p) => p.id === pitcherId);
           if (pitcher) {
@@ -117,7 +118,7 @@ export const Subscriptions = () => {
       return { previousSubscriptions };
     },
     onError: (err, newSubscription, context) => {
-      utils.subscription.byUserId.setData(context?.previousSubscriptions);
+      utils.subscription.byUserId.setData(undefined, context?.previousSubscriptions);
       Sentry.Native.captureException(err);
     },
     onSettled: () => {
@@ -133,13 +134,13 @@ export const Subscriptions = () => {
     onMutate: (subscriptionId) => {
       mutationTracker.startOne();
       const previousSubscriptions = utils.subscription.byUserId.getData();
-      utils.subscription.byUserId.setData((old) =>
+      utils.subscription.byUserId.setData(undefined, (old) =>
         old?.filter((s) => s.id !== subscriptionId)
       );
       return { previousSubscriptions };
     },
     onError: (err, newSubscription, context) => {
-      utils.subscription.byUserId.setData(context?.previousSubscriptions);
+      utils.subscription.byUserId.setData(undefined, context?.previousSubscriptions);
       Sentry.Native.captureException(err);
     },
     onSettled: () => {
@@ -229,13 +230,14 @@ export const Subscriptions = () => {
     <ScreenLayout>
       <Animated.View style={tw`pt-9 px-3 flex-1`} layout={Layout.duration(1)}>
         <SearchInput
-          onChange={(text) => {
-            setSearchFilter(text);
-          }}
+          onChange={(text) => setSearchFilter(text)}
+          onActive={() => setSearchActive(true)}
+          onCancel={() => setSearchActive(false)}
         />
         <Animated.FlatList
           // @ts-ignore - there is a type bug in Reanimated 2.9.x
           itemLayoutAnimation={Layout.duration(250)}
+          bounces={searchActive}
           keyExtractor={(item) => {
             if (typeof item === "string") {
               return item;
@@ -291,7 +293,6 @@ export const Subscriptions = () => {
                           unsubscribe(item.subscription!.id);
                         }}
                         disabled={
-                          // item.subscription.userId === "loading" ||
                           pauseMutations
                         }
                         style={style}
