@@ -32,7 +32,6 @@
     "expo-updates": "~0.14.7",
     "expo-web-browser": "~11.0.0",
     "lodash": "^4.17.21",
-    "next": "12.3.1",
     "next-auth": "4.12.2",
     "react": "18.0.0",
     "react-dom": "18.0.0",
