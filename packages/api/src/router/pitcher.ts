@@ -7,7 +7,6 @@ export const pitcherRouter = t.router({
     .use(isAuthed)
     .input(z.array(z.string()))
     .query(async ({ ctx, input }) => {
-      const now = Date.now();
       const inputJoined = input.join(" ");
       const searchResult: Pitcher[] = await ctx.prisma.pitcher.findMany({
         where: {
@@ -33,15 +32,12 @@ export const pitcherRouter = t.router({
         return 0;
       });
 
-      const then = Date.now();
-      console.log("OLD ONE:",then-now);
       return result;
     }),
   byFuzzyName: t.procedure
     .use(isAuthed)
     .input(z.string())
     .query(async ({ ctx, input }) => {
-      const now = Date.now();
       const words = input.split(" ");
 
       const query = words.reduce((acc, word, index) =>
@@ -53,8 +49,6 @@ export const pitcherRouter = t.router({
         WHERE MATCH (name) 
         AGAINST (${query} IN BOOLEAN MODE)
       `
-      const then = Date.now();
-      console.log("NEW TWO:",then-now);
       return result;
     }),
 });

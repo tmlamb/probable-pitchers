@@ -1,0 +1,66 @@
+version: '3.9'
+services:
+  nextjs:
+    build:
+      context: ../..
+      dockerfile: apps/nextjs/Dockerfile
+    environment:
+      DATABASE_URL: mysql://root:password@db:3306/probable-pitchers 
+      NEXTAUTH_URL: http://nextjs:3000
+      NEXTAUTH_SECRET: secret
+  db:
+    image: mysql:8.0
+    cap_add:
+      - SYS_NICE
+    restart: always
+    environment:
+      - MYSQL_DATABASE=probable-pitchers
+      - MYSQL_ROOT_PASSWORD=password
+    volumes:
+      - db:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", 'mysqladmin ping']
+      interval: 10s
+      retries: 10
+      timeout: 2s
+  migrate:
+    build:
+      context: ../..
+      dockerfile: packages/db/Dockerfile
+    environment:
+      DATABASE_URL: mysql://root:password@db:3306/probable-pitchers 
+    depends_on:
+      db:
+        condition: service_healthy
+  ingest:
+    build:
+      context: ../..
+      dockerfile: apps/ingest/Dockerfile
+    environment:
+      INGEST_JOBS: teams,pitchers
+      DATABASE_URL: mysql://root:password@db:3306/probable-pitchers 
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+  seed:
+    image: mysql:8.0
+    volumes:
+      - ./test-data.sql:/test-data.sql
+    entrypoint: [ "bash", "-c", "sleep 10 && mysql --user=root --password=password --host=db --port=3306 probable-pitchers < /test-data.sql && exit"] 
+    depends_on:
+      ingest:
+        condition: service_completed_successfully
+  test:
+    image: grafana/k6
+    environment:
+      API_URL: http://nextjs:3000
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+    volumes:
+      - ./scripts:/scripts
+    command: run /scripts/index.js
+volumes:
+  db:
+    driver: local

@@ -2,10 +2,8 @@ import { BugAntIcon } from "@heroicons/react/24/outline";
 import { faqs } from "@probable/common";
 import type { NextPage } from "next";
 import LinkButton from "../components/LinkButton";
-import { trpc } from "../utils/trpc";
 
 const Support: NextPage = () => {
-  trpc.pitcher.byFuzzyName.useQuery("Rich Hill");
   return (
     <main className="container flex flex-col items-start justify-start min-h-screen space-y-4 max-w-7xl py-8 px-3 sm:px-8 mx-auto">
       <h1 className="text-3xl sm:text-5xl leading-normal font-extrabold text-gray-700">

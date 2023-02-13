@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "load-test": "k6 run index.ts"
+    "test": "k6 run scripts/index.js"
   },
   "keywords": [],
   "author": "",
