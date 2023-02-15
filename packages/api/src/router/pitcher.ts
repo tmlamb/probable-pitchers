@@ -41,7 +41,7 @@ export const pitcherRouter = t.router({
       const words = input.split(" ");
 
       const query = words.reduce((acc, word, index) =>
-        `${acc}${index < words.length ? ' ' : ''}*${word}*`, ''
+        `${acc}${index < words.length ? ' ' : ''}*${word}*`
       );
 
       const result =  await ctx.prisma.$queryRaw<Pitcher[]>`
@@ -49,6 +49,7 @@ export const pitcherRouter = t.router({
         WHERE MATCH (name) 
         AGAINST (${query} IN BOOLEAN MODE)
       `
+
       return result;
     }),
 });
