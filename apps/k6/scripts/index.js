@@ -46,19 +46,6 @@ export default function() {
     `${__ENV.API_URL}/api/trpc/pitcher.byFuzzyName?batch=1&input={"0":{"json":"${searchTerms.join("%20")}"}}`,
     params
   );
-  //const response = http.get(
-  //  `http://localhost:3000/api/trpc/pitcher.byNameSearch?batch=1&input={"0":{"json":["${searchTerms.join("\",\"")}"]}}`,
-  //  params
-  //);
-
-  if (response.status === 200 && response.body) {
-    const results = JSON.parse(response.body)
-    const pitchers = results[0].result.data.json;
-    console.log(`\nQUERY: ${searchTerms.join(" ")}`);
-    pitchers.forEach((pitcher) => console.log(pitcher.name));
-  } else {
-    throw Error(`bad: ${JSON.stringify(response)}`);
-  }
 
   check(response, {
     'Get status is 200': (r) => r.status === 200,
