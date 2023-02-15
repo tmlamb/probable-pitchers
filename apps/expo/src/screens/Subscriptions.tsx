@@ -73,7 +73,7 @@ export const Subscriptions = () => {
     isInitialLoading,
     isFetching,
     isError,
-  } = trpc.pitcher.byNameSearch.useQuery(searchFilter?.split(" ") || [], {
+  } = trpc.pitcher.byFuzzyName.useQuery(searchFilter!, {
     enabled: !!searchFilter && subscriptionsFetched,
   });
 
