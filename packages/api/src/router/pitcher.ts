@@ -38,18 +38,16 @@ export const pitcherRouter = t.router({
     .use(isAuthed)
     .input(z.string())
     .query(async ({ ctx, input }) => {
-      const words = input.split(" ");
+      const words = input.trim().split(" ");
 
       const query = words.reduce((acc, word, index) =>
-        `${acc}${index < words.length ? ' ' : ''}*${word}*`
+        `${acc}${!!index && index < words.length ? ' ' : ''}*${word}*`, ''
       );
 
-      const result =  await ctx.prisma.$queryRaw<Pitcher[]>`
+      return await ctx.prisma.$queryRaw<Pitcher[]>`
         SELECT * FROM Pitcher
         WHERE MATCH (name) 
         AGAINST (${query} IN BOOLEAN MODE)
       `
-
-      return result;
     }),
 });
