@@ -108,17 +108,19 @@ export const Home = ({
           </SpecialText>
         </LinkButton>
       </HeaderLeftContainer>
-      <HeaderRightContainer>
-        <LinkButton
-          to={{ screen: "Subscriptions" }}
-          style={tw`py-6 pl-8 pr-3 -my-6 -mr-4`}
-          accessibilityLabel="Navigate to subscription management screen"
-        >
-          <SpecialText>
-            <AntDesign name="edit" size={24} />
-          </SpecialText>
-        </LinkButton>
-      </HeaderRightContainer>
+      {schedule && schedule.length > 0 &&
+        <HeaderRightContainer>
+          <LinkButton
+            to={{ screen: "Subscriptions" }}
+            style={tw`py-6 pl-8 pr-3 -my-6 -mr-4`}
+            accessibilityLabel="Navigate to subscription management screen"
+          >
+            <SpecialText>
+              <AntDesign name="edit" size={24} />
+            </SpecialText>
+          </LinkButton>
+        </HeaderRightContainer>
+      }
       <SectionList
         contentContainerStyle={tw`px-3 pt-9 pb-12`}
         bounces={false}
