@@ -59,10 +59,18 @@ export const Subscriptions = () => {
     data: subscriptions,
     isSuccess: subscriptionsFetched,
     isFetching: subscriptionsFetching,
+    isError: isSubscriptionsError,
+    error: subscriptionsError
   } = trpc.subscription.byUserId.useQuery(undefined, {
     enabled: !mutationTracker.isMutating(),
     refetchOnMount: false,
   });
+
+  if (isSubscriptionsError) {
+    Sentry.Native.captureException(
+      `Error fetching subscriptions on homepage: ${subscriptionsError}`
+    );
+  }
 
   const [searchFilter, setSearchFilter] = useState<string>();
   const [searchActive, setSearchActive] = useState<boolean>(false);
@@ -72,10 +80,17 @@ export const Subscriptions = () => {
     isSuccess,
     isInitialLoading,
     isFetching,
-    isError,
+    isError: isSearchError,
+    error: searchError
   } = trpc.pitcher.byFuzzyName.useQuery(searchFilter!, {
     enabled: !!searchFilter && subscriptionsFetched,
   });
+
+  if (isSearchError) {
+    Sentry.Native.captureException(
+      `Error fuzzy searching for pitchers on homepage: ${searchError}`
+    );
+  }
 
   const utils = trpc.useContext();
 
