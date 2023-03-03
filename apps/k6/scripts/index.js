@@ -48,7 +48,7 @@ export default function() {
   );
 
   check(response, {
-    'Get status is 200': (r) => r.status === 200,
+    'Get response status is 200': (r) => r.status === 200,
   });
 
 
