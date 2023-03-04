@@ -377,7 +377,7 @@ export const Subscriptions = () => {
                   </Animated.View>
                 )
               )}
-              {isError && (
+              {isSearchError && (
                 <Animated.View entering={FadeIn.delay(150)} exiting={FadeOut}>
                   <AlertText
                     style={tw`mb-9 mx-3 text-sm`}
