@@ -59,6 +59,7 @@ RUN adduser --system --uid 1001 ingest
 COPY --from=builder /probable-pitchers/apps/ingest/package.json ./apps/ingest/package.json
 COPY --from=builder /probable-pitchers/package.json ./package.json
 COPY --from=builder /probable-pitchers/node_modules ./node_modules
+COPY --from=builder /probable-pitchers/packages ./packages
 
 COPY --from=builder --chown=ingest:ingest /probable-pitchers/apps/ingest/dist/ ./apps/ingest/
 
