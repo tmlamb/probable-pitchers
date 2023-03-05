@@ -76,7 +76,7 @@ const TeamsResponse = z.object({
 });
 
 export async function getTeams(season: string): Promise<MlbTeam[]> {
-  console.log(season);
+  console.log("Season: ",season);
   return fetch(
     `https://statsapi.mlb.com/api/v1/teams?sportId=1&season=${season}`
   )
