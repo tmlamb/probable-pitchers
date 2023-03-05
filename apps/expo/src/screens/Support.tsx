@@ -14,7 +14,7 @@ export const Support = () => {
         contentContainerStyle={tw`justify-between px-3 pt-9 pb-9 flex-1`}
       >
         <View style={tw``}>
-          <PrimaryText style={tw`text-lg mb-4`}>FAQs</PrimaryText>
+          <PrimaryText style={tw`text-lg mb-4`}>Frequently Asked Questions</PrimaryText>
           {faqs.map((faq) => (
             <View key={faq.question} style={tw`mb-4`}>
               <PrimaryText style={tw`font-bold text-base`}>
@@ -28,7 +28,7 @@ export const Support = () => {
           onPress={() =>
             Linking.openURL(
               "https://github.com/tmlamb/probable-pitchers/issues"
-            )
+             )
           }
           accessibilityRole="link"
           accessibilityLabel="Open Application Feedback Page In Browser"
