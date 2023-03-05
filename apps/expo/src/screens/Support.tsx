@@ -27,7 +27,7 @@ export const Support = () => {
         <ButtonContainer
           onPress={() =>
             Linking.openURL(
-              "https://github.com/tmlamb/probable-pitchers/issues"
+              "https://github.com/tmlamb/probable-pitchers/issues/"
              )
           }
           accessibilityRole="link"
