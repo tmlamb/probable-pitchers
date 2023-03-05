@@ -19,10 +19,24 @@ jobs:
       changed-expo: ${{ steps.changed-expo.outputs.result }}
 
     steps:
-      - name: Creat Changeset
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Create Changeset
         id: changeset
         run: |
-          context=`npm run build --filter=$TURBO_RUN_FILTER --dry-run=json`
+          context=`npm run build -- --filter=$TURBO_RUN_FILTER --dry-run=json`
           content="${content//'%'/'%25'}"
           content="${content//$'\n'/'%0A'}"
           content="${content//$'\r'/'%0D'}"
