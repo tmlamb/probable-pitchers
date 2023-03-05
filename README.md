@@ -24,7 +24,7 @@ Web application for probablepitcher.com, providing users access to the subscript
 
 ### [ingest](apps/ingest)
 
-Worker/job that ingests pitcher and game data into the database.
+Worker that ingests pitcher and game data into the database.
 
 ## Other
 
