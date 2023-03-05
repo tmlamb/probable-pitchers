@@ -133,6 +133,7 @@ jobs:
   deploy-infra:
     name: Update Infrastructure
     needs: [build-nextjs, build-ingest]
+    if: always()
     runs-on: ubuntu-latest
 
     steps:
