@@ -178,6 +178,11 @@ jobs:
     name: Update Preview Mobile App
     needs: [checks, deploy-infra]
       #if: ${{ needs.checks.outputs.changed-expo }}
+    if: |
+      always() &&
+      needs.checks.result == 'success' &&
+      needs.deploy-infra.result == 'success' &&
+      needs.checks.outputs.changed-expo
     runs-on: ubuntu-latest
     env:
       CHANGED_EXPO: ${{ needs.checks.outputs.changed-expo }}
