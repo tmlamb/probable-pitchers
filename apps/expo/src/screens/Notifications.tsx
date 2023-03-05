@@ -30,14 +30,14 @@ export const Notifications = () => {
       onMutate: (notificationsEnabled) => {
         mutationTracker.startOne();
         const currentSettings = utils.user.settings.getData();
-        utils.user.settings.setData((old) => ({
+        utils.user.settings.setData(undefined, (old) => ({
           ...old,
           notificationsEnabled,
         }));
         return { currentSettings };
       },
       onError: (err, notificationsEnabled, context) => {
-        utils.user.settings.setData(context?.currentSettings);
+        utils.user.settings.setData(undefined, context?.currentSettings);
         Sentry.Native.captureException(err);
       },
       onSettled: () => {

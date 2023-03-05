@@ -131,7 +131,7 @@ jobs:
           docker push --all-tags ghcr.io/tmlamb/probable-pitchers-ingest
 
   deploy-infra:
-    name: Update Infrastructure
+    name: Deploy Infrastructure
     needs: [checks, build-nextjs, build-ingest]
     if: always()
     runs-on: ubuntu-latest
@@ -176,7 +176,7 @@ jobs:
 
   update-preview:
     name: Update Preview Mobile App
-    needs: deploy-infra
+    needs: [checks, deploy-infra]
     runs-on: ubuntu-latest
     if: ${{ needs.checks.outputs.changed-expo }}
 
