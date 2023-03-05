@@ -28,7 +28,7 @@ export async function ingestNotifications() {
             e instanceof Prisma.PrismaClientKnownRequestError &&
             e.code === "P2002" // unique constraint violation, notification already ingested
           ) {
-            console.info("Duplicate notification cannot be created: ", e);
+            console.info("Duplicate notifications cannot be created: ", e);
           } else {
             console.error(
               "Unknown error ingesting notifications for subscription: ",
