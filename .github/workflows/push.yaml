@@ -36,7 +36,7 @@ jobs:
       - name: Create Changeset
         id: changeset
         run: |
-          content=`npm run build -- --filter=...\[$TURBO_RUN_FILTER\] --dry-run=json`
+          content=`npm run build -- --filter=\[$TURBO_RUN_FILTER\] --dry-run=json`
           content="${content//'%'/'%25'}"
           content="${content//$'\n'/'%0A'}"
           content="${content//$'\r'/'%0D'}"
