@@ -171,6 +171,8 @@ jobs:
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
           DEPLOY_COMMIT_TAG: sha-${{ github.sha }}
+          CHANGED_NEXTJS: ${{ needs.checks.outputs.changed-nextjs }}
+          CHANGED_INGEST: ${{ needs.checks.outputs.changed-ingest }}
 
   update-preview:
     name: Update Preview Mobile App

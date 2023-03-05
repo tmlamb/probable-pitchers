@@ -6,6 +6,13 @@ import { containerRegistry } from "./config";
 const config = new pulumi.Config();
 const env = pulumi.getStack();
 const imageTag = process.env.DEPLOY_COMMIT_TAG || "latest";
+console.log("CHANGED NEXTJS>?????????????1",process.env.CHANGED_NEXTJS);
+console.log("CHANGED INGEST??????????????1",process.env.CHANGED_INGEST);
+const changedNextjs = process.env.CHANGED_NEXTJS === "true" || true;
+const changedIngest = process.env.CHANGED_INGEST === "true" || true;
+
+console.log("CHANGED NEXTJS>?????????????",changedNextjs);
+console.log("CHANGED INGEST??????????????",changedIngest);
 
 const domains = config.requireObject<string[]>("domains");
 const replicas = config.requireNumber("nextjsReplicas");
@@ -216,7 +223,7 @@ const deployment = new k8s.apps.v1.Deployment(
           containers: [
             {
               name: appLabels.app,
-              image: `ghcr.io/tmlamb/probable-pitchers-nextjs:${imageTag}`,
+              image: `ghcr.io/tmlamb/probable-pitchers-nextjs:${changedNextjs ? imageTag : "latest"}`,
               ports: [{ name: "http", containerPort: 3000 }],
               resources: {
                 requests: {
