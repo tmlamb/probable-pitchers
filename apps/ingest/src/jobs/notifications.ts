@@ -1,4 +1,4 @@
-import { Pitcher, Prisma } from "@prisma/client";
+import { Pitcher, Prisma } from "@probable/db";
 import pkg from "date-fns-tz";
 import { client } from "../db/db.js";
 import { sendPushNotification } from "../services/push.js";

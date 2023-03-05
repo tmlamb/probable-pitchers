@@ -43,6 +43,10 @@ ARG NEXTAUTH_SECRET
 ARG NEXTAUTH_URL
 ARG NEXTAUTH_EXPO_URL
 
+ARG TURBO_TEAM
+ENV TURBO_TEAM=$TURBO_TEAM
+ARG TURBO_TOKEN
+ENV TURBO_TOKEN=$TURBO_TOKEN
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
