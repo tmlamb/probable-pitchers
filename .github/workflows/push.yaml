@@ -177,7 +177,7 @@ jobs:
   update-preview:
     name: Update Preview Mobile App
     needs: [checks, deploy-infra]
-    if: ${{ needs.checks.outputs.changed-expo }}
+      #if: ${{ needs.checks.outputs.changed-expo }}
     runs-on: ubuntu-latest
 
     steps:
