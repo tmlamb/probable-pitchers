@@ -107,7 +107,7 @@ export default function SearchInput({ onChange, onActive, onCancel, style }: Pro
           }}
           value={searchText || ""}
           style={tw.style("rounded-xl")}
-          label={searchText ? undefined : "Search"}
+          label={searchText ? undefined : "Search pitchers by name"}
           accessibilityLabel="Filter list of pitchers by name"
         />
       </Animated.View>
