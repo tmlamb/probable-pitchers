@@ -1,64 +1,57 @@
 ########################
-#         DEPS         #
+#        PRUNER        #
 ########################
 
-# Install dependencies only when needed
-# TODO: re-evaluate if emulation is still necessary on arm64 after moving to node 18
-FROM --platform=linux/amd64 node:16-alpine AS deps
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+FROM node:16-alpine AS pruner
 RUN apk add --no-cache libc6-compat openssl
+RUN apk update
+
 WORKDIR /probable-pitchers
 
-COPY packages/db ./packages/db
+RUN npm -g install turbo
 
-# Install dependencies based on the preferred package manager
-COPY package.json  package-lock.json ./
-COPY apps/ingest/package.json ./apps/ingest/package.json
-COPY turbo.json ./turbo.json
-RUN \
-  if [ -f package-lock.json ]; then npm ci; \
-  else echo "Lockfile not found." && exit 1; \
-  fi
+COPY . .
+
+RUN turbo prune --scope=@probable/ingest --docker
 
 ########################
 #        BUILDER       #
 ########################
 
-# Rebuild the source code only when needed
-# TODO: re-evaluate if emulation is still necessary on arm64 after moving to node 18
-FROM --platform=linux/amd64 node:16-alpine AS builder
+FROM node:16-alpine AS builder
 RUN apk add --no-cache libc6-compat openssl
+RUN apk update
+
+WORKDIR /probable-pitchers
+
+COPY .gitignore .gitignore
+COPY turbo.json turbo.json
+COPY tsconfig.json tsconfig.json
+COPY patches/ patches/
+COPY types/ types/
+COPY --from=pruner /probable-pitchers/out/package-lock.json ./package-lock.json
+COPY --from=pruner /probable-pitchers/out/full/ . 
+
+RUN npm ci
 
 ARG INGEST_JOBS
 ARG DATABASE_URL
 
-WORKDIR /probable-pitchers
-COPY --from=deps /probable-pitchers/node_modules ./node_modules
-# COPY --from=deps /probable-pitchers/apps/ingest/node_modules ./apps/ingest/node_modules
-COPY . .
+ARG TURBO_TEAM
+ENV TURBO_TEAM=$TURBO_TEAM
+ARG TURBO_TOKEN
+ENV TURBO_TOKEN=$TURBO_TOKEN
 
-# Next.js collects completely anonymous telemetry data about general usage.
-# Learn more here: https://nextjs.org/telemetry
-# Uncomment the following line in case you want to disable telemetry during the build.
-# ENV NEXT_TELEMETRY_DISABLED 1
-
-RUN \
-  if [ -f package-lock.json ]; then npm run build -- --filter=ingest; \
-  else echo "Lockfile not found." && exit 1; \
-  fi
+RUN npm run build -- --filter=ingest
 
 ########################
 #        RUNNER        #
 ########################
 
-# Production image, copy all the files and run next
-# TODO: re-evaluate if emulation is still necessary after moving to node 18
-FROM --platform=linux/amd64 node:16-alpine AS runner
+FROM node:16-alpine AS runner
 WORKDIR /probable-pitchers
 
 ENV NODE_ENV production
-# Uncomment the following line in case you want to disable telemetry during runtime.
-# ENV NEXT_TELEMETRY_DISABLED 1
 
 RUN addgroup --system --gid 1001 ingest
 RUN adduser --system --uid 1001 ingest
@@ -66,10 +59,7 @@ RUN adduser --system --uid 1001 ingest
 COPY --from=builder /probable-pitchers/apps/ingest/package.json ./apps/ingest/package.json
 COPY --from=builder /probable-pitchers/package.json ./package.json
 COPY --from=builder /probable-pitchers/node_modules ./node_modules
-# COPY --from=builder /probable-pitchers/apps/ingest/node_modules ./apps/ingest/node_modules
 
-# Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=ingest:ingest /probable-pitchers/apps/ingest/dist/ ./apps/ingest/
 
 USER ingest
