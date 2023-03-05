@@ -140,7 +140,8 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
-      - uses: actions/setup-node@v3
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
         with:
           node-version: 16.x
           cache: 'npm'
@@ -201,7 +202,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Setup Node
+      - name: Setup Node.js environment
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
@@ -217,7 +218,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Publish update
+      - name: Publish Live Update
         run: cd apps/expo && APP_ENV=preview NEXTAUTH_URL="https://dev.probablepitcher.com" SENTRY_PUBLIC_DSN="${{ secrets.SENTRY_PUBLIC_DSN }}" eas update --branch preview --message "${{ github.event.head_commit.message }}"
 
       # - name: App Store Build

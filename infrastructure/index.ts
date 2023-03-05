@@ -6,13 +6,8 @@ import { containerRegistry } from "./config";
 const config = new pulumi.Config();
 const env = pulumi.getStack();
 const imageTag = process.env.DEPLOY_COMMIT_TAG || "latest";
-console.log("CHANGED NEXTJS>?????????????1",process.env.CHANGED_NEXTJS);
-console.log("CHANGED INGEST??????????????1",process.env.CHANGED_INGEST);
 const changedNextjs = process.env.CHANGED_NEXTJS === "true" || false;
 const changedIngest = process.env.CHANGED_INGEST === "true" || false;
-
-console.log("CHANGED NEXTJS>?????????????",changedNextjs);
-console.log("CHANGED INGEST??????????????",changedIngest);
 
 const domains = config.requireObject<string[]>("domains");
 const replicas = config.requireNumber("nextjsReplicas");
