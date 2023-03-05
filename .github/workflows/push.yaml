@@ -70,7 +70,7 @@ jobs:
 
   build-nextjs:
     name: Build nextjs image
-    needs: [test,changeset]
+    needs: [test, checks]
     runs-on: ubuntu-latest
     if: ${{ needs.checks.outputs.changed-nextjs }}
 
@@ -94,7 +94,7 @@ jobs:
 
   build-ingest:
     name: Build ingest image
-    needs: [test,changeset]
+    needs: [test, checks]
     runs-on: ubuntu-latest
     if: ${{ needs.checks.outputs.changed-ingest }}
 
@@ -118,7 +118,7 @@ jobs:
 
   deploy-infra:
     name: Update Infrastructure
-    needs: build-images
+    needs: [build-nextjs, build-ingest]
     runs-on: ubuntu-latest
 
     steps:
