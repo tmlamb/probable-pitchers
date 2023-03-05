@@ -69,8 +69,8 @@ jobs:
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
           DEPLOY_COMMIT_TAG: ${{ github.ref_name }}
-          CHANGED_INGEST: true
-          CHANGED_NEXTJS: true
+          CHANGED_INGEST: "true"
+          CHANGED_NEXTJS: "true"
 
   update-production:
     name: Update Production App
