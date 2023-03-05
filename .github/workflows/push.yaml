@@ -7,7 +7,6 @@ on:
 env:
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
   TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-  TURBO_REF_FILTER: ${{ github.event.before }}
 
 jobs:
   checks:
@@ -103,7 +102,7 @@ jobs:
 
       - name: Build and publish nextjs image
         run: |
-          docker build . --file apps/nextjs/Dockerfile --tag ghcr.io/tmlamb/probable-pitchers-nextjs:sha-${{ github.sha }} --tag ghcr.io/tmlamb/probable-pitchers-nextjs:latest
+          docker build . --file apps/nextjs/Dockerfile --tag ghcr.io/tmlamb/probable-pitchers-nextjs:sha-${{ github.sha }} --tag ghcr.io/tmlamb/probable-pitchers-nextjs:latest --build-arg TURBO_TEAM=$TURBO_TEAM --build-arg TURBO_TOKEN=$TURBO_TOKEN
           docker push --all-tags ghcr.io/tmlamb/probable-pitchers-nextjs
 
   build-ingest:
@@ -127,7 +126,7 @@ jobs:
 
       - name: Build and publish ingest image
         run: |
-          docker build . --file apps/ingest/Dockerfile --tag ghcr.io/tmlamb/probable-pitchers-ingest:sha-${{ github.sha }} --tag ghcr.io/tmlamb/probable-pitchers-ingest:latest
+          docker build . --file apps/ingest/Dockerfile --tag ghcr.io/tmlamb/probable-pitchers-ingest:sha-${{ github.sha }} --tag ghcr.io/tmlamb/probable-pitchers-ingest:latest --build-arg TURBO_TEAM=$TURBO_TEAM --build-arg TURBO_TOKEN=$TURBO_TOKEN
           docker push --all-tags ghcr.io/tmlamb/probable-pitchers-ingest
 
   deploy-infra:
@@ -189,9 +188,6 @@ jobs:
       CHANGED_EXPO: ${{ needs.checks.outputs.changed-expo }}
 
     steps:
-      - name: echo var
-        run: echo "$CHANGED_EXPO"
-
       - name: Check for EXPO_TOKEN
         run: |
           if [ -z "${{ secrets.EXPO_TOKEN }}" ]; then
