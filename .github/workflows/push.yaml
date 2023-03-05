@@ -3,62 +3,94 @@ on:
   push:
     branches:
       - main
+
+env:
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+
 jobs:
   test:
     name: Automated Testing
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
         with:
           node-version: 16.x
+          cache: 'npm'
+
       - name: Install Dependencies
         run: npm ci
+
       - name: Run Tests
         run: npm run test
+
   build-images:
     name: Build Container Images
     needs: test
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
+      - name: Check out code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
       - name: Login to container registry
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
           username: ${{ secrets.GHCR_USER }}
           password: ${{ secrets.GHCR_ACCESS_TOKEN }}
+
       - name: Build and publish nextjs image
         run: |
           docker build . --file apps/nextjs/Dockerfile --tag ghcr.io/tmlamb/probable-pitchers-nextjs:sha-${{ github.sha }} --tag ghcr.io/tmlamb/probable-pitchers-nextjs:latest
           docker push --all-tags ghcr.io/tmlamb/probable-pitchers-nextjs
+
       - name: Build and publish ingest image
         run: |
           docker build . --file apps/ingest/Dockerfile --tag ghcr.io/tmlamb/probable-pitchers-ingest:sha-${{ github.sha }} --tag ghcr.io/tmlamb/probable-pitchers-ingest:latest
           docker push --all-tags ghcr.io/tmlamb/probable-pitchers-ingest
+
   deploy-infra:
     name: Update Infrastructure
     needs: build-images
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
+      - name: Check out code
+        uses: actions/checkout@v3
+
       - uses: actions/setup-node@v3
         with:
           node-version: 16.x
+
       - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v0
+        uses: google-github-actions/auth@v1
         with:
           credentials_json: "${{ secrets.GCP_CREDENTIALS_PROD }}"
+
       - name: "Set up Cloud SDK"
-        uses: "google-github-actions/setup-gcloud@v0"
-      - id: "get-credentials"
-        uses: "google-github-actions/get-gke-credentials@v0"
+        uses: "google-github-actions/setup-gcloud@v1"
+
+      - name: "Get GKR Credentials"
+        uses: "google-github-actions/get-gke-credentials@v1"
         with:
           cluster_name: "probable-pitchers"
           location: "us-central1"
-      - run: cd infrastructure && npm install
-      - uses: pulumi/actions@v3
+
+      - name: "Install dependencies"
+        run: cd infrastructure && npm ci
+
+      - name: "Update test stack"
+        uses: pulumi/actions@v3
         with:
           command: up
           stack-name: test
@@ -66,10 +98,12 @@ jobs:
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
           DEPLOY_COMMIT_TAG: sha-${{ github.sha }}
+
   update-preview:
-    name: Update Preview App
+    name: Update Preview Mobile App
     needs: deploy-infra
     runs-on: ubuntu-latest
+
     steps:
       - name: Check for EXPO_TOKEN
         run: |
@@ -77,21 +111,27 @@ jobs:
             echo "You must provide an EXPO_TOKEN secret linked to this project's Expo account in this repo's secrets. Learn more: https://docs.expo.dev/eas-update/github-actions"
             exit 1
           fi
+
       - name: Checkout repository
         uses: actions/checkout@v3
+
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
+
       - name: Setup Expo
         uses: expo/expo-github-action@v7
         with:
           expo-version: latest
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
+
       - name: Install dependencies
         run: npm ci
+
       - name: Publish update
         run: cd apps/expo && APP_ENV=preview NEXTAUTH_URL="https://dev.probablepitcher.com" SENTRY_PUBLIC_DSN="${{ secrets.SENTRY_PUBLIC_DSN }}" eas update --branch preview --message "${{ github.event.head_commit.message }}"
+
       # - name: App Store Build
       #   run: cd apps/expo && eas build --profile preview --platform all --non-interactive
