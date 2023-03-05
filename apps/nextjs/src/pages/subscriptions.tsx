@@ -25,7 +25,7 @@ const Subscriptions: NextPage = () => {
     return (
       <main className="container flex flex-col items-start justify-start min-h-screen space-y-4 max-w-7xl py-8 px-3 sm:px-8 mx-auto">
         <h1 className="text-3xl sm:text-5xl leading-normal font-extrabold text-gray-700">
-          Subscriptions
+          Pitcher Subscriptions
         </h1>
         {Object.entries(schedule).map(([nextGameDay, subscriptions]) => (
           <div key={nextGameDay}>

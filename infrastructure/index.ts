@@ -82,7 +82,7 @@ const seedJob = new k8s.batch.v1.CronJob(
                 {
                   name: seedLabels.app,
 
-                  image: `ghcr.io/tmlamb/probable-pitchers-ingest:${imageTag}`,
+                  image: `ghcr.io/tmlamb/probable-pitchers-ingest:${changedIngest ? imageTag : 'latest'}`,
                   env: [
                     {
                       name: "DATABASE_URL",
@@ -128,7 +128,7 @@ const playerJob = new k8s.batch.v1.CronJob(
                 {
                   name: playerLabels.app,
 
-                  image: `ghcr.io/tmlamb/probable-pitchers-ingest:${imageTag}`,
+                  image: `ghcr.io/tmlamb/probable-pitchers-ingest:${changedIngest ? imageTag : 'latest'}`,
                   env: [
                     {
                       name: "DATABASE_URL",
@@ -173,7 +173,7 @@ const notifyJob = new k8s.batch.v1.CronJob(
                 {
                   name: notifyLabels.app,
 
-                  image: `ghcr.io/tmlamb/probable-pitchers-ingest:${imageTag}`,
+                  image: `ghcr.io/tmlamb/probable-pitchers-ingest:${changedIngest ? imageTag : 'latest'}`,
                   env: [
                     {
                       name: "DATABASE_URL",

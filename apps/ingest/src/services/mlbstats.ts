@@ -76,7 +76,7 @@ const TeamsResponse = z.object({
 });
 
 export async function getTeams(season: string): Promise<MlbTeam[]> {
-  console.log("Season: ",season);
+  console.log("Season:",season);
   return fetch(
     `https://statsapi.mlb.com/api/v1/teams?sportId=1&season=${season}`
   )
@@ -109,7 +109,7 @@ export async function getPitchers(season: string): Promise<MlbPlayer[]> {
       );
     })
     .catch((err: Error) => {
-      console.error(err);
+      console.error("Error fetching players:", err);
       throw err;
     });
 }
