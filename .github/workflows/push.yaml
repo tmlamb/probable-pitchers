@@ -179,8 +179,13 @@ jobs:
     needs: [checks, deploy-infra]
       #if: ${{ needs.checks.outputs.changed-expo }}
     runs-on: ubuntu-latest
+    env:
+      CHANGED_EXPO: ${{ needs.checks.outputs.changed-expo }}
 
     steps:
+      - name: echo var
+        run: echo "$CHANGED_EXPO"
+
       - name: Check for EXPO_TOKEN
         run: |
           if [ -z "${{ secrets.EXPO_TOKEN }}" ]; then
