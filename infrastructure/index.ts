@@ -116,7 +116,7 @@ const playerJob = new k8s.batch.v1.CronJob(
       namespace: namespaceName,
     },
     spec: {
-      schedule: "0 6 * 3,4,5,6,7,8,9,10,11 *",
+      schedule: "0 6 * 2,3,4,5,6,7,8,9,10,11,12 *",
       jobTemplate: {
         spec: {
           template: {
@@ -136,7 +136,7 @@ const playerJob = new k8s.batch.v1.CronJob(
                     },
                     {
                       name: "INGEST_JOBS",
-                      value: "pitchers",
+                      value: "pitchers,games",
                     },
                   ],
                 },
@@ -152,6 +152,7 @@ const playerJob = new k8s.batch.v1.CronJob(
     provider: clusterProvider,
   }
 );
+
 const notifyLabels = { app: `probable-notify-${env}` };
 
 const notifyJob = new k8s.batch.v1.CronJob(
@@ -161,7 +162,7 @@ const notifyJob = new k8s.batch.v1.CronJob(
       namespace: namespaceName,
     },
     spec: {
-      schedule: "0,30 15,16,17,18,19,20,21,22 * 2,3,4,5,6,7,8,9,10,11 *",
+      schedule: "0,30 15,16,17,18,19,20,21,22 * 2,3,4,5,6,7,8,9,10,11,12 *",
       jobTemplate: {
         spec: {
           template: {
