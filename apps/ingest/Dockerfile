@@ -32,7 +32,7 @@ COPY types/ types/
 COPY --from=pruner /probable-pitchers/out/package-lock.json ./package-lock.json
 COPY --from=pruner /probable-pitchers/out/full/ . 
 
-RUN npm ci
+RUN npm install
 
 ARG INGEST_JOBS
 ARG DATABASE_URL
