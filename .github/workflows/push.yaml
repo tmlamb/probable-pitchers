@@ -102,7 +102,7 @@ jobs:
 
       - name: Build and publish nextjs image
         run: |
-          docker build . --file apps/nextjs/Dockerfile --tag ghcr.io/tmlamb/probable-pitchers-nextjs:sha-${{ github.sha }} --tag ghcr.io/tmlamb/probable-pitchers-nextjs:latest --build-arg TURBO_TEAM=$TURBO_TEAM --build-arg TURBO_TOKEN=$TURBO_TOKEN
+          docker build . --file apps/nextjs/Dockerfile --tag ghcr.io/tmlamb/probable-pitchers-nextjs:sha-${{ github.sha }} --tag ghcr.io/tmlamb/probable-pitchers-nextjs:latest --build-arg TURBO_TEAM=${{ env.TURBO_TEAM }} --build-arg TURBO_TOKEN=${{ env.TURBO_TOKEN }}
           docker push --all-tags ghcr.io/tmlamb/probable-pitchers-nextjs
 
   build-ingest:
@@ -126,7 +126,7 @@ jobs:
 
       - name: Build and publish ingest image
         run: |
-          docker build . --file apps/ingest/Dockerfile --tag ghcr.io/tmlamb/probable-pitchers-ingest:sha-${{ github.sha }} --tag ghcr.io/tmlamb/probable-pitchers-ingest:latest --build-arg TURBO_TEAM=$TURBO_TEAM --build-arg TURBO_TOKEN=$TURBO_TOKEN
+          docker build . --file apps/ingest/Dockerfile --tag ghcr.io/tmlamb/probable-pitchers-ingest:sha-${{ github.sha }} --tag ghcr.io/tmlamb/probable-pitchers-ingest:latest --build-arg TURBO_TEAM=${{ env.TURBO_TEAM }} --build-arg TURBO_TOKEN=${{ env.TURBO_TOKEN }}
           docker push --all-tags ghcr.io/tmlamb/probable-pitchers-ingest
 
   deploy-infra:
