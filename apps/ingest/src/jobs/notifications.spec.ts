@@ -1,5 +1,5 @@
 import { beforeEach, jest, test } from "@jest/globals";
-import { Prisma } from "@probable/db";
+import { Prisma } from "@prisma/client";
 import { mockReset } from "jest-mock-extended";
 import { sendPushNotification } from "../services/push";
 import { pendingNotifications } from "../test/fixtures";
