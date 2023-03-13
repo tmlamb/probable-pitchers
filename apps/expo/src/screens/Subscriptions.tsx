@@ -26,7 +26,7 @@ import {
   ThemedView,
 } from "../components/Themed";
 import { trpc } from "../components/TRPCProvider";
-import { useTrackParallelMutations } from "../hooks/use-track-parallel-mutations";
+import { useTrackParallelMutations } from "@probable/common";
 import tw from "../tailwind";
 
 const SubscriptionButton = ({

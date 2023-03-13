@@ -1,3 +1,6 @@
+import * as dotenv from 'dotenv'
+dotenv.config({ path: "../../.env" });
+
 // @ts-check
 import withTM from "next-transpile-modules";
 

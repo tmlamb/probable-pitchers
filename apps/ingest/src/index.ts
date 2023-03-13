@@ -1,4 +1,6 @@
-// import { processGames } from "./jobs/daily-games.js";
+import * as dotenv from 'dotenv'
+dotenv.config({ path: "../../.env" });
+
 import { ingestGames } from "./jobs/games.js";
 import {
   ingestNotifications,
