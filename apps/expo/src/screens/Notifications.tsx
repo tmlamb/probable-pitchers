@@ -1,3 +1,4 @@
+import { useTrackParallelMutations } from "@probable/common";
 import { PermissionStatus } from "expo-modules-core";
 import * as ExpoNotifications from "expo-notifications";
 import React, { useEffect, useRef, useState } from "react";
@@ -14,7 +15,6 @@ import {
   ThemedView,
 } from "../components/Themed";
 import { trpc } from "../components/TRPCProvider";
-import { useTrackParallelMutations } from "../hooks/use-track-parallel-mutations";
 import tw from "../tailwind";
 
 export const Notifications = () => {
