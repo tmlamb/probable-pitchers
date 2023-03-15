@@ -42,7 +42,7 @@ const SubscriptionButton = ({
 }) => {
   return (
     <ButtonContainer
-      style={tw`-my-3 -mr-3 py-3 pl-3 pr-3`}
+      style={tw`-my-3 -mr-4 py-3 pl-4 pr-4`}
       onPress={onPress}
       accessibilityLabel={""}
       disabled={disabled}
@@ -243,7 +243,7 @@ export const Subscriptions = () => {
 
   return (
     <ScreenLayout>
-      <Animated.View style={tw`pt-9 px-3 flex-1`} layout={Layout.duration(1)}>
+      <Animated.View style={tw`pt-6 px-4 flex-1`} layout={Layout.duration(1)}>
         <SearchInput
           onChange={(text) => setSearchFilter(text)}
           onActive={() => setSearchActive(true)}
@@ -266,7 +266,7 @@ export const Subscriptions = () => {
             if (typeof item === "string") {
               return (
                 <Animated.View entering={FadeIn} exiting={FadeOut}>
-                  <View style={tw`flex-row justify-between mb-1.5 mx-3`}>
+                  <View style={tw`flex-row justify-between mb-1 mx-4`}>
                     <SecondaryText style={tw`uppercase text-sm`}>
                       {item}
                     </SecondaryText>
@@ -299,7 +299,7 @@ export const Subscriptions = () => {
                         : undefined
                     )}
                   >
-                    <PrimaryText style={tw`flex-1 pr-2.5`} numberOfLines={1}>
+                    <PrimaryText style={tw`flex-1 pr-9.5`} numberOfLines={1}>
                       {item.name}
                     </PrimaryText>
                     {item.subscription && (
@@ -347,7 +347,7 @@ export const Subscriptions = () => {
               {isSuccess && (
                 <Animated.View entering={FadeIn.delay(150)} exiting={FadeOut}>
                   <SecondaryText
-                    style={tw`mb-9 mx-3 text-sm`}
+                    style={tw`mb-6 mx-4 text-sm`}
                     accessibilityRole="summary"
                   >
                     No pitchers found. Try changing your search.
@@ -369,7 +369,7 @@ export const Subscriptions = () => {
                 !isSuccess && (
                   <Animated.View entering={FadeIn} exiting={FadeOut}>
                     <SecondaryText
-                      style={tw`mb-9 mx-3 text-sm`}
+                      style={tw`mb-6 mx-4 text-sm`}
                       accessibilityRole="summary"
                     >
                       Enter a player's name to perform a search.
@@ -380,7 +380,7 @@ export const Subscriptions = () => {
               {isSearchError && (
                 <Animated.View entering={FadeIn.delay(150)} exiting={FadeOut}>
                   <AlertText
-                    style={tw`mb-9 mx-3 text-sm`}
+                    style={tw`mb-6 mx-4 text-sm`}
                     accessibilityRole="alert"
                   >
                     An error occurred while performing your search. Please try

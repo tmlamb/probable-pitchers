@@ -36,7 +36,7 @@ export default function SearchInput({ onChange, onActive, onCancel, style }: Pro
   );
 
   const searchComponentMarginTop = useSharedValue(0);
-  const searchComponentMarginBottom = useSharedValue(36);
+  const searchComponentMarginBottom = useSharedValue(24);
   const searchComponentStyle = useAnimatedStyle(
     () => ({
       marginTop: searchComponentMarginTop.value,
@@ -91,7 +91,7 @@ export default function SearchInput({ onChange, onActive, onCancel, style }: Pro
               searchComponentMarginTop.value = withTiming(0, {
                 duration: 250,
               });
-              searchComponentMarginBottom.value = withTiming(36, {
+              searchComponentMarginBottom.value = withTiming(24, {
                 duration: 250,
               });
               setShowCancelButton(false);
@@ -114,7 +114,7 @@ export default function SearchInput({ onChange, onActive, onCancel, style }: Pro
       {showCancelButton && (
         <Animated.View
           entering={FadeInRight.delay(0)}
-          exiting={FadeOutRight.duration(100)}
+          exiting={FadeOutRight.duration(0)}
           onLayout={(event) => {
             const roundedWidth = Math.round(event.nativeEvent.layout.width);
             if (cancelButtonWidth !== roundedWidth) {
@@ -136,7 +136,7 @@ export default function SearchInput({ onChange, onActive, onCancel, style }: Pro
               searchComponentMarginTop.value = withTiming(0, {
                 duration: 250,
               });
-              searchComponentMarginBottom.value = withTiming(36, {
+              searchComponentMarginBottom.value = withTiming(24, {
                 duration: 250,
               });
               onChange(undefined);

@@ -121,17 +121,14 @@ export default function Navigation() {
                 options={{
                   headerTitle: "",
                   title: "Probable Pitcher",
-                  animation: "fade",
                 }}
               />
               <AppStack.Screen
                 name="Subscriptions"
                 component={Subscriptions}
                 options={{
-                  title: "Manage Subscriptions",
+                  title: "Manage Pitchers",
                   headerBackTitle: "Home",
-                  animation: "fade",
-                  animationDuration: 300,
                 }}
               />
               <AppStack.Screen

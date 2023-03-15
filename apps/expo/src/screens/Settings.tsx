@@ -15,7 +15,7 @@ import tw from "../tailwind";
 export const Settings = () => {
   return (
     <ScreenLayout>
-      <View style={tw`flex-1 px-3 py-9 justify-between`}>
+      <View style={tw`flex-1 px-3 py-6 justify-between`}>
         <View>
           <LinkButton
             to={{ screen: "Notifications" }}

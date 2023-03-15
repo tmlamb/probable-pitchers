@@ -71,7 +71,7 @@ export const Notifications = () => {
 
   return (
     <ScreenLayout>
-      <View style={tw`flex-1 px-3 py-9`}>
+      <View style={tw`flex-1 px-4 py-6`}>
         <ThemedView style={tw`rounded-xl`}>
           <PrimaryText style={tw``}>Notifications Enabled</PrimaryText>
           <Switch
@@ -92,7 +92,7 @@ export const Notifications = () => {
         {!permissionGranted && (
           <>
             <SecondaryText
-              style={tw`mx-3 mt-1.5 text-sm`}
+              style={tw`mx-4 mt-1.5 text-sm`}
               accessibilityRole="summary"
             >
               Permission to receive notifications from this app has been denied
@@ -100,7 +100,7 @@ export const Notifications = () => {
               allow this app to send notifications.
             </SecondaryText>
             <ButtonContainer
-              style={tw`mx-3 mt-1.5`}
+              style={tw`mx-4 mt-1.5`}
               onPress={Linking.openSettings}
             >
               <SpecialText style={tw`text-sm`}>

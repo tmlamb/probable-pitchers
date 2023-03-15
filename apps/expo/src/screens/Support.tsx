@@ -11,7 +11,7 @@ export const Support = () => {
   return (
     <ScreenLayout>
       <ScrollView
-        contentContainerStyle={tw`justify-between px-3 pt-9 pb-9 flex-1`}
+        contentContainerStyle={tw`justify-between px-3 pt-6 pb-6 flex-1`}
       >
         <View style={tw``}>
           <PrimaryText style={tw`text-lg mb-4`}>Frequently Asked Questions</PrimaryText>

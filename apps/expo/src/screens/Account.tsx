@@ -29,7 +29,7 @@ export const Account = () => {
 
   return (
     <ScreenLayout>
-      <View style={tw`flex-1 px-3 py-9`}>
+      <View style={tw`flex-1 px-4 py-6`}>
         <ThemedView style={tw`border-b-2 rounded-t-xl`}>
           <PrimaryText style={tw``}>Identity Provider</PrimaryText>
           {provider ? (
@@ -47,7 +47,7 @@ export const Account = () => {
           </ThemedView>
         </ButtonContainer>
         <DoubleConfirm
-          style={tw`mt-9`}
+          style={tw`mt-6`}
           first={
             <ThemedView style={tw`rounded-xl`}>
               <AlertText>Delete Account</AlertText>
@@ -60,7 +60,7 @@ export const Account = () => {
                 signOut();
               }}
             >
-              <AlertText style={tw`px-3 py-3 -my-3`}>
+              <AlertText style={tw`px-4 py-3 -my-3`}>
                 <AntDesign name="minuscircle" size={15} />
               </AlertText>
             </ButtonContainer>

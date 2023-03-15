@@ -4,7 +4,6 @@ import { formatInTimeZone } from "date-fns-tz";
 import * as Localization from "expo-localization";
 import { Subscription as ExpoSubscription } from "expo-modules-core";
 import * as ExpoNotifications from "expo-notifications";
-import { useSession } from "next-auth/expo";
 import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, SectionList } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
@@ -24,11 +23,11 @@ import {
 } from "../components/Themed";
 import { trpc } from "../components/TRPCProvider";
 import tw from "../tailwind";
+import { Ionicons } from '@expo/vector-icons';
 
 export const Home = ({
   navigation: { navigate },
 }: RootStackScreenProps<"Home">) => {
-  const { status } = useSession();
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef<ExpoSubscription>();
   const responseListener = useRef<ExpoSubscription>();
@@ -67,7 +66,7 @@ export const Home = ({
     isError,
     error,
   } = trpc.subscription.byUserId.useQuery(undefined, {
-    enabled: status === "authenticated",
+    enabled: true,
   });
 
   if (isError) {
@@ -78,7 +77,7 @@ export const Home = ({
 
   const schedule = subscriptionSchedule(subscriptions);
 
-  if (status !== "authenticated") {
+  if (isLoading) {
     return (
       <ScreenLayout>
         <Animated.View
@@ -97,49 +96,57 @@ export const Home = ({
 
   return (
     <ScreenLayout>
-      <HeaderLeftContainer>
-        <LinkButton
-          to={{ screen: "Settings" }}
-          style={tw`py-6 pl-2.5 pr-8 -my-6 -ml-4 web:-ml-3`}
-          accessibilityLabel="Navigate to Application Settings"
-        >
-          <SpecialText>
-            <AntDesign name="setting" size={24} />
-          </SpecialText>
-        </LinkButton>
-      </HeaderLeftContainer>
-      {schedule && schedule.length > 0 &&
-        <HeaderRightContainer>
-          <LinkButton
-            to={{ screen: "Subscriptions" }}
-            style={tw`py-6 pl-8 pr-3 -my-6 -mr-4`}
-            accessibilityLabel="Navigate to subscription management screen"
-          >
-            <SpecialText>
-              <AntDesign name="edit" size={24} />
-            </SpecialText>
-          </LinkButton>
-        </HeaderRightContainer>
-      }
-      <SectionList
-        contentContainerStyle={tw`px-3 pt-9 pb-12`}
-        bounces={false}
-        sections={schedule}
-        ListHeaderComponent={
-          <PrimaryText
-            style={tw`text-4xl font-bold tracking-tight mb-9`}
-            accessibilityRole="header"
-          >
-            Probable Pitcher
-          </PrimaryText>
+      <>
+        <HeaderLeftContainer>
+          <Animated.View entering={FadeIn.delay(300)} exiting={FadeOut}>
+            <LinkButton
+              to={{ screen: "Settings" }}
+              style={tw`py-6 pl-4 pr-8 -my-6 -ml-4 flex flex-row items-center`}
+              accessibilityLabel="Navigate to Application Settings"
+            >
+              <SpecialText style={tw`mr-1`}>
+                <AntDesign name="setting" size={24} />
+              </SpecialText>
+              <SpecialText>Settings</SpecialText>
+            </LinkButton>
+          </Animated.View>
+        </HeaderLeftContainer>
+        {schedule.length > 0 &&
+          <HeaderRightContainer>
+            <Animated.View entering={FadeIn.delay(300)} exiting={FadeOut}>
+              <LinkButton
+                to={{ screen: "Subscriptions" }}
+                style={tw`py-6 pl-8 pr-4 -my-6 -mr-4 flex flex-row items-center`}
+                accessibilityLabel="Navigate to subscription management screen"
+              >
+                <SpecialText>Manage</SpecialText>
+                <SpecialText style={tw`ml-0.5 mt-0.5`}>
+                  <Ionicons name="ios-baseball-outline" size={27} />
+                </SpecialText>
+              </LinkButton>
+            </Animated.View>
+          </HeaderRightContainer>
         }
-        renderSectionHeader={({ section: { nextGameDay } }) => (
-          <SecondaryText style={tw`ml-3 mb-1.5 uppercase text-sm`}>
-            {nextGameDay}
-          </SecondaryText>
-        )}
-        renderItem={({ index, item, section }) => (
-          <Animated.View entering={FadeIn.delay(150)} exiting={FadeOut}>
+      </>
+      <Animated.View entering={FadeIn.delay(300)} exiting={FadeOut}>
+        <SectionList
+          contentContainerStyle={tw`px-4 pt-6 pb-12`}
+          bounces={false}
+          sections={schedule}
+          ListHeaderComponent={
+            <PrimaryText
+              style={tw`text-4xl font-bold tracking-tight mb-6`}
+              accessibilityRole="header"
+            >
+              Probable Pitcher
+            </PrimaryText>
+          }
+          renderSectionHeader={({ section: { nextGameDay } }) => (
+            <SecondaryText style={tw`ml-4 mb-1 uppercase text-sm`}>
+              {nextGameDay}
+            </SecondaryText>
+          )}
+          renderItem={({ index, item, section }) => (
             <ThemedView
               key={item.id}
               style={tw.style(
@@ -163,55 +170,45 @@ export const Home = ({
                 </SecondaryText>
               )}
             </ThemedView>
-          </Animated.View>
-        )}
-        ListEmptyComponent={
-          <>
-            {isSuccess && (
-              <Animated.View entering={FadeIn.delay(150)} exiting={FadeOut}>
-                <SecondaryText
-                  style={tw`mb-9 mx-3 text-sm`}
-                  accessibilityRole="summary"
-                >
-                  To get started, add an alert subscription for your favorite
-                  pitcher.
-                </SecondaryText>
-                <LinkButton
-                  to={{ screen: "Subscriptions" }}
-                  accessibilityLabel="Navigate to subscription management screen"
-                >
-                  <ThemedView rounded>
-                    <SpecialText>Add Subscription</SpecialText>
-                  </ThemedView>
-                </LinkButton>
-              </Animated.View>
-            )}
-            {isLoading && (
-              <Animated.View
-                style={tw`absolute w-screen h-screen justify-center`}
-                entering={FadeIn}
-                exiting={FadeOut}
-              >
-                <ActivityIndicator
-                  size="large"
-                  color={String(tw.style(secondaryTextColor).color)}
-                />
-              </Animated.View>
-            )}
-            {isError && (
-              <Animated.View entering={FadeIn.delay(150)} exiting={FadeOut}>
-                <AlertText
-                  style={tw`mb-9 mx-3 text-sm`}
-                  accessibilityRole="alert"
-                >
-                  An error occurred while loading your subscriptions. Please try
-                  again later.
-                </AlertText>
-              </Animated.View>
-            )}
-          </>
-        }
-      />
+          )}
+          ListEmptyComponent={
+            <>
+              {isSuccess && (
+                <>
+                  <SecondaryText
+                    style={tw`mb-6 mx-4 text-sm`}
+                    accessibilityRole="summary"
+                  >
+                    To get started, add an alert subscription for your favorite
+                    pitcher.
+                  </SecondaryText>
+                  <Animated.View entering={FadeIn.delay(500)} exiting={FadeOut}>
+                    <LinkButton
+                      to={{ screen: "Subscriptions" }}
+                      accessibilityLabel="Navigate to subscription management screen"
+                    >
+                      <ThemedView rounded>
+                        <SpecialText>Add Pitcher</SpecialText>
+                      </ThemedView>
+                    </LinkButton>
+                  </Animated.View>
+                </>
+              )}
+              {isError && (
+                <Animated.View entering={FadeIn.delay(500)} exiting={FadeOut}>
+                  <AlertText
+                    style={tw`mb-6 mx-4 text-sm`}
+                    accessibilityRole="alert"
+                  >
+                    An error occurred while loading your subscriptions. Please try
+                    again later.
+                  </AlertText>
+                </Animated.View>
+              )}
+            </>
+          }
+        />
+      </Animated.View>
     </ScreenLayout>
   );
 };
