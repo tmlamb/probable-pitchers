@@ -121,7 +121,7 @@ export const Home = ({
               >
                 <SpecialText>Manage</SpecialText>
                 <SpecialText style={tw`ml-0.5 mt-0.5`}>
-                  <Ionicons name="ios-baseball-outline" size={27} />
+                  <Ionicons name="ios-baseball-outline" size={26} />
                 </SpecialText>
               </LinkButton>
             </Animated.View>
