@@ -1,5 +1,5 @@
 import { createPrivateKey } from "crypto";
-import { SignJWT } from 'jose/jwt/sign'
+import { SignJWT } from 'jose'
 
 /*
   Creates a JWT from the components found at Apple.

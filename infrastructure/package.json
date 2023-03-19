@@ -2,7 +2,8 @@
   "name": "@probable/infrastructure",
   "main": "index.ts",
   "devDependencies": {
-    "@types/node": "^16"
+    "@types/node": "^16",
+    "jose": "^4.13.1"
   },
   "dependencies": {
     "@pulumi/gcp": "^6.39.0",
