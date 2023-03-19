@@ -2,7 +2,7 @@ import * as gcp from "@pulumi/gcp";
 import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
 import { containerRegistry } from "./config";
-import generateSecret from "./appleGenerateSecret";
+import { generateSecret } from "./apple";
 
 const config = new pulumi.Config();
 const env = pulumi.getStack();
