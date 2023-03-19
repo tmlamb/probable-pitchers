@@ -3,7 +3,8 @@
   "main": "index.ts",
   "devDependencies": {
     "@types/node": "^16",
-    "jose": "^4.13.1"
+    "jose": "^4.13.1",
+    "typescript": "4.9.4"
   },
   "dependencies": {
     "@pulumi/gcp": "^6.39.0",
