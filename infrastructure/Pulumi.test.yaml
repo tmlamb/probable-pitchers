@@ -4,7 +4,7 @@ config:
   probable-pitchers:appleClientId:
     secure: AAABANQs6v+Pg0TlLihAcfakjtuG+GKhvzKW2zmEcGqynP0kuIDODP2SPbYq3TcmYyB8U0yWU4IvqAv7pZcl6w==
   probable-pitchers:appleClientSecret:
-    secure: AAABAP2Wo4oLeLEQ8HLI0nqplWrkMSiaqC5DxbjHCvNK1QOKAGChLycJJqyi3hd9582oR8PLl+XuVzJ+XVzZJSnNmqXv7ur/Ry6j3Df4Z3ToU5ZexHjsABE/XPMjJoLyS6NgFB7hyqb3xB/BzU7heNai6l2VA6sM2K/iYv7/zqhUWaa+h340OSAwH4zFYl+tb/XokCdlmFTyqOUc+rxRJawob9SQnmwqDDUTtnbBhad2xm+wkdm2TFYNygsl81by3a1dsF3PaltDOnLg4DbNc/dK78TrfLVdCJDndhfynYE4yerr81ncO0UTvWPieq7kfdhEGNmj454Mm2TzeExM1Dk54kEHxw+f6yEhcHFNnaDKc7XcFr1UeUfdQR2frt1zV6Ob5mATWQ46cdIdbZaBeW7y4X/x5Fakxz/U9mkbFhI0yYkgmJyRfKHLgSseHqM9ylo=
+    secure: AAABAPt2AfHN/QhEbHy4O3ylPouBotsLI8sUc4+mDCZTsd/3NLNM+QaYxwcaS5QT38phX9nTCJOu+qbQoRF8bwsMEKXpHNAD5g9gtd4hNf11R2JvJ+FJ5/DOI0Ihn1kBNLvlup+gBiXuf+QO/jsztC2op7f95SnGP429ISfgVo/nVqgljKXeTQr+ktjcW39XpIZQz7tzevAjuCm2S9SZNSnI7ok7qtUB8CVhGR6ORg5YRWkkeRiVCX5r/OU/8bW8MNdY7FVl03HoosFTsRKEhSrU/Bmez0cbODjdjrW3AkRpOOWm9UlO6SS6xCLbtFY3fDr5KpttUzyqkrJZz3Qv50S6TD4b1GeIXvRzsy/R+GmKKr45riBUTxTSdSbztUeuWZi9+Uf8SbFrNz7dl1THmjfPa1O2eYc/ScXMlg69G1RxrTykPnDbcPY+X1FSAuGeFgdotVoMsqoRy5gfTQ==
   probable-pitchers:appleWebClientId:
     secure: AAABAEAswqIpAO6NGjIloT8MyNBCnUtO4IMpBpMczqzhXiXabp32sq2ba23h2tOnFACYNjv4NG/WFXkF+CI=
   probable-pitchers:appleWebClientSecret:
@@ -25,7 +25,7 @@ config:
   probable-pitchers:dbUrl:
     secure: AAABAGJN5zTnnR+y2ZijVHjvqQC+y+6dElvNqw9WtRdNhvxTKAO8VgHDBthA021ZxIveXoA7Zxy+JQtzgZIoN8Tbm5kKHJOPxB/OehjrNL5BgnsNvvyaexJVtbjDvAoQ0ze13LSLKBPRDRmXPDvhoLFRpYGHszir1IBkm5xaHrqjXjRlGKiigN28+Fr19nEZAK5vrGKWV5UkbBE4Z33pc9EYxXmU/F8L+B/H0tT1PqQ=
   probable-pitchers:domains:
-  - dev.probablepitcher.com
+    - dev.probablepitcher.com
   probable-pitchers:nextAuthExpoUrl:
     secure: AAABAMxqUcodJjN2abII8DrH01jZ9RBS87MQAVVc7xlyHunGIuW/Mz5cKxh8I1C1u+mCYjp8QMvsMTey7snbHkWmw8pMr0w0M2M5/2wp
   probable-pitchers:nextAuthSecret:
