@@ -397,9 +397,9 @@ const ingress = new k8s.networking.v1.Ingress(
                 pathType: "Prefix",
                 backend: {
                   service: {
-                    name: service.metadata.apply((m) => m.name),
+                    name: service?.metadata?.apply((m) => m?.name),
                     port: {
-                      number: service?.spec.ports[0].apply((p) => p.port),
+                      number: service?.spec?.ports?.[0].apply((p) => p?.port),
                     },
                   },
                 },
