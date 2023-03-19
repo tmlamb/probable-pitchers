@@ -2,6 +2,7 @@ import * as gcp from "@pulumi/gcp";
 import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
 import { containerRegistry } from "./config";
+import generateSecret from "./appleGenerateSecret";
 
 const config = new pulumi.Config();
 const env = pulumi.getStack();
@@ -194,6 +195,18 @@ const notifyJob = new k8s.batch.v1.CronJob(
   }
 );
 
+const appleClientSecret = pulumi.all([
+  config.requireSecret("appleTeamId"), 
+  config.requireSecret("appleKeyId"), 
+  config.requireSecret("applePrivateKey"), 
+  config.requireSecret("appleClientId")
+]).apply(([
+  teamId,
+  keyId,
+  privateKey,
+  clientId
+]) => generateSecret(teamId,keyId,privateKey,clientId));
+
 const appLabels = { app: `probable-nextjs-${env}` };
 
 const deployment = new k8s.apps.v1.Deployment(
@@ -249,7 +262,7 @@ const deployment = new k8s.apps.v1.Deployment(
                 },
                 {
                   name: "APPLE_CLIENT_SECRET",
-                  value: config.requireSecret("appleClientSecret"),
+                  value: appleClientSecret,
                 },
                 {
                   name: "APPLE_WEB_CLIENT_ID",

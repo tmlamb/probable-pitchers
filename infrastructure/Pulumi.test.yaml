@@ -5,6 +5,12 @@ config:
     secure: AAABANQs6v+Pg0TlLihAcfakjtuG+GKhvzKW2zmEcGqynP0kuIDODP2SPbYq3TcmYyB8U0yWU4IvqAv7pZcl6w==
   probable-pitchers:appleClientSecret:
     secure: AAABAPt2AfHN/QhEbHy4O3ylPouBotsLI8sUc4+mDCZTsd/3NLNM+QaYxwcaS5QT38phX9nTCJOu+qbQoRF8bwsMEKXpHNAD5g9gtd4hNf11R2JvJ+FJ5/DOI0Ihn1kBNLvlup+gBiXuf+QO/jsztC2op7f95SnGP429ISfgVo/nVqgljKXeTQr+ktjcW39XpIZQz7tzevAjuCm2S9SZNSnI7ok7qtUB8CVhGR6ORg5YRWkkeRiVCX5r/OU/8bW8MNdY7FVl03HoosFTsRKEhSrU/Bmez0cbODjdjrW3AkRpOOWm9UlO6SS6xCLbtFY3fDr5KpttUzyqkrJZz3Qv50S6TD4b1GeIXvRzsy/R+GmKKr45riBUTxTSdSbztUeuWZi9+Uf8SbFrNz7dl1THmjfPa1O2eYc/ScXMlg69G1RxrTykPnDbcPY+X1FSAuGeFgdotVoMsqoRy5gfTQ==
+  probable-pitchers:appleKeyId:
+    secure: AAABAEqsrZtB0SR6dEOO1pbAVCvkTewSuVszWYUD8yq+bWCGVAM7gvkG
+  probable-pitchers:applePrivateKey:
+    secure: AAABAObwJwMpB3oh71EN5qKJBm62j2JSNxT61IrVWUTTcQccMjXznm2k43olJBqEOz24YZFxBpVse41ZlE+zMeSusExqKSSdrJl4zBmhxRqFRF5VPWGqbt9JjHf+dKkgo+iJhgSWQprlKk7F0zqQ3+qteeSU45kPhJKk2su46XL3QnzZluzKnlXsypctQ3FbSUnabJv5qUXEd12+uz17XfhD7o16sseuHbyy/vDAXS8/BzEiT2jvNltfYf5PppTjus08QwlCeBHbc59oN+qjmM5R/p28y9EisFDszGZtJ6nH2TY+hiC02Ql/ZSTaI9auTCUwDbmBaxJu/wyBjOz6z9nVra+bliE1JtUYSloTcao0dazaoMR2wBsWs7o13Rm8SA==
+  probable-pitchers:appleTeamId:
+    secure: AAABAEYxkyKghVzX+4CZ2RSNAl0tzQgtkLfaieS7biTCCOR578IAK0p/
   probable-pitchers:appleWebClientId:
     secure: AAABAEAswqIpAO6NGjIloT8MyNBCnUtO4IMpBpMczqzhXiXabp32sq2ba23h2tOnFACYNjv4NG/WFXkF+CI=
   probable-pitchers:appleWebClientSecret:
