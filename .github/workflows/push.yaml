@@ -130,7 +130,7 @@ jobs:
           docker push --all-tags ghcr.io/tmlamb/probable-pitchers-ingest
 
   deploy-infra:
-    name: Deploy Infrastructure
+    name: Deploy Preview Infrastructure
     needs: [checks, build-nextjs, build-ingest]
     if: always()
     runs-on: ubuntu-latest
@@ -177,7 +177,6 @@ jobs:
   update-preview:
     name: Update Preview Mobile App
     needs: [checks, deploy-infra]
-      #if: ${{ needs.checks.outputs.changed-expo }}
     if: |
       always() &&
       needs.checks.result == 'success' &&
@@ -214,8 +213,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Publish Live Update
-        run: cd apps/expo && APP_ENV=preview NEXTAUTH_URL="https://dev.probablepitcher.com" SENTRY_PUBLIC_DSN="${{ secrets.SENTRY_PUBLIC_DSN }}" eas update --branch preview --message "${{ github.event.head_commit.message }}"
+    # - name: Publish Live Update
+    #   run: cd apps/expo && APP_ENV=preview NEXTAUTH_URL="https://dev.probablepitcher.com" SENTRY_PUBLIC_DSN="${{ secrets.SENTRY_PUBLIC_DSN }}" eas update --branch preview --message "${{ github.event.head_commit.message }}"
 
-      # - name: App Store Build
-      #   run: cd apps/expo && eas build --profile preview --platform all --non-interactive
+      - name: App Store Build
+        run: cd apps/expo && eas build --profile preview --platform all --non-interactive
