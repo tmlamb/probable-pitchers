@@ -1,34 +1,77 @@
 {
   "project_info": {
-    "project_number": "150194805842",
-    "project_id": "probable-pitchers-924cc",
-    "storage_bucket": "probable-pitchers-924cc.appspot.com"
+    "project_number": "624022936208",
+    "project_id": "probable-pitchers-prod",
+    "storage_bucket": "probable-pitchers-prod.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:150194805842:android:a58a6b9e3a102c6126138b",
+        "mobilesdk_app_id": "1:624022936208:android:ddd01a31e53c9b49eed615",
         "android_client_info": {
           "package_name": "com.triplesight.probablepitchers"
         }
       },
       "oauth_client": [
         {
-          "client_id": "150194805842-l2pnsktib7gt07i3m992rermsv66erpt.apps.googleusercontent.com",
+          "client_id": "624022936208-52n1u3lfese76mpfa60nm1944qdehflj.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAy8wOkIGDcrqf9mpLK_p012TULisVB1Uk"
+          "current_key": "AIzaSyB7u5ulPN60IPq_4pD5M7u3rQDxuLj6JA8"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "150194805842-l2pnsktib7gt07i3m992rermsv66erpt.apps.googleusercontent.com",
+              "client_id": "624022936208-52n1u3lfese76mpfa60nm1944qdehflj.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "624022936208-hor8qeko9fmp9f6e2hpjfjihns1tb27k.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.triplesight.probablepitchers.preview"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:624022936208:android:79f5acc1664524e5eed615",
+        "android_client_info": {
+          "package_name": "com.triplesight.probablepitchers.preview"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "624022936208-52n1u3lfese76mpfa60nm1944qdehflj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7u5ulPN60IPq_4pD5M7u3rQDxuLj6JA8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "624022936208-52n1u3lfese76mpfa60nm1944qdehflj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "624022936208-hor8qeko9fmp9f6e2hpjfjihns1tb27k.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.triplesight.probablepitchers.preview"
+              }
             }
           ]
         }
