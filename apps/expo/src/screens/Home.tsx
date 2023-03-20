@@ -116,7 +116,7 @@ export const Home = ({
             <Animated.View entering={FadeIn.delay(300)} exiting={FadeOut}>
               <LinkButton
                 to={{ screen: "Subscriptions" }}
-                style={tw`py-6 pl-8 pr-4 -my-6 -mr-4 flex flex-row items-center`}
+                style={tw`py-6 pl-8 pr-3.5 -my-6 -mr-4 flex flex-row items-center`}
                 accessibilityLabel="Navigate to subscription management screen"
               >
                 <SpecialText>Manage</SpecialText>
