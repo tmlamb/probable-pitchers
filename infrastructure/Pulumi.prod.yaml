@@ -5,6 +5,8 @@ config:
     secure: AAABAMUJ5h08x3RNtICO07PjHF/3QNTdorVxgB87GMfcn89mL9LCOP0avi2MiJFKrrnrLVz31yW1u3LsV1P0jA==
   probable-pitchers:appleClientSecret:
     secure: AAABABsp2PK2isI5V+NwbKgv609AkJrD+AefZ9AlLy1RUeoMCdWK9cfdun4YIiBzVBrhu1bBwKkup9CS/EVy22NAV4hEWBDboiQQalDQOOfKcGKp/aGV88bn6YZlw9uBkKkvZ4L4QXt5CoBLGf67joopGRcVnQcRm884AB/D97vjajZN2tscy/WhEv+iWfIH3gIY/afomxg6C5vSagBQHgoeqtiu79fEj6tV8H4S+lIGkkQiWQrG77C/VDibq5MVWiBVY/t2RiEjCNgt/tEy2aQhjcAecX9Cu4ahxZTdLCUipyWRILrtjfdnLoHo5/JFKGelc49fM5KvSoeT7NSqW2O39cdj26kIQC9p73Gxg+w5pDFBUJKGMBAVUxfwz317a3pz7OKl1cPPbrWOpO4AJO+7aeCSaHl30/PKHVB0YNDZ+m5aQzmG8Ai3hQ3X80pj1Lo=
+  probable-pitchers:appleKeyId:
+    secure: AAABAPRcB7kTJ8rAXGC8SKI2Nx3CwHlX+eOwOPohsmFoZ4F7tsZI3v+G
   probable-pitchers:applePrivateKey:
     secure: AAABAGFyYA7PnFRXve1SMJP4yLcn05aPLegdlB7Nh1pDwECLU7MzwKySnGobVMvtMT9c+le/flK4AMGu2qHXV32Nawh9jtbjsIrB4J0VNyc8ogTO3mUNtS8SILnnGDSQNMNWEJp+CKrVvm5nySozk+ZRN0nb/W/7v8VU6QxfTPL1lcfkBLl5XpQ/6otG2pk9j5YSbqXhwUQLpVtOD+A7/6i6/VlzKxp6DpVSoD8kjyWagpQxZkMv7UGM1GVIMV2wG2nkt6rByaT4O9aIwrypZkZGoCS1u78bOafTi9omVO3neDHdlKTAwZ9ai056ooFsQ6doE7Lw7NB2Q9ALn38rVxR16moxdzlxowr8EYwMzRdqFL/lEiYV57Z9cwEw1PMDKQ==
   probable-pitchers:appleTeamId:
@@ -37,4 +39,4 @@ config:
     secure: AAABAChsoNi91oSFQwjCYiKA/4t898wSbFssaoWM55whHKzdSv0hhB4Qlz1NdRMRxTjN4eTwLQ7fa3PhfQjzii3UXbnIPPkfc9dYAw==
   probable-pitchers:nextAuthUrl:
     secure: AAABAGh0q9EQlZv90jxASZlv/Ssut36V4xakZfnV+gGepPse3Zg1HA+xMBKI8/INIcae4n1javpwoNs=
-  probable-pitchers:nextjsReplicas: "1"
+  probable-pitchers:nextjsReplicas: "2"
