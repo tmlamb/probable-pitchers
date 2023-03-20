@@ -196,16 +196,17 @@ const notifyJob = new k8s.batch.v1.CronJob(
 );
 
 const appleClientSecret = pulumi.all([
-  config.requireSecret("appleTeamId"), 
-  config.requireSecret("appleKeyId"), 
-  config.requireSecret("applePrivateKey"), 
+  config.requireSecret("appleTeamId"),
+  config.requireSecret("appleKeyId"),
+  config.requireSecret("applePrivateKey"),
   config.requireSecret("appleClientId")
 ]).apply(([
   teamId,
   keyId,
   privateKey,
   clientId
-]) => generateSecret(teamId,keyId,privateKey,clientId));
+]) => generateSecret({ teamId, keyId, privateKey, clientId }));
+appleClientSecret.apply((s) => console.log("SECRET:",s));
 
 const appLabels = { app: `probable-nextjs-${env}` };
 

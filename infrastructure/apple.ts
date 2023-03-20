@@ -1,6 +1,12 @@
 import { createPrivateKey } from "crypto";
 import { SignJWT } from 'jose'
 
+interface AppleClientInfo {
+  teamId: string;
+  keyId: string;
+  privateKey: string;
+  clientId: string;
+}
 /*
   Creates a JWT from the components found at Apple.
   Read more: https://developer.apple.com/documentation/sign_in_with_apple/generate_and_validate_tokens#3262048
@@ -11,7 +17,7 @@ import { SignJWT } from 'jose'
     privateKey   The private key to use to sign the JWT. (Starts with -----BEGIN PRIVATE KEY-----)
     clientId     The client id to use in the JWT.
 */
-export async function generateSecret(teamId: string, keyId: string, privateKey: string, clientId: string) {
+export async function generateSecret({ teamId, keyId, privateKey, clientId }: AppleClientInfo) {
   const expirationTime = Math.ceil(Date.now() / 1000) + 86400 * 180;
   privateKey = privateKey.replace(/\\n/g, "\n");
 
@@ -21,7 +27,7 @@ export async function generateSecret(teamId: string, keyId: string, privateKey: 
     .setIssuedAt()
     .setExpirationTime(expirationTime)
     .setSubject(clientId)
-    .setProtectedHeader({ alg: "ES256", keyId })
+    .setProtectedHeader({ alg: "ES256", kid: keyId })
     .sign(createPrivateKey(privateKey));
 
   return clientSecret;
