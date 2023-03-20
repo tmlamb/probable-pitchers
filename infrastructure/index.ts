@@ -206,7 +206,6 @@ const appleClientSecret = pulumi.all([
   privateKey,
   clientId
 ]) => generateSecret({ teamId, keyId, privateKey, clientId }));
-appleClientSecret.apply((s) => console.log("SECRET:",s));
 
 const appLabels = { app: `probable-nextjs-${env}` };
 

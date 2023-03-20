@@ -38,4 +38,4 @@ config:
     secure: AAABANz39DJyXbzjtGhBI/iUcGj7n3qLytjoiVnZmmS9HRXKLBpp2CL5oZrjh6KlUgltBAZ2kRnDJD/jyM/vV3NfVTbtS9heupk/wQ==
   probable-pitchers:nextAuthUrl:
     secure: AAABAIwGdwxyRRPl09bUAWc5zXT2X4yJJR742JIDbSPxSc5QUXQQWfrefjza1KmlgHn1Z7VQayP6n9f1HqWM
-  probable-pitchers:nextjsReplicas: "1"
+  probable-pitchers:nextjsReplicas: "2"
