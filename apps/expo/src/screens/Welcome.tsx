@@ -3,7 +3,7 @@ import { signIn } from "next-auth/expo";
 import { useState } from "react";
 import { ActivityIndicator, Image, Pressable, View } from "react-native";
 import { useAppColorScheme } from "twrnc";
-import { appleLogin, googleLogin } from "../components/AuthProvider";
+import { useSocialSignIn } from "../components/AuthProvider";
 import ModalLayout from "../components/ModalLayout";
 import {
   PrimaryText,
@@ -11,10 +11,16 @@ import {
   specialTextColor,
 } from "../components/Themed";
 import tw from "../tailwind";
+import * as WebBrowser from "expo-web-browser";
+
+WebBrowser.maybeCompleteAuthSession();
 
 export const Welcome = () => {
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [colorScheme] = useAppColorScheme(tw);
+
+  const { googleSignIn, appleSignIn } = useSocialSignIn();
+
   return (
     <ModalLayout>
       <View style={tw`h-full w-full py-9 px-3`}>
@@ -35,7 +41,7 @@ export const Welcome = () => {
               style={tw`mx-auto pt-9 active:opacity-10`}
               onPress={async () => {
                 setIsSigningIn(true);
-                await signIn(() => googleLogin());
+                await signIn(() => googleSignIn());
                 setIsSigningIn(false);
               }}
             >
@@ -57,7 +63,7 @@ export const Welcome = () => {
               style={tw`mx-auto mt-9 w-[200px] h-[43.24px] active:opacity-10`}
               onPress={async () => {
                 setIsSigningIn(true);
-                await signIn(() => appleLogin());
+                await signIn(() => appleSignIn());
                 setIsSigningIn(false);
               }}
             />

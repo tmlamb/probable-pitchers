@@ -7,7 +7,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
-    "scheme": "probable-pitchers",
+    "scheme": "probablepitcher",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -39,6 +39,6 @@
         "projectId": "abd1f73f-1027-4617-a091-abea678a0784"
       }
     },
-    "plugins": ["sentry-expo"]
+    "plugins": ["sentry-expo", "expo-localization"]
   }
 }
