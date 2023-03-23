@@ -424,9 +424,6 @@ const PitcherSubscription = ({
           <PrimaryText numberOfLines={1}>
             {pitcher.name}
           </PrimaryText>
-          <SecondaryText>
-            {pitcher.primaryNumber}
-          </SecondaryText>
         </Animated.View>
       </ThemedView>
     </>
