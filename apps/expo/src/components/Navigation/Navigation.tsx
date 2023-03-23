@@ -127,7 +127,7 @@ export default function Navigation() {
                 name="Subscriptions"
                 component={Subscriptions}
                 options={{
-                  title: "Manage Pitchers",
+                  title: "Edit Subscriptions",
                   headerBackTitle: "Home",
                 }}
               />

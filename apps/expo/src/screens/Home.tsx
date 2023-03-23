@@ -23,7 +23,6 @@ import {
 } from "../components/Themed";
 import { trpc } from "../components/TRPCProvider";
 import tw from "../tailwind";
-import { Ionicons } from '@expo/vector-icons';
 
 export const Home = ({
   navigation: { navigate },
@@ -96,38 +95,37 @@ export const Home = ({
 
   return (
     <ScreenLayout>
-      <>
-        <HeaderLeftContainer>
-          <Animated.View entering={FadeIn.delay(300)} exiting={FadeOut}>
-            <LinkButton
-              to={{ screen: "Settings" }}
-              style={tw`py-6 pl-4 pr-8 -my-6 -ml-4 flex flex-row items-center`}
-              accessibilityLabel="Navigate to Application Settings"
-            >
-              <SpecialText style={tw`mr-1`}>
-                <AntDesign name="setting" size={24} />
-              </SpecialText>
-              <SpecialText>Settings</SpecialText>
-            </LinkButton>
-          </Animated.View>
-        </HeaderLeftContainer>
-        {schedule.length > 0 &&
+      {schedule.length > 0 &&
+        <>
+          <HeaderLeftContainer>
+            <Animated.View entering={FadeIn.delay(300)} exiting={FadeOut}>
+              <LinkButton
+                to={{ screen: "Settings" }}
+                style={tw`py-6 pl-4 pr-8 -my-6 -ml-4 flex flex-row items-center`}
+                accessibilityLabel="Navigate to Application Settings"
+              >
+                <SpecialText style={tw`mr-3`}>
+                  <AntDesign name="setting" size={24} />
+                </SpecialText>
+              </LinkButton>
+            </Animated.View>
+          </HeaderLeftContainer>
           <HeaderRightContainer>
             <Animated.View entering={FadeIn.delay(300)} exiting={FadeOut}>
               <LinkButton
                 to={{ screen: "Subscriptions" }}
-                style={tw`py-6 pl-8 pr-3.5 -my-6 -mr-4 flex flex-row items-center`}
+                style={tw`py-6 pl-8 pr-4 -my-6 -mr-4 flex flex-row items-center`}
                 accessibilityLabel="Navigate to subscription management screen"
               >
-                <SpecialText>Manage</SpecialText>
-                <SpecialText style={tw`ml-0.5 mt-0.5`}>
-                  <Ionicons name="ios-baseball-outline" size={26} />
+                <SpecialText>Subscriptions</SpecialText>
+                <SpecialText style={tw`ml-0.5`}>
+                  <AntDesign name="edit" size={24} />
                 </SpecialText>
               </LinkButton>
             </Animated.View>
           </HeaderRightContainer>
-        }
-      </>
+        </>
+      }
       <Animated.View entering={FadeIn.delay(300)} exiting={FadeOut}>
         <SectionList
           contentContainerStyle={tw`px-4 pt-6 pb-12`}
@@ -179,8 +177,7 @@ export const Home = ({
                     style={tw`mb-6 mx-4 text-sm`}
                     accessibilityRole="summary"
                   >
-                    To get started, add an alert subscription for your favorite
-                    pitcher.
+                    To get started, edit your subscriptions to add your favorite pitchers.
                   </SecondaryText>
                   <Animated.View entering={FadeIn.delay(500)} exiting={FadeOut}>
                     <LinkButton
@@ -188,7 +185,7 @@ export const Home = ({
                       accessibilityLabel="Navigate to subscription management screen"
                     >
                       <ThemedView rounded>
-                        <SpecialText>Add Pitcher</SpecialText>
+                        <SpecialText>Edit Subscriptions</SpecialText>
                       </ThemedView>
                     </LinkButton>
                   </Animated.View>

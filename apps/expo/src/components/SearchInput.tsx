@@ -107,7 +107,7 @@ export default function SearchInput({ onChange, onActive, onCancel, style }: Pro
           }}
           value={searchText || ""}
           style={tw.style("rounded-xl")}
-          label={searchText ? undefined : "Search pitchers by name"}
+          label={searchText ? undefined : "Search pitchers to subscribe"}
           accessibilityLabel="Filter list of pitchers by name"
         />
       </Animated.View>
@@ -150,8 +150,8 @@ export default function SearchInput({ onChange, onActive, onCancel, style }: Pro
             }}
             accessibilityLabel="Clear exercise filter"
           >
-            <SpecialText style={tw`pl-2.5 text-lg tracking-tight`}>
-              Cancel
+            <SpecialText style={tw`pl-2.5 font-bold text-lg tracking-tight`}>
+              Done
             </SpecialText>
           </ButtonContainer>
         </Animated.View>

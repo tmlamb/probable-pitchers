@@ -7,7 +7,9 @@ import { ActivityIndicator, StyleProp, View, ViewStyle } from "react-native";
 import Animated, {
   Easing,
   FadeIn,
+  FadeInLeft,
   FadeOut,
+  FadeOutLeft,
   Layout,
   useAnimatedStyle,
   useSharedValue,
@@ -15,7 +17,6 @@ import Animated, {
 } from "react-native-reanimated";
 import * as Sentry from "sentry-expo";
 import ButtonContainer from "../components/ButtonContainer";
-import ScreenLayout from "../components/ScreenLayout";
 import SearchInput from "../components/SearchInput";
 import {
   AlertText,
@@ -28,29 +29,14 @@ import {
 import { trpc } from "../components/TRPCProvider";
 import { useTrackParallelMutations } from "@probable/common";
 import tw from "../tailwind";
+import ModalLayout from "../components/ModalLayout";
+import { ClassInput } from "twrnc/dist/esm/types";
+import HeaderRightContainer from "../components/HeaderRightContainer";
 
-const SubscriptionButton = ({
-  onPress,
-  disabled,
-  children,
-  style,
-}: {
-  onPress: () => void;
-  disabled: boolean;
-  children: React.ReactNode;
-  style: StyleProp<Animated.AnimateStyle<StyleProp<ViewStyle>>>;
-}) => {
-  return (
-    <ButtonContainer
-      style={tw`-my-3 -mr-4 py-3 pl-4 pr-4`}
-      onPress={onPress}
-      accessibilityLabel={""}
-      disabled={disabled}
-    >
-      <Animated.View style={style}>{children}</Animated.View>
-    </ButtonContainer>
-  );
-};
+type PitcherSubscription =
+  Pitcher & {
+    subscription?: Subscription
+  };
 
 export const Subscriptions = () => {
   const mutationTracker = useTrackParallelMutations();
@@ -73,7 +59,7 @@ export const Subscriptions = () => {
   }
 
   const [searchFilter, setSearchFilter] = useState<string>();
-  const [searchActive, setSearchActive] = useState<boolean>(false);
+  const [isSearchActive, setIsSearchActive] = useState<boolean>(false);
 
   const {
     data: pitchersFromSearch,
@@ -167,50 +153,44 @@ export const Subscriptions = () => {
     },
   });
 
-  const [pushStatus, setPushStatus] = useState<PermissionStatus>();
-
-  Notifications.getPermissionsAsync().then(({ status }) => {
-    setPushStatus(status);
-  });
-
   // Why not just use section list? It doesn't have support from Reanimated's "itemLayoutAnimation"
   // prop, which we are depending on below for the cool layout transitions.
   const subscribedAndAvailablePitchers: (
     | string
-    | (Pitcher & { subscription?: Subscription })
+    | PitcherSubscription
   )[] = [];
 
   if (subscriptions) {
     const subscribedPitchers =
       (searchFilter
         ? pitchers
-            ?.filter((p) => p.subscription)
-            .map(
-              (p) =>
-                ({
-                  id: p.id,
-                  name: p.name,
-                  teamId: p.teamId,
-                  subscription: {
-                    id: p.subscription!.id,
-                    pitcherId: p.id,
-                    userId: p.subscription!.userId,
-                  },
-                } as Pitcher & { subscription?: Subscription })
-            )
+          ?.filter((p) => p.subscription)
+          .map(
+            (p) =>
+            ({
+              id: p.id,
+              name: p.name,
+              teamId: p.teamId,
+              subscription: {
+                id: p.subscription!.id,
+                pitcherId: p.id,
+                userId: p.subscription!.userId,
+              },
+            } as PitcherSubscription)
+          )
         : subscriptions.map(
-            (s) =>
-              ({
-                id: s.pitcher.id,
-                name: s.pitcher.name,
-                teamId: s.pitcher.teamId,
-                subscription: {
-                  id: s.id,
-                  pitcherId: s.pitcherId,
-                  userId: s.userId,
-                },
-              } as Pitcher & { subscription?: Subscription })
-          )) || [];
+          (s) =>
+          ({
+            id: s.pitcher.id,
+            name: s.pitcher.name,
+            teamId: s.pitcher.teamId,
+            subscription: {
+              id: s.id,
+              pitcherId: s.pitcherId,
+              userId: s.userId,
+            },
+          } as PitcherSubscription)
+        )) || [];
     if (!!subscribedPitchers.length) {
       subscribedAndAvailablePitchers.push("Subscribed");
       subscribedAndAvailablePitchers.push(...subscribedPitchers);
@@ -241,18 +221,37 @@ export const Subscriptions = () => {
 
   const style = useAnimatedStyle(() => ({ opacity: opacity.value }), []);
 
+  const [isEditing, setIsEditing] = useState(false);
+
+  useEffect(() => {
+    if (isSearchActive) setIsEditing(false);
+  }, [isSearchActive]);
+
   return (
-    <ScreenLayout>
+    <ModalLayout>
+      <HeaderRightContainer>
+        <ButtonContainer onPress={() => setIsEditing((isEditing) => !isEditing)}>
+          {isEditing ? (
+            <SpecialText style={tw`font-bold`}>
+              Done
+            </SpecialText>
+          ) : (
+            <SpecialText>
+              Edit
+            </SpecialText>
+          )}
+        </ButtonContainer>
+      </HeaderRightContainer>
       <Animated.View style={tw`pt-6 px-4 flex-1`} layout={Layout.duration(1)}>
         <SearchInput
           onChange={(text) => setSearchFilter(text)}
-          onActive={() => setSearchActive(true)}
-          onCancel={() => setSearchActive(false)}
+          onActive={() => setIsSearchActive(true)}
+          onCancel={() => setIsSearchActive(false)}
         />
         <Animated.FlatList
           // @ts-ignore - there is a type bug in Reanimated 2.9.x
           itemLayoutAnimation={Layout.duration(250)}
-          bounces={searchActive}
+          bounces={isSearchActive}
           keyExtractor={(item) => {
             if (typeof item === "string") {
               return item;
@@ -285,7 +284,18 @@ export const Subscriptions = () => {
             } else {
               return (
                 <Animated.View entering={FadeIn} exiting={FadeOut}>
-                  <ThemedView
+                  <PitcherSubscription
+                    subscribeHandler={async () => {
+                      subscribe({
+                        pitcherId: item.id,
+                      });
+                    }}
+                    unsubscribeHandler={isEditing && !isSearchActive ? () => {
+                      unsubscribe(item.subscription!.id);
+                    } : undefined}
+                    pitcher={item}
+                    subscription={item.subscription}
+                    disabled={pauseMutations}
                     style={tw.style(
                       "border-b-2",
                       typeof subscribedAndAvailablePitchers[index - 1] ===
@@ -294,50 +304,12 @@ export const Subscriptions = () => {
                         : undefined,
                       !subscribedAndAvailablePitchers[index + 1] ||
                         typeof subscribedAndAvailablePitchers[index + 1] ===
-                          "string"
+                        "string"
                         ? "border-b-0 rounded-b-xl mb-3"
                         : undefined
                     )}
-                  >
-                    <PrimaryText style={tw`flex-1 pr-9.5`} numberOfLines={1}>
-                      {item.name}
-                    </PrimaryText>
-                    {item.subscription && (
-                      <SubscriptionButton
-                        onPress={() => {
-                          unsubscribe(item.subscription!.id);
-                        }}
-                        disabled={
-                          pauseMutations
-                        }
-                        style={style}
-                      >
-                        <AlertText>
-                          <AntDesign name="minuscircle" size={20} />
-                        </AlertText>
-                      </SubscriptionButton>
-                    )}
-                    {!item.subscription && (
-                      <SubscriptionButton
-                        onPress={async () => {
-                          if (pushStatus === PermissionStatus.DENIED) {
-                            alert(
-                              "Permission for this application to send push notifications has been denied. To receive alerts, you must allow notifications for Probable Pitcher in your phone's application settings."
-                            );
-                          }
-                          subscribe({
-                            pitcherId: item.id,
-                          });
-                        }}
-                        disabled={pauseMutations}
-                        style={style}
-                      >
-                        <SpecialText>
-                          <AntDesign name="pluscircle" size={20} />
-                        </SpecialText>
-                      </SubscriptionButton>
-                    )}
-                  </ThemedView>
+                    buttonStyle={style}
+                  />
                 </Animated.View>
               );
             }
@@ -372,7 +344,7 @@ export const Subscriptions = () => {
                       style={tw`mb-6 mx-4 text-sm`}
                       accessibilityRole="summary"
                     >
-                      Enter a player's name to perform a search.
+                      Search for your favorite pitcher to add them to your list of subscriptions.
                     </SecondaryText>
                   </Animated.View>
                 )
@@ -392,6 +364,71 @@ export const Subscriptions = () => {
           }
         />
       </Animated.View>
-    </ScreenLayout>
+    </ModalLayout >
+  );
+};
+
+const PitcherSubscription = ({
+  subscribeHandler,
+  unsubscribeHandler,
+  pitcher,
+  subscription,
+  disabled,
+  style,
+  buttonStyle
+}: {
+  subscribeHandler: () => void;
+  unsubscribeHandler?: () => void;
+  pitcher: Pitcher;
+  subscription?: Subscription;
+  disabled?: boolean;
+  style?: ClassInput;
+  buttonStyle: StyleProp<Animated.AnimateStyle<StyleProp<ViewStyle>>>;
+}) => {
+  return (
+    <>
+      <ThemedView
+        style={tw.style(style)}
+      >
+        {subscription && unsubscribeHandler && (
+          <Animated.View entering={FadeInLeft} exiting={FadeOutLeft}>
+            <ButtonContainer
+              style={tw`-my-3 -ml-4 p-3`}
+              onPress={unsubscribeHandler}
+              accessibilityLabel={""}
+              disabled={disabled}
+            >
+              <Animated.View style={buttonStyle}>
+                <AlertText>
+                  <AntDesign name="minuscircle" size={20} />
+                </AlertText>
+              </Animated.View>
+            </ButtonContainer>
+          </Animated.View>
+        )}
+        {!subscription && (
+          <ButtonContainer
+            style={tw`-my-3 -ml-4 p-3`}
+            onPress={subscribeHandler}
+            accessibilityLabel={""}
+            disabled={disabled}
+          >
+            <Animated.View style={buttonStyle}>
+              <SpecialText>
+                <AntDesign name="pluscircle" size={20} />
+              </SpecialText>
+            </Animated.View>
+          </ButtonContainer>
+        )}
+        <Animated.View style={tw`flex-1 pr-9.5`} layout={Layout}>
+          <PrimaryText numberOfLines={1}>
+            {pitcher.name}
+          </PrimaryText>
+          <SecondaryText>
+            {pitcher.primaryNumber}
+          </SecondaryText>
+        </Animated.View>
+      </ThemedView>
+    </>
   );
 };
