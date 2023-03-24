@@ -13,7 +13,7 @@ const changedIngest = process.env.CHANGED_INGEST === "true" || false;
 const domains = config.requireObject<string[]>("domains");
 const replicas = config.requireNumber("nextjsReplicas");
 
-const clusterProvider = new k8s.Provider(`probable-pitchers-${env}`, {
+const clusterProvider = new k8s.Provider(`probable-pitcher-${env}`, {
   kubeconfig: process.env.KUBECONFIG,
 });
 
