@@ -156,8 +156,8 @@ jobs:
       - name: "Get GKR Credentials"
         uses: "google-github-actions/get-gke-credentials@v1"
         with:
-          cluster_name: "probable-pitchers"
-          location: "us-central1"
+          cluster_name: "probable-pitcher"
+          location: "us-west1"
 
       - name: "Install dependencies"
         run: cd infrastructure && npm ci

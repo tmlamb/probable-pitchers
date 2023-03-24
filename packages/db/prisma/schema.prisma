@@ -57,9 +57,10 @@ model Device {
 }
 
 model Team {
-  id       Int       @id
-  name     String    @unique
-  pitchers Pitcher[]
+  id           Int       @id
+  name         String    @unique
+  abbreviation String?
+  pitchers     Pitcher[]
 }
 
 model Pitcher {
@@ -71,6 +72,7 @@ model Pitcher {
   awayGames     Game[]         @relation("AwayPitcher")
   subscriptions Subscription[]
   notifications Notification[]
+  primaryNumber String?
 
   @@fulltext([name])
 }

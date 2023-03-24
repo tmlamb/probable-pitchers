@@ -1,6 +1,6 @@
 config:
   gcp:project: probable-pitchers-prod
-  gcp:region: us-central1
+  gcp:region: us-west1
   probable-pitchers:appleClientId:
     secure: AAABAO0lAlLtDlKbWqFYdf/4kQlIQiWWNNeHMplJj6CBkpjYyfPsuXvnP/EJqGAgSt41U7t66X21/dh8ec2NRmy/nD2kQVtk
   probable-pitchers:appleClientSecret:
@@ -29,7 +29,7 @@ config:
     user:
       secure: AAABAOH8baHozb2O1zUNJaSeHq/1V7KQfJujqFz2VOhrrxIT9Fg=
   probable-pitchers:dbUrl:
-    secure: AAABAGJN5zTnnR+y2ZijVHjvqQC+y+6dElvNqw9WtRdNhvxTKAO8VgHDBthA021ZxIveXoA7Zxy+JQtzgZIoN8Tbm5kKHJOPxB/OehjrNL5BgnsNvvyaexJVtbjDvAoQ0ze13LSLKBPRDRmXPDvhoLFRpYGHszir1IBkm5xaHrqjXjRlGKiigN28+Fr19nEZAK5vrGKWV5UkbBE4Z33pc9EYxXmU/F8L+B/H0tT1PqQ=
+    secure: AAABAMqZ+cYMs/j8sBUYSoPsMw7g37x39FUSR/UDdU8FK0jYln31zg50IUK0SUSvXVJzraLglItkzjdyf9lrplIGLxe7snsnKRQxQKXoNHtBHOwtxvgvdjrzpyukPd1WQu9L4ehzhKFye6uZjRjUCdw/aQ1iiu6w2Udp/VQz4lFNfe4J1bganSYR5wvOSzhBd6IMEnvkcM8cgjgUJJka6LOBqP2KuPqwaBuNP31uht0=
   probable-pitchers:domains:
     - dev.probablepitcher.com
   probable-pitchers:nextAuthExpoUrl:
