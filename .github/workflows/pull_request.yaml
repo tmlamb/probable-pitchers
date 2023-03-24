@@ -45,7 +45,7 @@ jobs:
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
         with:
-          credentials_json: "${{ secrets.GCP_CREDENTIALS }}"
+          credentials_json: "${{ secrets.GCP_CREDENTIALS_PROD }}"
 
       - name: Install Dependencies
         run: cd infrastructure && npm ci
