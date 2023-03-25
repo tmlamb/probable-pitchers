@@ -13,7 +13,7 @@ const changedIngest = process.env.CHANGED_INGEST === "true" || false;
 const domains = config.requireObject<string[]>("domains");
 const replicas = config.requireNumber("nextjsReplicas");
 
-const clusterProvider = new k8s.Provider(`probable-pitcher-${env}`, {
+const clusterProvider = new k8s.Provider(`probable-pitchers-${env}`, {
   kubeconfig: process.env.KUBECONFIG,
 });
 
@@ -379,19 +379,19 @@ const ingress = new k8s.networking.v1.Ingress(
           host: domain,
           http: {
             paths: [
-//              {
-//                path: "/api/metrics",
-//                pathType: "Prefix",
-//                backend: {
-//                  service: {
-//                    name: "default-http-backend",
-//                    namespaceName: "kube-system",
-//                    port: {
-//                      number: 80,
-//                    },
-//                  },
-//                },
-//              },
+              //{
+              //  path: "/api/metrics",
+              //  pathType: "Prefix",
+              //  backend: {
+              //    service: {
+              //      name: "default-http-backend",
+              //      namespaceName: "kube-system",
+              //      port: {
+              //        number: 80,
+              //      },
+              //    },
+              //  },
+              //},
               {
                 path: "/",
                 pathType: "Prefix",
