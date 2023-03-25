@@ -54,8 +54,8 @@ jobs:
       - name: "Get GKR Credentials"
         uses: "google-github-actions/get-gke-credentials@v1"
         with:
-          cluster_name: "probable-pitchers"
-          location: "us-central1"
+          cluster_name: "probable-pitcher"
+          location: "us-west1"
 
       - name: "Install dependencies"
         run: cd infrastructure && npm ci
@@ -64,7 +64,7 @@ jobs:
         uses: pulumi/actions@v3
         with:
           command: up
-          stack-name: prod
+          stack-name: production
           work-dir: infrastructure
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}

@@ -3,8 +3,6 @@ config:
   gcp:region: us-central1
   probable-pitchers:appleClientId:
     secure: AAABAO0lAlLtDlKbWqFYdf/4kQlIQiWWNNeHMplJj6CBkpjYyfPsuXvnP/EJqGAgSt41U7t66X21/dh8ec2NRmy/nD2kQVtk
-  probable-pitchers:appleClientSecret:
-    secure: AAABAPt2AfHN/QhEbHy4O3ylPouBotsLI8sUc4+mDCZTsd/3NLNM+QaYxwcaS5QT38phX9nTCJOu+qbQoRF8bwsMEKXpHNAD5g9gtd4hNf11R2JvJ+FJ5/DOI0Ihn1kBNLvlup+gBiXuf+QO/jsztC2op7f95SnGP429ISfgVo/nVqgljKXeTQr+ktjcW39XpIZQz7tzevAjuCm2S9SZNSnI7ok7qtUB8CVhGR6ORg5YRWkkeRiVCX5r/OU/8bW8MNdY7FVl03HoosFTsRKEhSrU/Bmez0cbODjdjrW3AkRpOOWm9UlO6SS6xCLbtFY3fDr5KpttUzyqkrJZz3Qv50S6TD4b1GeIXvRzsy/R+GmKKr45riBUTxTSdSbztUeuWZi9+Uf8SbFrNz7dl1THmjfPa1O2eYc/ScXMlg69G1RxrTykPnDbcPY+X1FSAuGeFgdotVoMsqoRy5gfTQ==
   probable-pitchers:appleKeyId:
     secure: AAABAEqsrZtB0SR6dEOO1pbAVCvkTewSuVszWYUD8yq+bWCGVAM7gvkG
   probable-pitchers:applePrivateKey:
