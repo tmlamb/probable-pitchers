@@ -1,16 +1,18 @@
 import { add, endOfToday } from "date-fns";
 import prisma from "./client.js";
+import { Pitcher, Team, Game } from "@probable/db";
 
 export const client = {
   team: {
     byId: (id: number) => {
       return prisma.team.findUnique({ where: { id } });
     },
-    upsert: (id: number, name: string) => {
+    upsert: ({ id, name, abbreviation }: Team) => {
+      console.info(`Upserting team ${id} ${name} ${abbreviation}`);
       return prisma.team.upsert({
         where: { id },
-        create: { id, name },
-        update: { name },
+        create: { id, name, abbreviation },
+        update: { name, abbreviation },
       });
     },
   },
@@ -21,11 +23,11 @@ export const client = {
     byId: (id: number) => {
       return prisma.pitcher.findUnique({ where: { id } });
     },
-    upsert: (id: number, name: string, teamId: number) => {
+    upsert: ({ id, name, teamId, primaryNumber }: Pitcher) => {
       return prisma.pitcher.upsert({
         where: { id },
-        create: { id, name, teamId },
-        update: { name, teamId },
+        create: { id, name, primaryNumber, teamId },
+        update: { name, primaryNumber, teamId },
       });
     },
   },
@@ -50,12 +52,7 @@ export const client = {
         },
       });
     },
-    upsert: (
-      id: number,
-      date: Date,
-      homePitcherId?: number,
-      awayPitcherId?: number
-    ) => {
+    upsert: ({ id, date, homePitcherId, awayPitcherId }: Game) => {
       return prisma.game.upsert({
         where: { id },
         create: { id, date, homePitcherId, awayPitcherId },
@@ -119,7 +116,9 @@ export const client = {
     },
   },
   notification: {
-    create: (userId: string, gameId: number, pitcherId: number) => {
+    create: ({ userId, gameId, pitcherId }: { 
+      userId: string, gameId: number, pitcherId: number 
+    }) => {
       return prisma.notification.create({
         data: { userId, gameId, pitcherId },
       });

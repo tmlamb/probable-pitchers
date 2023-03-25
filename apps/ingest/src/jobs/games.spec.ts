@@ -27,6 +27,7 @@ test("should create one new game", async () => {
         team: {
           id: 654,
           name: "Weigh Team",
+          abbreviation: "WT",
         },
       },
       home: {
@@ -37,6 +38,7 @@ test("should create one new game", async () => {
         team: {
           id: 987,
           name: "Home Team",
+          abbreviation: "HT",
         },
       },
     },

@@ -1,24 +1,22 @@
 import { format } from "date-fns";
 import { client } from "../db/db.js";
-import { getPitchers } from "../services/mlbstats.js";
+import { getPitchers, MlbPlayer } from "../services/mlbstats.js";
 
-export async function processPitcher(pitcher: {
-  fullName: string;
-  currentTeam: { id: number };
-  id: number;
-}) {
-  const existingPitcher = await client.pitcher.byId(pitcher.id);
+export async function processPitcher(pitcher: MlbPlayer) {
+  const existing = await client.pitcher.byId(pitcher.id);
   if (
-    !existingPitcher ||
-    existingPitcher.name !== pitcher.fullName ||
-    existingPitcher.teamId !== pitcher.currentTeam.id
+    !existing ||
+    existing.name !== pitcher.fullName ||
+    (pitcher.currentTeam && existing.teamId !== pitcher.currentTeam.id) ||
+    (pitcher.primaryNumber && existing.primaryNumber !== pitcher.primaryNumber)
   ) {
     console.debug("Upserting pitcher: ", pitcher);
-    await client.pitcher.upsert(
-      pitcher.id,
-      pitcher.fullName,
-      pitcher.currentTeam.id
-    );
+    await client.pitcher.upsert({
+      id: pitcher.id,
+      name: pitcher.fullName,
+      teamId: pitcher.currentTeam.id,
+      primaryNumber: pitcher.primaryNumber || null,
+    });
 
     const pitchersWithName = await client.pitcher.byName(pitcher.fullName);
     if (pitchersWithName.length > 1) {

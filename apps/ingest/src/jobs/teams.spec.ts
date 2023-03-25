@@ -9,12 +9,13 @@ test("should upsert one team", async () => {
   prismaMock.team.findUnique.mockResolvedValueOnce({
     id: 133,
     name: "Oakland Athletes",
+    abbreviation: "ATH",
   });
 
   for (let i = 1; i < mlbTeams.length; i++) {
     const mockedTeam = mlbTeams[i];
     prismaMock.team.findUnique.mockResolvedValueOnce(
-      mockedTeam || { id: -1, name: "Test Data Issue: Check Fixture" }
+      mockedTeam || { id: -1, name: "Test Data Issue: Check Fixture", abbreviation: null }
     );
   }
 
@@ -30,9 +31,11 @@ test("should upsert one team", async () => {
     create: {
       id: 133,
       name: "Oakland Athletics",
+      abbreviation: "OAK",
     },
     update: {
       name: "Oakland Athletics",
+      abbreviation: "OAK",
     },
   });
 });

@@ -12,6 +12,7 @@ test("should upsert one existing pitcher", async () => {
     id: mlbPitchers[0]!.id,
     name: "Babe Ruth",
     teamId: 139,
+    primaryNumber: "3",
   };
 
   prismaMock.pitcher.findUnique.mockResolvedValueOnce(pitcherToUpdate);
@@ -24,11 +25,13 @@ test("should upsert one existing pitcher", async () => {
             name: mockedPitcher.fullName,
             id: mockedPitcher.id,
             teamId: mockedPitcher.currentTeam.id,
+            primaryNumber: mockedPitcher.primaryNumber || null,
           }
         : {
             name: "Test Data Issue: Check Fixture",
             id: -1,
             teamId: -1,
+            primaryNumber: null,
           }
     );
   }
@@ -48,20 +51,22 @@ test("should upsert one existing pitcher", async () => {
       id: mlbPitchers[0]!.id,
       name: mlbPitchers[0]!.fullName,
       teamId: mlbPitchers[0]!.currentTeam.id,
+      primaryNumber: mlbPitchers[0]!.primaryNumber,
     },
     update: {
       name: mlbPitchers[0]!.fullName,
       teamId: mlbPitchers[0]!.currentTeam.id,
+      primaryNumber: mlbPitchers[0]!.primaryNumber,
     },
   });
 });
 
 test("should insert one new pitcher", async () => {
-  // const newPitcher = { id: 999999, name: "Babe Ruth", teamId: 111 };
   const newPitcher = {
     id: mlbPitchers[mlbPitchers.length - 1]!.id,
     name: mlbPitchers[mlbPitchers.length - 1]!.fullName,
     teamId: mlbPitchers[mlbPitchers.length - 1]!.currentTeam.id,
+    primaryNumber: mlbPitchers[mlbPitchers.length - 1]!.primaryNumber || null,
   };
 
   for (let i = 0; i < mlbPitchers.length - 1; i++) {
@@ -72,11 +77,13 @@ test("should insert one new pitcher", async () => {
             name: mockedPitcher.fullName,
             id: mockedPitcher.id,
             teamId: mockedPitcher.currentTeam.id,
+            primaryNumber: mockedPitcher.primaryNumber || null,
           }
         : {
             name: "Test Data Issue: Check Fixture",
             id: -1,
             teamId: -1,
+            primaryNumber: null,
           }
     );
   }
@@ -98,10 +105,12 @@ test("should insert one new pitcher", async () => {
       id: newPitcher.id,
       name: newPitcher.name,
       teamId: newPitcher.teamId,
+      primaryNumber: newPitcher.primaryNumber,
     },
     update: {
       name: newPitcher.name,
       teamId: newPitcher.teamId,
+      primaryNumber: newPitcher.primaryNumber,
     },
   });
 });

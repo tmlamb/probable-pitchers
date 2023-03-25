@@ -9,9 +9,17 @@ export async function ingestTeams() {
   console.debug("Found teams: ", teams);
 
   for (const team of teams) {
-    const existingTeam = await client.team.byId(team.id);
-    if (!existingTeam || existingTeam.name !== team.name) {
-      await client.team.upsert(team.id, team.name);
+    const existing = await client.team.byId(team.id);
+    if (
+      !existing ||
+      existing.name !== team.name ||
+      (team.abbreviation && existing.abbreviation !== team.abbreviation)
+    ) {
+      await client.team.upsert({
+        id: team.id,
+        name: team.name,
+        abbreviation: team.abbreviation || null
+      });
     }
   }
 }

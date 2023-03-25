@@ -18,11 +18,11 @@ export async function ingestNotifications() {
       const subscriptions = await client.subscription.byPitcherId(pitcher.id);
       for (const subscription of subscriptions) {
         try {
-          await client.notification.create(
-            subscription.userId,
-            game.id,
-            pitcher.id
-          );
+          await client.notification.create({
+            userId: subscription.userId,
+            gameId: game.id,
+            pitcherId: pitcher.id
+          });
         } catch (e) {
           if (
             e instanceof Prisma.PrismaClientKnownRequestError &&

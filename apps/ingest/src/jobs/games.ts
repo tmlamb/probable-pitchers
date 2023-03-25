@@ -30,11 +30,11 @@ export async function ingestGames() {
         });
       }
     }
-    await client.game.upsert(
-      game.gamePk,
-      new Date(game.gameDate),
-      game.teams.home.probablePitcher?.id,
-      game.teams.away.probablePitcher?.id
-    );
+    await client.game.upsert({
+      id: game.gamePk,
+      date: new Date(game.gameDate),
+      homePitcherId: game.teams.home.probablePitcher?.id || null,
+      awayPitcherId: game.teams.away.probablePitcher?.id || null,
+    });
   }
 }

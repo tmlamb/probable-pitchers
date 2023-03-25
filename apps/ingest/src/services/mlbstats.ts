@@ -4,6 +4,7 @@ import { z } from "zod";
 const Team = z.object({
   id: z.number(),
   name: z.string(),
+  abbreviation: z.string(),
 });
 
 export type MlbTeam = z.infer<typeof Team>;
@@ -11,6 +12,7 @@ export type MlbTeam = z.infer<typeof Team>;
 const ProbablePitcher = z.object({
   id: z.number(),
   fullName: z.string(),
+  primaryNumber: z.string().optional(),
 });
 
 const Player = ProbablePitcher.merge(
@@ -20,7 +22,7 @@ const Player = ProbablePitcher.merge(
     }),
     primaryPosition: z.object({
       code: z.string(),
-    }),
+    }).optional(),
   })
 );
 
@@ -105,7 +107,7 @@ export async function getPitchers(season: string): Promise<MlbPlayer[]> {
       // "1" is a pitcher
       // "Y" is a two-way player (stupid sexy Ohtani)
       return players.people.filter(
-        (p) => p.primaryPosition.code === "1" || p.primaryPosition.code === "Y"
+        (p) => p.primaryPosition?.code === "1" || p.primaryPosition?.code === "Y"
       );
     })
     .catch((err: Error) => {
