@@ -72,7 +72,7 @@ export default function SearchInput({ onChange, onActive, onCancel, style }: Pro
               searchComponentWidth - cancelButtonWidth,
               { duration: 250 }
             );
-            searchComponentMarginTop.value = withTiming(24, {
+            searchComponentMarginTop.value = withTiming(48, {
               duration: 250,
             });
             searchComponentMarginBottom.value = withTiming(12, {

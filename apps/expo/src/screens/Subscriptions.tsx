@@ -256,7 +256,7 @@ export const Subscriptions = () => {
             </ButtonContainer>
           )}
       </HeaderRightContainer>
-      <Animated.View style={tw`pt-6 px-3 flex-1`} layout={Layout.duration(1)}>
+      <Animated.View style={tw`pt-0 px-3 flex-1`} layout={Layout.duration(1)}>
         <Animated.FlatList
           // @ts-ignore - there is a type bug in Reanimated 2.9.x
           itemLayoutAnimation={Layout.duration(250)}
@@ -274,7 +274,7 @@ export const Subscriptions = () => {
               {!isSearchActive &&
                 <Animated.View layout={Layout} exiting={FadeOutUp.duration(75)}>
                   <PrimaryText
-                    style={tw`text-4xl font-bold tracking-tight mb-3`}
+                    style={tw`text-4xl font-bold tracking-tight mt-6 mb-3`}
                     accessibilityRole="header"
                   >
                     Probable Pitcher
