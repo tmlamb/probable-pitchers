@@ -13,7 +13,7 @@ export const pitcherRouter = t.router({
         `${acc}${!!index && index < words.length ? ' ' : ''}*${word}*`, ''
       );
 
-      return await ctx.prisma.$queryRaw<(Pitcher & { team?: { abbreviation?: string } })[]>`
+      return await ctx.prisma.$queryRaw<(Pitcher & { abbreviation: string })[]>`
         SELECT
             p.id,
             p.name,

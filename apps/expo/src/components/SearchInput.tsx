@@ -1,3 +1,4 @@
+import { AntDesign } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { Dimensions, Keyboard } from "react-native";
@@ -11,7 +12,7 @@ import Animated, {
 import { ClassInput } from "twrnc/dist/esm/types";
 import tw from "../tailwind";
 import ButtonContainer from "./ButtonContainer";
-import { SpecialText, ThemedTextInput } from "./Themed";
+import { SecondaryText, SpecialText, ThemedTextInput } from "./Themed";
 
 type Props = {
   onChange: (text?: string) => void;
@@ -47,7 +48,7 @@ export default function SearchInput({ onChange, onActive, onCancel, style }: Pro
       alignItems: "center",
       justifyContent: "space-between",
     }),
-    [searchComponentMarginTop.value]
+    [searchComponentMarginTop.value, searchComponentMarginBottom.value]
   );
 
   return (
@@ -71,7 +72,7 @@ export default function SearchInput({ onChange, onActive, onCancel, style }: Pro
               searchComponentWidth - cancelButtonWidth,
               { duration: 250 }
             );
-            searchComponentMarginTop.value = withTiming(26, {
+            searchComponentMarginTop.value = withTiming(24, {
               duration: 250,
             });
             searchComponentMarginBottom.value = withTiming(12, {
@@ -106,8 +107,13 @@ export default function SearchInput({ onChange, onActive, onCancel, style }: Pro
             setSearchText(text);
           }}
           value={searchText || ""}
-          style={tw.style("rounded-xl")}
-          label={searchText ? undefined : "Search pitchers to subscribe"}
+          style={tw.style("rounded-xl px-3")}
+          leftIcon={<>
+            <SecondaryText style={tw`-ml-1.5 mr-1.5`}>
+              <AntDesign name="search1" size={18} />
+            </SecondaryText>
+          </>}
+          placeholder="Search"
           accessibilityLabel="Filter list of pitchers by name"
         />
       </Animated.View>
@@ -150,7 +156,7 @@ export default function SearchInput({ onChange, onActive, onCancel, style }: Pro
             }}
             accessibilityLabel="Clear exercise filter"
           >
-            <SpecialText style={tw`pl-2.5 font-bold text-lg tracking-tight`}>
+            <SpecialText style={tw`pl-3 font-bold text-lg tracking-tight`}>
               Done
             </SpecialText>
           </ButtonContainer>

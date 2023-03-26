@@ -9,7 +9,6 @@ import { AppState, Platform, View } from "react-native";
 import * as Sentry from "sentry-expo";
 import {
   Account,
-  Home,
   Notifications,
   Settings,
   Subscriptions,
@@ -116,19 +115,11 @@ export default function Navigation() {
           {status !== "unauthenticated" && (
             <>
               <AppStack.Screen
-                name="Home"
-                component={Home}
-                options={{
-                  headerTitle: "",
-                  title: "Probable Pitcher",
-                }}
-              />
-              <AppStack.Screen
                 name="Subscriptions"
                 component={Subscriptions}
                 options={{
-                  title: "Edit Subscriptions",
-                  headerBackTitle: "Home",
+                  headerTitle: "",
+                  title: "Probable Pitcher",
                 }}
               />
               <AppStack.Screen
@@ -136,8 +127,7 @@ export default function Navigation() {
                 component={Settings}
                 options={{
                   title: "Settings",
-                  headerBackTitle: "Home",
-                  animation: "fade_from_bottom",
+                  headerBackTitle: "Back",
                 }}
               />
               <AppStack.Screen

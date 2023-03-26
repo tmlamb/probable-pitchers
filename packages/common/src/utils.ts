@@ -1,4 +1,4 @@
-import { Game, Pitcher, Subscription } from "@probable/db";
+import { Game, Pitcher, Subscription, Team } from "@probable/db";
 import {
   format,
   formatDistanceToNowStrict,
@@ -23,33 +23,43 @@ function nextGameDate(
   }
 }
 
+
+export type PitcherSubscription =
+  Pitcher & {
+    team: { abbreviation: string | null },
+    homeGames?: Game[],
+    awayGames?: Game[],
+    nextGameDate?: Date,
+    subscription?: Subscription
+  };
+
 export const subscriptionSchedule = (
   subscriptions:
     | (Subscription & {
-        pitcher: Pitcher & {
-          homeGames: Game[];
-          awayGames: Game[];
-        };
-      })[]
+      pitcher: Pitcher & {
+        team: { abbreviation: string | null },
+        homeGames: Game[];
+        awayGames: Game[];
+      };
+    })[]
     | undefined
 ): {
   nextGameDay: string;
-  data: (Subscription & {
-    pitcher: Pitcher & {
-      homeGames: Game[];
-      awayGames: Game[];
-      nextGameDate?: Date;
-    };
-  })[];
+  data: PitcherSubscription[];
 }[] => {
   return _(subscriptions)
-    .map((sub) => ({
-      ...sub,
-      pitcher: { ...sub.pitcher, nextGameDate: nextGameDate(sub.pitcher) },
+    .map((s) => ({
+      ...s.pitcher,
+      nextGameDate: nextGameDate(s.pitcher),
+      subscription: {
+        id: s.id,
+        userId: s.userId,
+        pitcherId: s.pitcherId,
+      }
     }))
-    .orderBy((sub) => sub.pitcher.nextGameDate)
-    .groupBy((sub) => {
-      const date = sub.pitcher.nextGameDate;
+    .orderBy((p) => p.nextGameDate)
+    .groupBy((p) => {
+      const date = p.nextGameDate;
       if (date) {
         const dateForSection = format(date, "EEE, MMM d");
         if (isToday(date)) {

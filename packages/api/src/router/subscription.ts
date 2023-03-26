@@ -10,6 +10,7 @@ export const subscriptionRouter = t.router({
           include: {
             homeGames: true,
             awayGames: true,
+            team: true,
           },
         },
       },
