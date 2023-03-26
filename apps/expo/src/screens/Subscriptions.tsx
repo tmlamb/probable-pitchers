@@ -1,6 +1,6 @@
 import { AntDesign } from "@expo/vector-icons";
 import { Game, Pitcher, Subscription } from "@probable/db";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, StyleProp, View, ViewStyle } from "react-native";
 import Animated, {
   Easing,
@@ -38,9 +38,45 @@ import HeaderLeftContainer from "../components/HeaderLeftContainer";
 import LinkButton from "../components/LinkButton";
 import { formatInTimeZone } from "date-fns-tz";
 import * as Localization from "expo-localization";
+import { Subscription as ExpoSubscription } from "expo-modules-core";
+import * as ExpoNotifications from "expo-notifications";
 import ScreenLayout from "../components/ScreenLayout";
+import { RootStackScreenProps } from "../components/Navigation";
 
-export const Subscriptions = () => {
+export const Subscriptions = ({
+  navigation: { navigate },
+}: RootStackScreenProps<"Subscriptions">) => {
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef<ExpoSubscription>();
+  const responseListener = useRef<ExpoSubscription>();
+
+  useEffect(() => {
+    // This listener is fired whenever a notification is received while the app is foregrounded
+    notificationListener.current =
+      ExpoNotifications.addNotificationReceivedListener((notification) => {
+        setNotification(!!notification);
+      });
+
+    // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
+    responseListener.current =
+      ExpoNotifications.addNotificationResponseReceivedListener((response) => {
+        navigate("Subscriptions");
+      });
+
+    return () => {
+      if (notificationListener?.current) {
+        ExpoNotifications.removeNotificationSubscription(
+          notificationListener.current
+        );
+      }
+      if (responseListener?.current) {
+        ExpoNotifications.removeNotificationSubscription(
+          responseListener.current
+        );
+      }
+    };
+  }, []);
+
   const mutationTracker = useTrackParallelMutations();
 
   const subscriptions = trpc.subscription.byUserId.useQuery(undefined, {
