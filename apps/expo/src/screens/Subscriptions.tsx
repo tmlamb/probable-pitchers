@@ -412,7 +412,7 @@ const PitcherView = ({
   return (
     <>
       <ThemedView
-        style={tw.style(style)}
+        style={tw.style("relative", style)}
       >
         {pitcher.subscription && unsubscribeHandler && (
           <Animated.View entering={FadeInLeft} exiting={FadeOutLeft}>
@@ -459,13 +459,13 @@ const PitcherView = ({
         </Animated.View>
         {!pitcher.subscription && (
           <ButtonContainer
-            style={tw`-my-3 -mr-3 p-3`}
+            style={tw`right-0 absolute h-full w-full items-end`}
             onPress={subscribeHandler}
             accessibilityLabel={""}
             disabled={disabled}
           >
             <Animated.View style={buttonStyle}>
-              <SpecialText>
+              <SpecialText style="pr-3">
                 <AntDesign name="pluscircle" size={16} />
               </SpecialText>
             </Animated.View>
