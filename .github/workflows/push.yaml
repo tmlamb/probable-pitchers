@@ -43,19 +43,27 @@ jobs:
 
       - name: Changed nextjs?
         id: changed-nextjs
-        if: ${{ contains(fromJSON(steps.changeset.outputs.result).packages, '@probable/nextjs') }}
+        if: |
+          ${{ contains(fromJSON(steps.changeset.outputs.result).packages, '@probable/nextjs') }} ||
+          ${{ contains(fromJSON(steps.changeset.outputs.result).packages, '@probable/api') }} ||
+          ${{ contains(fromJSON(steps.changeset.outputs.result).packages, '@probable/common') }}
         run: |
           echo "::set-output name=result::true"
 
       - name: Changed ingest?
         id: changed-ingest
-        if: ${{ contains(fromJSON(steps.changeset.outputs.result).packages, '@probable/ingest') }}
+        if: |
+          ${{ contains(fromJSON(steps.changeset.outputs.result).packages, '@probable/ingest') }} ||
+          ${{ contains(fromJSON(steps.changeset.outputs.result).packages, '@probable/common') }}
         run: |
           echo "::set-output name=result::true"
 
       - name: Changed expo?
         id: changed-expo
-        if: ${{ contains(fromJSON(steps.changeset.outputs.result).packages, '@probable/expo') }}
+        if: |
+          ${{ contains(fromJSON(steps.changeset.outputs.result).packages, '@probable/expo') }} ||
+          ${{ contains(fromJSON(steps.changeset.outputs.result).packages, '@probable/api') }} ||
+          ${{ contains(fromJSON(steps.changeset.outputs.result).packages, '@probable/common') }}
         run: |
           echo "::set-output name=result::true"
 
