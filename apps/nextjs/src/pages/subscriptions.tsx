@@ -33,7 +33,7 @@ const Subscriptions: NextPage = () => {
               {day.nextGameDay}
             </h2>
             {day.data.map((pitcher) => (
-              <div key={pitcher.id}>{subscription.pitcher.name}</div>
+              <div key={pitcher.id}>{pitcher.name}</div>
             ))}
           </div>
         ))}
