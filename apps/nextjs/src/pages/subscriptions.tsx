@@ -27,13 +27,13 @@ const Subscriptions: NextPage = () => {
         <h1 className="text-3xl sm:text-5xl leading-normal font-extrabold text-gray-700">
           Pitcher Subscriptions
         </h1>
-        {Object.entries(schedule).map(([nextGameDay, subscriptions]) => (
+        {Object.entries(schedule).map(([nextGameDay, day]) => (
           <div key={nextGameDay}>
             <h2 className="text-2xl leading-normal font-extrabold text-gray-700">
-              {subscriptions.nextGameDay}
+              {day.nextGameDay}
             </h2>
-            {subscriptions.data.map((subscription) => (
-              <div key={subscription.id}>{subscription.pitcher.name}</div>
+            {day.data.map((pitcher) => (
+              <div key={pitcher.id}>{pitcher.name}</div>
             ))}
           </div>
         ))}
