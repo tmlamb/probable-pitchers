@@ -140,7 +140,9 @@ jobs:
   deploy-infra:
     name: Deploy Preview Infrastructure
     needs: [checks, build-nextjs, build-ingest]
-    if: always()
+    if: always() &&
+      (!needs.build-nextjs || needs.build-nextjs.result == 'success') &&
+      (!needs.build-ingest || needs.build-ingest.result == 'success')
     runs-on: ubuntu-latest
 
     steps:
