@@ -13,7 +13,8 @@ export const pitcherRouter = t.router({
         `${acc}${!!index && index < words.length ? ' ' : ''}*${word}*`, ''
       );
 
-      return await ctx.prisma.$queryRaw<(Pitcher & { abbreviation: string })[]>`
+      return await ctx.prisma.$queryRaw<(Pitcher & { abbreviation: string })[]>
+      `
         SELECT
             p.id,
             p.name,
@@ -23,8 +24,8 @@ export const pitcherRouter = t.router({
         FROM
             Pitcher p
         INNER JOIN Team t ON t.id = p.teamId
-        WHERE MATCH (p.name)
-        AGAINST (${query} IN BOOLEAN MODE)
+        WHERE MATCH (p.name) AGAINST (${query} IN BOOLEAN MODE)
+        LIMIT 18
       `
     }),
 });
