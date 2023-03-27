@@ -7,6 +7,7 @@ import Animated, {
   FadeIn,
   FadeInLeft,
   FadeInRight,
+  FadeInUp,
   FadeOut,
   FadeOutLeft,
   FadeOutRight,
@@ -310,7 +311,7 @@ export const Subscriptions = ({
           ListHeaderComponent={
             <View style={tw.style('px-3', isSearchActive ? 'bg-slate-900' : 'bg-black')}>
               {!isSearchActive &&
-                <Animated.View layout={Layout} exiting={FadeOutUp.duration(75)}>
+                <Animated.View layout={Layout} entering={FadeIn.delay(100)} exiting={FadeOutUp.duration(50)}>
                   <PrimaryText
                     style={tw`text-4xl font-bold tracking-tight mt-6 mb-3`}
                     accessibilityRole="header"

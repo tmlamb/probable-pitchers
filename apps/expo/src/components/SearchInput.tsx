@@ -37,23 +37,22 @@ export default function SearchInput({ onChange, onActive, onCancel, style }: Pro
   );
 
   const searchComponentMarginTop = useSharedValue(0);
-  const searchComponentMarginBottom = useSharedValue(12);
   const searchComponentStyle = useAnimatedStyle(
     () => ({
       marginTop: searchComponentMarginTop.value,
-      marginBottom: searchComponentMarginBottom.value,
+      marginBottom: 12,
       width: "100%",
       display: "flex",
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
     }),
-    [searchComponentMarginTop.value, searchComponentMarginBottom.value]
+    [searchComponentMarginTop.value]
   );
 
   return (
     <Animated.View
-      style={tw.style(style, searchComponentStyle)}
+      style={tw.style("mb-9", style, searchComponentStyle)}
       onLayout={(event) => {
         const roundedWidth = Math.round(event.nativeEvent.layout.width);
         if (roundedWidth !== searchComponentWidth) {
@@ -72,10 +71,7 @@ export default function SearchInput({ onChange, onActive, onCancel, style }: Pro
               searchComponentWidth - cancelButtonWidth,
               { duration: 250 }
             );
-            searchComponentMarginTop.value = withTiming(48, {
-              duration: 250,
-            });
-            searchComponentMarginBottom.value = withTiming(12, {
+            searchComponentMarginTop.value = withTiming(54, {
               duration: 250,
             });
             setShowCancelButton(true);
@@ -90,9 +86,6 @@ export default function SearchInput({ onChange, onActive, onCancel, style }: Pro
                 duration: 250,
               });
               searchComponentMarginTop.value = withTiming(0, {
-                duration: 250,
-              });
-              searchComponentMarginBottom.value = withTiming(12, {
                 duration: 250,
               });
               setShowCancelButton(false);
@@ -120,7 +113,7 @@ export default function SearchInput({ onChange, onActive, onCancel, style }: Pro
       {showCancelButton && (
         <Animated.View
           entering={FadeInRight.delay(0)}
-          exiting={FadeOutRight.duration(0)}
+          exiting={FadeOutRight.duration(100)}
           onLayout={(event) => {
             const roundedWidth = Math.round(event.nativeEvent.layout.width);
             if (cancelButtonWidth !== roundedWidth) {
@@ -140,9 +133,6 @@ export default function SearchInput({ onChange, onActive, onCancel, style }: Pro
                 duration: 250,
               });
               searchComponentMarginTop.value = withTiming(0, {
-                duration: 250,
-              });
-              searchComponentMarginBottom.value = withTiming(12, {
                 duration: 250,
               });
               onChange(undefined);
