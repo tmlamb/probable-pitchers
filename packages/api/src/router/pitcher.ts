@@ -25,7 +25,7 @@ export const pitcherRouter = t.router({
             Pitcher p
         INNER JOIN Team t ON t.id = p.teamId
         WHERE MATCH (p.name) AGAINST (${query} IN BOOLEAN MODE)
-        LIMIT 18;
+        LIMIT 18
       `
     }),
 });
