@@ -309,7 +309,7 @@ export const Subscriptions = ({
           stickyHeaderIndices={[0]}
           stickyHeaderHiddenOnScroll={!isSearchActive}
           ListHeaderComponent={
-            <View style={tw.style('px-3', isSearchActive ? 'bg-slate-900' : 'bg-black')}>
+            <View style={tw.style('px-3', isSearchActive ? 'bg-white dark:bg-slate-900' : 'bg-slate-50 dark:bg-black')}>
               {!isSearchActive &&
                 <Animated.View layout={Layout} entering={FadeIn.delay(100)} exiting={FadeOutUp.duration(50)}>
                   <PrimaryText
