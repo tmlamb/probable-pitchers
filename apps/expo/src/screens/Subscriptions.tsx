@@ -292,7 +292,7 @@ export const Subscriptions = ({
             </ButtonContainer>
           )}
       </HeaderRightContainer>
-      <Animated.View style={tw`pt-0 px-3 flex-1`} layout={Layout.duration(1)}>
+      <Animated.View style={tw`flex-1`} layout={Layout.duration(1)}>
         <Animated.FlatList
           // @ts-ignore - there is a type bug in Reanimated 2.9.x
           itemLayoutAnimation={Layout.duration(250)}
@@ -302,11 +302,13 @@ export const Subscriptions = ({
             }
             return String(item.id);
           }}
-          contentContainerStyle={tw`pb-88`}
+          contentContainerStyle={tw`pb-96`}
           data={subscribedAndAvailablePitchers}
           keyboardShouldPersistTaps="handled"
+          stickyHeaderIndices={[0]}
+          stickyHeaderHiddenOnScroll={!isSearchActive}
           ListHeaderComponent={
-            <>
+            <View style={tw.style('px-3', isSearchActive ? 'bg-slate-900' : 'bg-black')}>
               {!isSearchActive &&
                 <Animated.View layout={Layout} exiting={FadeOutUp.duration(75)}>
                   <PrimaryText
@@ -322,13 +324,13 @@ export const Subscriptions = ({
                 onActive={() => setIsSearchActive(true)}
                 onCancel={() => setIsSearchActive(false)}
               />
-            </>
+            </View>
           }
           renderItem={({ index, item }) => {
             if (typeof item === "string") {
               return (
                 <Animated.View entering={FadeIn} exiting={FadeOut}>
-                  <View style={tw`flex-row justify-between mb-1 mx-3`}>
+                  <View style={tw`flex-row justify-between mt-3 mb-1 mx-6`}>
                     <SecondaryText style={tw`uppercase text-sm`}>
                       {item}
                     </SecondaryText>
@@ -367,7 +369,7 @@ export const Subscriptions = ({
                       !subscribedAndAvailablePitchers[index + 1] ||
                         typeof subscribedAndAvailablePitchers[index + 1] ===
                         "string"
-                        ? "border-b-0 rounded-b-xl mb-3"
+                        ? "border-b-0 rounded-b-xl"
                         : undefined
                     )}
                     buttonStyle={style}
@@ -381,7 +383,7 @@ export const Subscriptions = ({
               {search.isSuccess && (
                 <Animated.View entering={FadeIn.delay(150)} exiting={FadeOut}>
                   <SecondaryText
-                    style={tw`mb-6 mx-3 text-sm`}
+                    style={tw`mt-3 mb-6 mx-6 text-sm`}
                     accessibilityRole="summary"
                   >
                     No pitchers found. Try changing your search.
@@ -403,7 +405,7 @@ export const Subscriptions = ({
                 !search.isSuccess && (
                   <Animated.View entering={FadeIn} exiting={FadeOut}>
                     <SecondaryText
-                      style={tw`mb-6 mx-3 text-sm`}
+                      style={tw`mt-3 mb-6 mx-6 text-sm`}
                       accessibilityRole="summary"
                     >
                       Search for your favorite pitcher to add them to your list of subscriptions.
@@ -414,7 +416,7 @@ export const Subscriptions = ({
               {search.isError && (
                 <Animated.View entering={FadeIn.delay(150)} exiting={FadeOut}>
                   <AlertText
-                    style={tw`mb-6 mx-3 text-sm`}
+                    style={tw`mt-3 mb-6 mx-6 text-sm`}
                     accessibilityRole="alert"
                   >
                     An error occurred while performing your search. Please try
@@ -448,7 +450,7 @@ const PitcherView = ({
   return (
     <>
       <ThemedView
-        style={tw.style("relative", style)}
+        style={tw.style("relative mx-3", style)}
       >
         {pitcher.subscription && unsubscribeHandler && (
           <Animated.View entering={FadeInLeft} exiting={FadeOutLeft}>
@@ -468,7 +470,7 @@ const PitcherView = ({
         )}
         <Animated.View style={tw`flex-1 flex-row justify-between items-center`} layout={Layout}>
           <Animated.View style={tw`flex-row items-center`} layout={Layout}>
-            <PrimaryText numberOfLines={1}>
+            <PrimaryText style={tw``} numberOfLines={2}>
               {pitcher.name}
             </PrimaryText>
             <Animated.View style={tw`items-center mx-3 -my-1.5`} layout={Layout}>
@@ -495,7 +497,7 @@ const PitcherView = ({
         </Animated.View>
         {!pitcher.subscription && (
           <ButtonContainer
-            style={tw`right-0 absolute h-full w-full items-end`}
+            style={tw`right-0 p-3 -m-3 absolute items-end`}
             onPress={subscribeHandler}
             accessibilityLabel={""}
             disabled={disabled}

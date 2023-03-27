@@ -37,7 +37,7 @@ export default function SearchInput({ onChange, onActive, onCancel, style }: Pro
   );
 
   const searchComponentMarginTop = useSharedValue(0);
-  const searchComponentMarginBottom = useSharedValue(24);
+  const searchComponentMarginBottom = useSharedValue(12);
   const searchComponentStyle = useAnimatedStyle(
     () => ({
       marginTop: searchComponentMarginTop.value,
@@ -92,7 +92,7 @@ export default function SearchInput({ onChange, onActive, onCancel, style }: Pro
               searchComponentMarginTop.value = withTiming(0, {
                 duration: 250,
               });
-              searchComponentMarginBottom.value = withTiming(24, {
+              searchComponentMarginBottom.value = withTiming(12, {
                 duration: 250,
               });
               setShowCancelButton(false);
@@ -142,7 +142,7 @@ export default function SearchInput({ onChange, onActive, onCancel, style }: Pro
               searchComponentMarginTop.value = withTiming(0, {
                 duration: 250,
               });
-              searchComponentMarginBottom.value = withTiming(24, {
+              searchComponentMarginBottom.value = withTiming(12, {
                 duration: 250,
               });
               onChange(undefined);
