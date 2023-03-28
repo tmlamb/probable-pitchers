@@ -71,7 +71,7 @@ export default function SearchInput({ onChange, onActive, onCancel, style }: Pro
               searchComponentWidth - cancelButtonWidth,
               { duration: 250 }
             );
-            searchComponentMarginTop.value = withTiming(54, {
+            searchComponentMarginTop.value = withTiming(-24, {
               duration: 250,
             });
             setShowCancelButton(true);

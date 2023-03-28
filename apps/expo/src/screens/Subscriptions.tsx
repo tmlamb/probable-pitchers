@@ -1,7 +1,7 @@
 import { AntDesign } from "@expo/vector-icons";
 import { Game, Pitcher, Subscription } from "@probable/db";
 import React, { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, StyleProp, View, ViewStyle } from "react-native";
+import { ActivityIndicator, NativeScrollEvent, NativeSyntheticEvent, StyleProp, View, ViewStyle } from "react-native";
 import Animated, {
   Easing,
   FadeIn,
@@ -237,6 +237,16 @@ export const Subscriptions = ({
     if (isSearchActive) setIsEditing(false);
   }, [isSearchActive]);
 
+  const [isScrolling, setIsScrolling] = useState(false);
+
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    if (event.nativeEvent.contentOffset.y > 0) {
+      setIsScrolling(true);
+    } else {
+      setIsScrolling(false);
+    }
+  };
+
   if (subscriptions.isLoading) {
     return (
       <ScreenLayout>
@@ -274,7 +284,7 @@ export const Subscriptions = ({
           (isEditing ?
             <ButtonContainer
               onPress={() => setIsEditing((isEditing) => !isEditing)}
-              style={tw`py-6 pl-8 pr-3 -my-6 -mr-3 flex flex-row items-center`}
+              style={tw`pl-8 pb-4 pr-3 -mb-4 -mr-4 flex flex-row items-center`}
               accessibilityLabel={`${isEditing ? 'Disable' : 'Enable'} edit mode`}
             >
               <SpecialText style={tw`font-bold`}>
@@ -284,7 +294,7 @@ export const Subscriptions = ({
             :
             <ButtonContainer
               onPress={() => setIsEditing((isEditing) => !isEditing)}
-              style={tw`py-6 pl-8 pr-3 -my-6 -mr-3 flex flex-row items-center`}
+              style={tw`pl-6 pb-4 pr-3 -mb-4 -mr-4 flex flex-row items-center`}
               accessibilityLabel={`${isEditing ? 'Disable' : 'Enable'} edit mode`}
             >
               <SpecialText>
@@ -308,18 +318,17 @@ export const Subscriptions = ({
           keyboardShouldPersistTaps="handled"
           stickyHeaderIndices={[0]}
           stickyHeaderHiddenOnScroll={!isSearchActive}
+          onScroll={(event) => handleScroll(event)}
           ListHeaderComponent={
-            <View style={tw.style('px-3', isSearchActive ? 'bg-white dark:bg-slate-900' : 'bg-slate-50 dark:bg-black')}>
-              {!isSearchActive &&
-                <Animated.View layout={Layout} entering={FadeIn.delay(100)} exiting={FadeOutUp.duration(50)}>
-                  <PrimaryText
-                    style={tw`text-4xl font-bold tracking-tight mt-6 mb-3`}
-                    accessibilityRole="header"
-                  >
-                    Probable Pitcher
-                  </PrimaryText>
-                </Animated.View>
-              }
+            <View style={tw.style('px-3 bg-slate-50 dark:bg-black', isSearchActive && isScrolling ? 'bg-opacity-80' : 'bg-opacity-100')}>
+              <Animated.View layout={Layout} entering={FadeIn.delay(100)} exiting={FadeOutUp.duration(50)}>
+                <PrimaryText
+                  style={tw.style(isSearchActive ? 'text-transparent' : '', 'text-4xl font-bold tracking-tight mt-6 mb-3')}
+                  accessibilityRole="header"
+                >
+                  Probable Pitcher
+                </PrimaryText>
+              </Animated.View>
               <SearchInput
                 onChange={(text) => setSearchFilter(text)}
                 onActive={() => setIsSearchActive(true)}
