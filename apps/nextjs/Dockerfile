@@ -34,7 +34,7 @@ COPY types/ types/
 COPY --from=pruner /probable-pitchers/out/package-lock.json ./package-lock.json
 COPY --from=pruner /probable-pitchers/out/full/ . 
 
-RUN npm install
+RUN npm ci
 
 ARG DATABASE_URL
 ARG AUTH_GOOGLE_CLIENT_ID
