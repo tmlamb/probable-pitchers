@@ -1,5 +1,4 @@
 import { AntDesign } from "@expo/vector-icons";
-import { Game, Pitcher, Subscription } from "@probable/db";
 import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, NativeScrollEvent, NativeSyntheticEvent, StyleProp, View, ViewStyle } from "react-native";
 import Animated, {
@@ -7,7 +6,6 @@ import Animated, {
   FadeIn,
   FadeInLeft,
   FadeInRight,
-  FadeInUp,
   FadeOut,
   FadeOutLeft,
   FadeOutRight,
@@ -32,7 +30,6 @@ import {
 import { trpc } from "../components/TRPCProvider";
 import { PitcherSubscription, subscriptionSchedule, useTrackParallelMutations } from "@probable/common";
 import tw from "../tailwind";
-import ModalLayout from "../components/ModalLayout";
 import { ClassInput } from "twrnc/dist/esm/types";
 import HeaderRightContainer from "../components/HeaderRightContainer";
 import HeaderLeftContainer from "../components/HeaderLeftContainer";

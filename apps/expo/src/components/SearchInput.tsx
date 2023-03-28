@@ -1,6 +1,6 @@
 import { AntDesign } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Dimensions, Keyboard } from "react-native";
 import Animated, {
   FadeInRight,
@@ -13,6 +13,7 @@ import { ClassInput } from "twrnc/dist/esm/types";
 import tw from "../tailwind";
 import ButtonContainer from "./ButtonContainer";
 import { SecondaryText, SpecialText, ThemedTextInput } from "./Themed";
+import { AppState } from "react-native";
 
 type Props = {
   onChange: (text?: string) => void;
@@ -49,6 +50,35 @@ export default function SearchInput({ onChange, onActive, onCancel, style }: Pro
     }),
     [searchComponentMarginTop.value]
   );
+
+  const appState = useRef(AppState.currentState);
+  useEffect(() => {
+    const listener = AppState.addEventListener("change", (nextAppState) => {
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === "active"
+      ) {
+        searchFilterWidth.value = withTiming(searchComponentWidth, {
+          duration: 50,
+        });
+        searchComponentMarginTop.value = withTiming(0, {
+          duration: 50,
+        });
+        onChange(undefined);
+        setSearchText(undefined);
+        setShowCancelButton(false);
+        navigation.setOptions({
+          headerShown: true,
+        });
+        onCancel();
+        Keyboard.dismiss();
+      }
+      appState.current = nextAppState;
+    });
+    return () => {
+      listener.remove();
+    };
+  }, []);
 
   return (
     <Animated.View
