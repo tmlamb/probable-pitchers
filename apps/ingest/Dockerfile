@@ -24,8 +24,6 @@ RUN apk update
 
 WORKDIR /probable-pitchers
 
-RUN npm -g install turbo
-
 COPY .gitignore .gitignore
 COPY turbo.json turbo.json
 COPY tsconfig.json tsconfig.json
@@ -34,7 +32,7 @@ COPY types/ types/
 COPY --from=pruner /probable-pitchers/out/package-lock.json ./package-lock.json
 COPY --from=pruner /probable-pitchers/out/full/ . 
 
-RUN npm ci
+RUN npm install --package-lock=false
 
 ARG INGEST_JOBS
 ARG DATABASE_URL
