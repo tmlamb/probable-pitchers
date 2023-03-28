@@ -9,7 +9,6 @@ import Animated, {
   FadeOut,
   FadeOutLeft,
   FadeOutRight,
-  FadeOutUp,
   Layout,
   useAnimatedStyle,
   useSharedValue,
@@ -318,7 +317,7 @@ export const Subscriptions = ({
           onScroll={(event) => handleScroll(event)}
           ListHeaderComponent={
             <View style={tw.style('px-3 bg-slate-50 dark:bg-black', isSearchActive && isScrolling ? 'bg-opacity-80' : 'bg-opacity-100')}>
-              <Animated.View layout={Layout} entering={FadeIn.delay(100)} exiting={FadeOutUp.duration(50)}>
+              <Animated.View layout={Layout}>
                 <PrimaryText
                   style={tw.style(isSearchActive ? 'text-transparent' : '', 'text-4xl font-bold tracking-tight mt-6 mb-3')}
                   accessibilityRole="header"
