@@ -24,6 +24,8 @@ RUN apk update
 
 WORKDIR /probable-pitchers
 
+RUN npm -g install turbo
+
 COPY .gitignore .gitignore
 COPY turbo.json turbo.json
 COPY tsconfig.json tsconfig.json
