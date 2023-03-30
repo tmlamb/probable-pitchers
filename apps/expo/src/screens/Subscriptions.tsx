@@ -299,10 +299,10 @@ export const Subscriptions = ({
             </ButtonContainer>
           )}
       </HeaderRightContainer>
-      <Animated.View style={tw`flex-1`} layout={Layout.duration(1)}>
+      <View style={tw`flex-1`}>
         <Animated.FlatList
           // @ts-ignore - there is a type bug in Reanimated 2.9.x
-          itemLayoutAnimation={Layout.duration(250)}
+          itemLayoutAnimation={Layout.duration(175)}
           keyExtractor={(item) => {
             if (typeof item === "string") {
               return item;
@@ -317,7 +317,7 @@ export const Subscriptions = ({
           onScroll={(event) => handleScroll(event)}
           ListHeaderComponent={
             <View style={tw.style('px-3 bg-slate-50 dark:bg-black', isSearchActive && isScrolling ? 'bg-opacity-80' : 'bg-opacity-100')}>
-              <Animated.View layout={Layout}>
+              <Animated.View layout={Layout.duration(250)}>
                 <PrimaryText
                   style={tw.style(isSearchActive ? 'text-transparent' : '', 'text-4xl font-bold tracking-tight mt-6 mb-3')}
                   accessibilityRole="header"
@@ -433,7 +433,7 @@ export const Subscriptions = ({
             </>
           }
         />
-      </Animated.View>
+      </View>
     </ScreenLayout >
   );
 };
