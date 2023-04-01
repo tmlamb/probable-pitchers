@@ -494,7 +494,7 @@ const PitcherView = ({
               <SecondaryText style={tw`ml-1.5 text-sm`}>
                 {formatInTimeZone(
                   pitcher.nextGameDate,
-                  Localization.timezone,
+                  Localization.getCalendars()[0].timeZone || "America/New_York",
                   "h:mmaaaaa"
                 )}
               </SecondaryText>
