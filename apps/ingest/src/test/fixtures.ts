@@ -60,6 +60,7 @@ export const pendingNotifications = [
     ],
     devices: [
       {
+        id: "DEVICE_A",
         timezone: "America/New_York",
         pushToken: "PUSH_TOKEN_A",
       },
@@ -81,10 +82,12 @@ export const pendingNotifications = [
     ],
     devices: [
       {
+        id: "DEVICE_B",
         timezone: "America/New_York",
         pushToken: "PUSH_TOKEN_B",
       },
       {
+        id: "DEVICE_B2",
         timezone: "America/Chicago",
         pushToken: "PUSH_TOKEN_B2",
       },

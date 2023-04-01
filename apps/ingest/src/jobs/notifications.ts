@@ -46,20 +46,29 @@ export async function sendNotifications() {
   const usersWithNotifications =
     await client.user.withUnsentNotificationsForFutureGames();
   console.debug(
-    `Found ${
-      usersWithNotifications.length
+    `Found ${usersWithNotifications.length
     } users with notifications: ${JSON.stringify(usersWithNotifications)}`
   );
   for (const user of usersWithNotifications) {
     try {
       console.debug(
-        `User ${user.id} has ${
-          user.notifications.length
+        `User ${user.id} has ${user.notifications.length
         } notifications: ${JSON.stringify(user.notifications)}`
       );
 
       const fulfilled = new Set<number>();
       for (const device of user.devices) {
+        const localHour = Number(formatInTimeZone(Date.now(), device.timezone, "H"));
+        if (localHour < 9 || localHour >= 21) {
+          console.debug(
+            `User ${user.id} / device ${device.id} skipped alert because ${localHour} is in quiet hours for the timezone '${device.timezone}'.`
+          );
+          continue;
+        }
+        console.debug(
+          `User ${user.id} / device ${device.id} sent alert because ${localHour} is in working hours for the timezone '${device.timezone}'.`
+        );
+
         let messages: string[] = [];
         for (const notification of user.notifications) {
           const localizedGameTime = formatInTimeZone(
