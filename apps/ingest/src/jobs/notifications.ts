@@ -86,7 +86,6 @@ export async function sendNotifications() {
           messages.join("\n")
         );
       }
-      console.log("fullfilled", fulfilled);
       for (const id of fulfilled) {
         await client.notification.complete(id, new Date());
       }
