@@ -25,7 +25,7 @@ export default function App() {
   useDeviceContext(tw);
 
   if (Platform.OS === "android") {
-    enableLayoutAnimations(false);
+    //enableLayoutAnimations(false);
 
     require('@formatjs/intl-getcanonicallocales/polyfill').default;
     require('@formatjs/intl-locale/polyfill').default;
