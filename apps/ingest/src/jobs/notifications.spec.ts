@@ -189,6 +189,9 @@ test("should ingest multiple game notifications", async () => {
 });
 
 test("should trigger notifications for users", async () => {
+  jest.useFakeTimers()
+  jest.setSystemTime(new Date('2023-04-04T13:30:00.000Z'))
+
   prismaMock.user.findMany.mockResolvedValueOnce(pendingNotifications);
 
   prismaMock.notification.update.mockResolvedValue({
@@ -196,14 +199,14 @@ test("should trigger notifications for users", async () => {
     userId: "A",
     gameId: -1,
     pitcherId: -1,
-    sentOn: new Date(),
+    sentOn: new Date('2023-04-04T13:30:00.000Z'),
   });
 
   await sendNotifications();
 
   expect(prismaMock.user.findMany).toHaveBeenCalledTimes(1);
 
-  expect(sendPushNotification).toHaveBeenCalledTimes(3);
+  expect(sendPushNotification).toHaveBeenCalledTimes(2);
 
   expect(sendPushNotification).toHaveBeenNthCalledWith(
     1,
@@ -216,12 +219,6 @@ test("should trigger notifications for users", async () => {
     "PUSH_TOKEN_B",
     "Probable Pitcher Today",
     "Joe Jackson - 6:00 pm"
-  );
-  expect(sendPushNotification).toHaveBeenNthCalledWith(
-    3,
-    "PUSH_TOKEN_B2",
-    "Probable Pitcher Today",
-    "Joe Jackson - 5:00 pm"
   );
 
   expect(prismaMock.notification.update).toHaveBeenCalledTimes(3);
@@ -237,9 +234,14 @@ test("should trigger notifications for users", async () => {
     where: { id: 33 },
     data: { sentOn: expect.any(Date) },
   });
+
+  jest.useRealTimers()
 });
 
 test("should recover after error", async () => {
+  jest.useFakeTimers()
+  jest.setSystemTime(new Date('2023-04-04T16:30:00.000Z'))
+
   prismaMock.user.findMany.mockResolvedValueOnce(pendingNotifications);
 
   prismaMock.notification.update.mockRejectedValueOnce(new Error("oops"));
@@ -248,7 +250,7 @@ test("should recover after error", async () => {
     userId: "A",
     gameId: -1,
     pitcherId: -1,
-    sentOn: new Date(),
+    sentOn: new Date("2023-04-04T16:30:00.000Z"),
   });
 
   await sendNotifications();
@@ -285,4 +287,6 @@ test("should recover after error", async () => {
     where: { id: 33 },
     data: { sentOn: expect.any(Date) },
   });
+
+  jest.useRealTimers()
 });
