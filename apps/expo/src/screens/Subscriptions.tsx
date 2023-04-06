@@ -335,21 +335,19 @@ export const Subscriptions = ({
           renderItem={({ index, item }) => {
             if (typeof item === "string") {
               return (
-                <Animated.View entering={FadeIn} exiting={FadeOut}>
-                  <View style={tw`flex-row justify-between mt-3 mb-1 mx-6`}>
-                    <SecondaryText style={tw`uppercase text-sm`}>
-                      {item}
-                    </SecondaryText>
-                    {index === 0 &&
-                      (search.isFetching ||
-                        (!search.isSuccess && !!searchFilter) ||
-                        mutationTracker.isMutating() ||
-                        subscriptions.isFetching) && (
-                        <Animated.View entering={FadeIn} exiting={FadeOut}>
-                          <ActivityIndicator size="small" />
-                        </Animated.View>
-                      )}
-                  </View>
+                <Animated.View entering={FadeIn} exiting={FadeOut} style={tw`flex-row justify-between mt-3 mb-1 mx-6`}>
+                  <SecondaryText style={tw`uppercase text-sm`}>
+                    {item}
+                  </SecondaryText>
+                  {index === 0 &&
+                    (search.isFetching ||
+                      (!search.isSuccess && !!searchFilter) ||
+                      mutationTracker.isMutating() ||
+                      subscriptions.isFetching) && (
+                      <Animated.View entering={FadeIn} exiting={FadeOut} style={tw`-mr-1`}>
+                        <ActivityIndicator size="small" />
+                      </Animated.View>
+                    )}
                 </Animated.View>
               );
             } else {
