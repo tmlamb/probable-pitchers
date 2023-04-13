@@ -11,7 +11,7 @@ import { ingestTeams } from "./jobs/teams.js";
 
 const ingestJobs = process.env.INGEST_JOBS;
 
-console.error("INGEST_JOBS:", ingestJobs);
+console.info("INGEST_JOBS:", ingestJobs);
 
 if (ingestJobs) {
   if (ingestJobs.includes("teams")) {
