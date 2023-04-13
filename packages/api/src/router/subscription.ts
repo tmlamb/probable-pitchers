@@ -38,15 +38,9 @@ export const subscriptionRouter = t.router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const subscription = await ctx.prisma.subscription.findUnique({
-        where: { id: input.id },
-      });
-      if (subscription?.userId !== ctx.session.user.id) {
-        throw new Error("User not authorized to update this subscription");
-      }
       return ctx.prisma.subscription.update({
         where: {
-          id: input.id,
+          id_userId: { id: input.id, userId: ctx.session.user.id },
         },
         data: input,
       });
@@ -55,12 +49,10 @@ export const subscriptionRouter = t.router({
     .use(isAuthed)
     .input(z.number())
     .mutation(async ({ ctx, input }) => {
-      const subscription = await ctx.prisma.subscription.findUnique({
-        where: { id: input },
+      return ctx.prisma.subscription.delete({
+        where: {
+          id_userId: { id: input, userId: ctx.session.user.id }
+        }
       });
-      if (subscription?.userId !== ctx.session.user.id) {
-        throw new Error("User not authorized to delete this subscription");
-      }
-      return ctx.prisma.subscription.delete({ where: { id: input } });
     }),
 });

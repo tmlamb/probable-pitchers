@@ -18,43 +18,53 @@ import { trpc } from "../components/TRPCProvider";
 import tw from "../tailwind";
 
 export const Notifications = () => {
-  const { data: settings, isSuccess: settingsFetched } =
-    trpc.user.settings.useQuery();
-
   const utils = trpc.useContext();
 
   const mutationTracker = useTrackParallelMutations();
 
+  const [expoPushToken, setExpoPushToken] = useState<string>();
+
+  const { data: device, isSuccess: deviceFetched } =
+    trpc.device.byPushToken.useQuery(expoPushToken!, {
+      enabled: !!expoPushToken && !mutationTracker.isMutating(),
+    });
+
   const { mutate: toggleNotifications } =
-    trpc.user.toggleNotifications.useMutation({
-      onMutate: (notificationsEnabled) => {
+    trpc.device.toggleNotifications.useMutation({
+      onMutate: async ({ notificationsEnabled }) => {
+        await utils.device.byPushToken.cancel(expoPushToken!);
         mutationTracker.startOne();
-        const currentSettings = utils.user.settings.getData();
-        utils.user.settings.setData(undefined, (old) => ({
-          ...old,
-          notificationsEnabled,
-        }));
-        return { currentSettings };
+        const currentDevice = utils.device.byPushToken.getData(expoPushToken!);
+        utils.device.byPushToken.setData(expoPushToken!, (old) => ({ ...old!, notificationsEnabled }));
+        return { currentDevice };
       },
-      onError: (err, notificationsEnabled, context) => {
-        utils.user.settings.setData(undefined, context?.currentSettings);
+      onError: (err, input, context) => {
+        utils.device.byPushToken.setData(expoPushToken!, context?.currentDevice);
         Sentry.Native.captureException(err);
       },
       onSettled: () => {
         mutationTracker.endOne();
-        utils.user.settings.invalidate();
+        if (mutationTracker.allEnded()) {
+          utils.device.byPushToken.invalidate(expoPushToken!);
+        }
       },
     });
 
   const appState = useRef(AppState.currentState);
+
   const [permissionGranted, setPermissionGranted] = useState(true);
+
   useEffect(() => {
     function checkStatus() {
-      ExpoNotifications.getPermissionsAsync().then((status) => {
-        setPermissionGranted(status.status === PermissionStatus.GRANTED);
+      ExpoNotifications.getPermissionsAsync().then(({ status }) => {
+        setPermissionGranted(status === PermissionStatus.GRANTED);
+      });
+      ExpoNotifications.getExpoPushTokenAsync().then(({ data: token }) => {
+        setExpoPushToken(token);
       });
     }
     checkStatus();
+
     const listener = AppState.addEventListener("change", (nextAppState) => {
       if (
         appState.current.match(/inactive|background/) &&
@@ -80,11 +90,12 @@ export const Notifications = () => {
               false: String(tw.style(secondaryTextColor).color),
             }}
             ios_backgroundColor={String(tw.style(secondaryTextColor).color)}
-            onValueChange={toggleNotifications}
-            value={settings?.notificationsEnabled && permissionGranted}
+            onValueChange={() => toggleNotifications({ id: device!.id, notificationsEnabled: !device!.notificationsEnabled })}
+            value={device?.notificationsEnabled && permissionGranted}
             disabled={
-              !settingsFetched ||
+              !deviceFetched ||
               !permissionGranted ||
+              !device ||
               mutationTracker.isMutating()
             }
           />

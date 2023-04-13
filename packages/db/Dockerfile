@@ -29,5 +29,5 @@ RUN chmod 777 ./node_modules/.prisma/client/index.js
 
 ARG DATABASE_URL
 
-#RUN npm run db-push
-CMD ["npm", "run", "db-push"]
+WORKDIR /probable-pitchers/packages/db
+CMD ["npm", "run", "db-push", "--", "--accept-data-loss"]

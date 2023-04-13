@@ -17,25 +17,27 @@ export async function ingestNotifications() {
     for (const pitcher of pitchers) {
       const subscriptions = await client.subscription.byPitcherId(pitcher.id);
       for (const subscription of subscriptions) {
-        try {
-          await client.notification.create({
-            userId: subscription.userId,
-            gameId: game.id,
-            pitcherId: pitcher.id
-          });
-        } catch (e) {
-          if (
-            e instanceof Prisma.PrismaClientKnownRequestError &&
-            e.code === "P2002" // unique constraint violation, notification already ingested
-          ) {
-            console.info("Duplicate notifications cannot be created: ", e);
-          } else {
-            console.error(
-              "Unknown error ingesting notifications for subscription: ",
-              e
-            );
+        for (const device of subscription.user.devices) {
+          try {
+            await client.notification.create({
+              deviceId: device.id,
+              gameId: game.id,
+              pitcherId: pitcher.id
+            });
+          } catch (e) {
+            if (
+              e instanceof Prisma.PrismaClientKnownRequestError &&
+              e.code === "P2002" // unique constraint violation, notification already ingested
+            ) {
+              console.info("Duplicate notifications cannot be created: ", e);
+            } else {
+              console.error(
+                "Unknown error ingesting notifications for subscription: ",
+                e
+              );
+            }
+            continue;
           }
-          continue;
         }
       }
     }
@@ -43,55 +45,63 @@ export async function ingestNotifications() {
 }
 
 export async function sendNotifications() {
-  const usersWithNotifications =
-    await client.user.withUnsentNotificationsForFutureGames();
+
+  const devicesWithNotifications =
+    await client.device.withPendingNotifications();
+
   console.debug(
-    `Found ${usersWithNotifications.length
-    } users with notifications: ${JSON.stringify(usersWithNotifications)}`
+    `Found ${devicesWithNotifications.length
+    } devices with notifications: ${JSON.stringify(devicesWithNotifications)}`
   );
-  for (const user of usersWithNotifications) {
-    try {
+
+  for (const device of devicesWithNotifications) {
+    const localHour = Number(formatInTimeZone(Date.now(), device.timezone, "H"));
+    if (localHour < 9 || localHour >= 21) {
       console.debug(
-        `User ${user.id} has ${user.notifications.length
-        } notifications: ${JSON.stringify(user.notifications)}`
+        `User device ${device.id} skipped alert because ${localHour} is in quiet hours for the timezone '${device.timezone}'.`
+      );
+      continue;
+    }
+    console.debug(
+      `User device ${device.id} sent alert because ${localHour} is in working hours for the timezone '${device.timezone}'.`
+    );
+
+    console.debug(
+      `Device ${device.id} has ${device.notifications.length} notifications: ${JSON.stringify(device.notifications)}`
+    );
+
+    const fulfilled = new Set<number>();
+    let messages: string[] = [];
+
+    for (const notification of device.notifications) {
+      const localizedGameTime = formatInTimeZone(
+        notification.game.date,
+        device.timezone,
+        TIME_FORMAT
       );
 
-      const fulfilled = new Set<number>();
-      for (const device of user.devices) {
-        const localHour = Number(formatInTimeZone(Date.now(), device.timezone, "H"));
-        if (localHour < 9 || localHour >= 21) {
-          console.debug(
-            `User ${user.id} / device ${device.id} skipped alert because ${localHour} is in quiet hours for the timezone '${device.timezone}'.`
-          );
-          continue;
-        }
-        console.debug(
-          `User ${user.id} / device ${device.id} sent alert because ${localHour} is in working hours for the timezone '${device.timezone}'.`
-        );
+      messages.push(`${notification.pitcher.name} @ ${localizedGameTime}`);
+      fulfilled.add(notification.id);
+    }
 
-        let messages: string[] = [];
-        for (const notification of user.notifications) {
-          const localizedGameTime = formatInTimeZone(
-            notification.game.date,
-            device.timezone,
-            TIME_FORMAT
-          );
-
-          messages.push(`${notification.pitcher.name} - ${localizedGameTime}`);
-          fulfilled.add(notification.id);
-        }
-        sendPushNotification(
-          device.pushToken,
-          `Probable Pitcher${messages.length > 1 ? "s" : ""} Today`,
-          messages.join("\n")
-        );
-      }
-      for (const id of fulfilled) {
-        await client.notification.complete(id, new Date());
-      }
+    try {
+      sendPushNotification(
+        device.pushToken,
+        `Probable Pitcher${messages.length > 1 ? "s" : ""}`,
+        messages.join("\n")
+      );
     } catch (e) {
-      console.error("Error processing notifications for user: ", user, e);
+      console.error(`Error sending push notification to ${device.pushToken} for device: ${device}`, e);
       continue;
+    }
+
+    for (const id of fulfilled) {
+      try {
+        await client.notification.update(id, new Date());
+      } catch (e) {
+        console.error(`Error marking notification ${id} for device ${device.id} as completed`, e);
+        continue;
+      }
     }
   }
 }

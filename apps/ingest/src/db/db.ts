@@ -64,6 +64,7 @@ export const client = {
     byPitcherId: (pitcherId: number) => {
       return prisma.subscription.findMany({
         where: { pitcherId },
+        include: { user: { include: { devices: true } } },
       });
     },
   },
@@ -73,13 +74,37 @@ export const client = {
         where: { id },
       });
     },
-    withUnsentNotificationsForFutureGames: () => {
+  },
+  notification: {
+    create: ({ deviceId, gameId, pitcherId }: {
+      deviceId: string, gameId: number, pitcherId: number
+    }) => {
+      return prisma.notification.create({
+        data: { deviceId, gameId, pitcherId },
+      });
+    },
+    update: (id: number, sentOn: Date) => {
+      return prisma.notification.update({
+        where: { id },
+        data: { sentOn },
+      });
+    },
+  },
+  device: {
+    byUserId: (userId: string) => {
+      return prisma.device.findMany({
+        where: { userId },
+      });
+    },
+    withPendingNotifications: () => {
       const start = new Date();
       const end = add(endOfToday(), { hours: 6 });
+
       console.info(
-        `Looking for users with unsent notifications between ${start} and ${end}`
+        `Looking for devices with unsent notifications between ${start} and ${end}`
       );
-      const notifyCondition = {
+
+      const notificationsPendingToday = {
         AND: [
           {
             sentOn: null,
@@ -94,7 +119,8 @@ export const client = {
           },
         ],
       };
-      return prisma.user.findMany({
+
+      return prisma.device.findMany({
         select: {
           id: true,
           notifications: {
@@ -102,38 +128,19 @@ export const client = {
               game: true,
               pitcher: true,
             },
-            where: notifyCondition,
+            // limits the notifications to those that are pending today
+            where: notificationsPendingToday,
           },
-          devices: true,
+          timezone: true,
+          pushToken: true,
         },
         where: {
           notificationsEnabled: true,
           notifications: {
-            some: notifyCondition,
+            // limits the devices to those that have notifications pending today
+            some: notificationsPendingToday,
           },
         },
-      });
-    },
-  },
-  notification: {
-    create: ({ userId, gameId, pitcherId }: { 
-      userId: string, gameId: number, pitcherId: number 
-    }) => {
-      return prisma.notification.create({
-        data: { userId, gameId, pitcherId },
-      });
-    },
-    complete: (id: number, sentOn: Date) => {
-      return prisma.notification.update({
-        where: { id },
-        data: { sentOn },
-      });
-    },
-  },
-  device: {
-    byUserId: (userId: string) => {
-      return prisma.device.findMany({
-        where: { userId },
       });
     },
   },

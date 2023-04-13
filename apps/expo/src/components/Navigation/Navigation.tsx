@@ -88,7 +88,6 @@ export default function Navigation() {
 
   if (status === "authenticated") {
     trpcContext.subscription.byUserId.prefetch();
-    trpcContext.user.settings.prefetch();
     trpcContext.account.byUserId.prefetch();
   }
 

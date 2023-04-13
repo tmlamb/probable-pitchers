@@ -111,8 +111,9 @@ export const Subscriptions = ({
   }));
 
   const { mutate: subscribe } = trpc.subscription.create.useMutation({
-    onMutate: ({ pitcherId }) => {
+    onMutate: async ({ pitcherId }) => {
       mutationTracker.startOne();
+      await utils.subscription.byUserId.cancel();
       const previousSubscriptions = utils.subscription.byUserId.getData();
       utils.subscription.byUserId.setData(undefined, (old) => {
         if (old) {
@@ -158,8 +159,9 @@ export const Subscriptions = ({
   });
 
   const { mutate: unsubscribe } = trpc.subscription.delete.useMutation({
-    onMutate: (subscriptionId) => {
+    onMutate: async (subscriptionId) => {
       mutationTracker.startOne();
+      await utils.subscription.byUserId.cancel();
       const previousSubscriptions = utils.subscription.byUserId.getData();
       utils.subscription.byUserId.setData(undefined, (old) =>
         old?.filter((s) => s.id !== subscriptionId)

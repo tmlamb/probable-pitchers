@@ -1,6 +1,5 @@
 INSERT IGNORE INTO `User` (
   `id`,
-  `notificationsEnabled`,
   `email`,
   `emailVerified`,
   `image`
@@ -8,7 +7,6 @@ INSERT IGNORE INTO `User` (
 VALUES
   (
     'test_user_id',
-    TRUE,
     'test@probablepitcher.com',
     NULL,
     NULL

@@ -35,11 +35,12 @@ export const mlbTeams: MlbTeam[] = [
 
 export const pendingNotifications = [
   {
-    id: "A",
+    id: "DEVICE_A",
+    timezone: "America/New_York",
+    pushToken: "PUSH_TOKEN_A",
     notifications: [
       {
         id: 11,
-        sentOn: null,
         game: {
           date: new Date("2022-11-02T15:05:00Z"),
         },
@@ -49,7 +50,6 @@ export const pendingNotifications = [
       },
       {
         id: 22,
-        sentOn: null,
         game: {
           date: new Date("2022-11-02T17:20:00Z"),
         },
@@ -58,16 +58,11 @@ export const pendingNotifications = [
         },
       },
     ],
-    devices: [
-      {
-        id: "DEVICE_A",
-        timezone: "America/New_York",
-        pushToken: "PUSH_TOKEN_A",
-      },
-    ],
   } as any,
   {
-    id: "B",
+    id: "DEVICE_B",
+    timezone: "America/New_York",
+    pushToken: "PUSH_TOKEN_B",
     notifications: [
       {
         id: 33,
@@ -80,16 +75,38 @@ export const pendingNotifications = [
         },
       },
     ],
-    devices: [
+  } as any,
+  {
+    id: "DEVICE_B2",
+    timezone: "America/Chicago",
+    pushToken: "PUSH_TOKEN_B2",
+    notifications: [
       {
-        id: "DEVICE_B",
-        timezone: "America/New_York",
-        pushToken: "PUSH_TOKEN_B",
+        id: 44,
+        sentOn: null,
+        game: {
+          date: new Date("2022-11-02T22:00:00Z"),
+        },
+        pitcher: {
+          name: "Joe Jackson",
+        },
       },
+    ],
+  } as any,
+  {
+    id: "DEVICE_B3",
+    timezone: "America/New_York",
+    pushToken: "PUSH_TOKEN_B3",
+    notifications: [
       {
-        id: "DEVICE_B2",
-        timezone: "America/Chicago",
-        pushToken: "PUSH_TOKEN_B2",
+        id: 55,
+        sentOn: null,
+        game: {
+          date: new Date("2022-11-02T22:00:00Z"),
+        },
+        pitcher: {
+          name: "Joe Jackson",
+        },
       },
     ],
   } as any,

@@ -6,14 +6,14 @@ import type {
 } from "next";
 import { unstable_getServerSession } from "next-auth";
 import { useSession } from "next-auth/react";
-import { trpc } from "../utils/trpc";
+//import { trpc } from "../utils/trpc";
 
+// TODO: Delete or refactor for device-specific settings
 const Settings: NextPage = () => {
   const { data: session } = useSession();
-  const { data: settings } = trpc.user.settings.useQuery(undefined, {
-    enabled: !!session,
-  });
-  console.log(settings);
+  //const { data: settings } = trpc.user.settings.useQuery(undefined, {
+  //  enabled: !!session,
+  //});
 
   if (session) {
     return (
@@ -26,7 +26,7 @@ const Settings: NextPage = () => {
             Notifications Enabled:
           </span>
           <span className="text-2xl">
-            {String(settings?.notificationsEnabled)}
+            {/*String(settings?.notificationsEnabled)*/}
           </span>
         </div>
       </main>

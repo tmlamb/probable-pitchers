@@ -4,14 +4,12 @@ export async function sendPushNotification(
   expoPushToken: string,
   title: string,
   body: string,
-  data?: object
 ) {
   const message = {
     to: expoPushToken,
     sound: "default",
     title: title,
     body: body,
-    data: data,
   };
   try {
     console.log(`sending push notification: ${JSON.stringify(message)}`);

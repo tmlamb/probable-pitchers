@@ -158,7 +158,7 @@ const notifyJob = new k8s.batch.v1.CronJob(
       namespace: namespaceName,
     },
     spec: {
-      schedule: "0,30 15,16,17,18,19,20,21,22 * 2,3,4,5,6,7,8,9,10,11,12 *",
+      schedule: "0,30 * * 2,3,4,5,6,7,8,9,10,11,12 *",
       jobTemplate: {
         spec: {
           template: {

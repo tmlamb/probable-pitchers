@@ -28,15 +28,9 @@ export const deviceRouter = t.router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const device = await ctx.prisma.device.findUnique({
-        where: { id: input.id },
-      });
-      if (device?.userId !== ctx.session.user.id) {
-        throw new Error("User not authorized to update this device");
-      }
       return ctx.prisma.device.update({
         where: {
-          id: input.id,
+          id_userId: { userId: ctx.session.user.id, id: input.id },
         },
         data: input,
       });
@@ -52,6 +46,17 @@ export const deviceRouter = t.router({
     .query(({ input, ctx }) => {
       return ctx.prisma.device.findUnique({
         where: { pushToken: input },
+      });
+    }),
+  toggleNotifications: t.procedure
+    .use(isAuthed)
+    .input(z.object({ id: z.string(), notificationsEnabled: z.boolean() }))
+    .mutation(({ input, ctx }) => {
+      return ctx.prisma.device.update({
+        where: {
+          id_userId: { id: input.id, userId: ctx.session.user.id },
+        },
+        data: { notificationsEnabled: input.notificationsEnabled },
       });
     }),
 });

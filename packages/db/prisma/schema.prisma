@@ -36,24 +36,26 @@ model Session {
 }
 
 model User {
-  id                   String         @id @default(cuid())
-  subscriptions        Subscription[]
-  accounts             Account[]
-  sessions             Session[]
-  devices              Device[]
-  notifications        Notification[]
-  notificationsEnabled Boolean        @default(true)
-  email                String?        @unique
-  emailVerified        DateTime?
-  image                String?
+  id            String         @id @default(cuid())
+  subscriptions Subscription[]
+  accounts      Account[]
+  sessions      Session[]
+  devices       Device[]
+  email         String?        @unique
+  emailVerified DateTime?
+  image         String?
 }
 
 model Device {
-  id        String @id @default(cuid())
-  pushToken String @unique
-  timezone  String
-  userId    String
-  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                   String  @id @default(cuid())
+  pushToken            String  @unique
+  timezone             String
+  userId               String
+  notificationsEnabled Boolean @default(true)
+  user                 User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notifications        Notification[]
+
+  @@unique([id, userId])
 }
 
 model Team {
@@ -95,17 +97,18 @@ model Subscription {
   pitcherId Int
 
   @@unique([userId, pitcherId])
+  @@unique([id, userId])
 }
 
 model Notification {
   id        Int       @id @default(autoincrement())
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String
+  device    Device    @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  deviceId  String
   game      Game      @relation(fields: [gameId], references: [id])
   gameId    Int
   pitcher   Pitcher   @relation(fields: [pitcherId], references: [id])
   pitcherId Int
   sentOn    DateTime?
 
-  @@unique([userId, gameId, pitcherId])
+  @@unique([deviceId, gameId, pitcherId])
 }
