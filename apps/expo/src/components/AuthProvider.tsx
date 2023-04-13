@@ -1,6 +1,7 @@
 import { nativeProviders } from "@probable/api";
 import * as AppleAuthentication from "expo-apple-authentication";
 import * as AuthSession from "expo-auth-session";
+import * as Sentry from "sentry-expo";
 import { discovery as googleDiscovery } from "expo-auth-session/providers/google";
 import Constants from "expo-constants";
 import { CodedError } from "expo-modules-core";
@@ -8,6 +9,12 @@ import { getSignInInfo, SessionProvider, SigninResult } from "next-auth/expo";
 import { getBaseUrl } from "../api";
 
 const projectNameForProxy = Constants.manifest2?.extra?.scopeKey;
+
+if (!projectNameForProxy) {
+  Sentry.Native.captureException(
+    new Error("No scopeKey found in manifest.extra.scopeKey. Full manifest2: " + JSON.stringify(Constants.manifest2))
+  );
+}
 
 export const googleLogin = async (): Promise<SigninResult | null> => {
   const redirectUri = AuthSession.makeRedirectUri({
