@@ -1,5 +1,6 @@
-import { Game, Pitcher, Subscription, Team } from "@probable/db";
+import { Game, Pitcher, Subscription } from "@probable/db";
 import {
+  add,
   format,
   formatDistanceToNowStrict,
   isFuture,
@@ -16,8 +17,8 @@ function nextGameDate(
   }
 ): Date | undefined {
   const futureGames = [...pitcher.homeGames, ...pitcher.awayGames]
-    .filter((game) => isFuture(game.date))
-    .map((game) => game.date);
+    .filter(({ date }) => isFuture(add(date, { hours: 3 })))
+    .map(({ date }) => date);
   if (futureGames.length) {
     return min(futureGames);
   }
@@ -63,11 +64,11 @@ export const subscriptionSchedule = (
       if (date) {
         const dateForSection = format(date, "EEE, MMM d");
         if (isToday(date)) {
-          return `Pitching Today (${dateForSection})`;
+          return `Today (${dateForSection})`;
         } else if (isTomorrow(date)) {
-          return `Pitching Tomorrow (${dateForSection})`;
+          return `Tomorrow (${dateForSection})`;
         } else {
-          return `Pitching in ${formatDistanceToNowStrict(
+          return `In ${formatDistanceToNowStrict(
             date
           )} (${dateForSection})`;
         }
