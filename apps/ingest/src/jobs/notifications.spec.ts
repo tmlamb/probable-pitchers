@@ -262,19 +262,19 @@ test("should trigger notifications for users", async () => {
     1,
     "PUSH_TOKEN_A",
     "Probable Pitchers",
-    "Greg Maddux @ 11:05 am\nBabe Ruth @ 1:20 pm"
+    "Greg Maddux @ 11:05 am EDT\nBabe Ruth @ 1:20 pm EDT"
   );
   expect(sendPushNotification).toHaveBeenNthCalledWith(
     2,
     "PUSH_TOKEN_B",
     "Probable Pitcher",
-    "Joe Jackson @ 6:00 pm"
+    "Joe Jackson @ 6:00 pm EDT"
   );
   expect(sendPushNotification).toHaveBeenNthCalledWith(
     3,
     "PUSH_TOKEN_B3",
     "Probable Pitcher",
-    "Joe Jackson @ 6:00 pm"
+    "Joe Jackson @ 6:00 pm EDT"
   );
 
   expect(prismaMock.notification.update).toHaveBeenCalledTimes(4);
@@ -323,25 +323,25 @@ test("should recover after error", async () => {
     1,
     "PUSH_TOKEN_A",
     "Probable Pitchers",
-    "Greg Maddux @ 11:05 am\nBabe Ruth @ 1:20 pm"
+    "Greg Maddux @ 11:05 am EDT\nBabe Ruth @ 1:20 pm EDT"
   );
   expect(sendPushNotification).toHaveBeenNthCalledWith(
     2,
     "PUSH_TOKEN_B",
     "Probable Pitcher",
-    "Joe Jackson @ 6:00 pm"
+    "Joe Jackson @ 6:00 pm EDT"
   );
   expect(sendPushNotification).toHaveBeenNthCalledWith(
     3,
     "PUSH_TOKEN_B2",
     "Probable Pitcher",
-    "Joe Jackson @ 5:00 pm"
+    "Joe Jackson @ 5:00 pm CDT"
   );
   expect(sendPushNotification).toHaveBeenNthCalledWith(
     4,
     "PUSH_TOKEN_B3",
     "Probable Pitcher",
-    "Joe Jackson @ 6:00 pm"
+    "Joe Jackson @ 6:00 pm EDT"
   );
 
   expect(prismaMock.notification.update).toHaveBeenCalledTimes(5);

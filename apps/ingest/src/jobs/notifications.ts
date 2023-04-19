@@ -4,7 +4,7 @@ import { client } from "../db/db.js";
 import { sendPushNotification } from "../services/push.js";
 const { formatInTimeZone } = pkg;
 
-const TIME_FORMAT = "h:mm aaa";
+const TIME_FORMAT = "h:mm aaa z";
 
 export async function ingestNotifications() {
   const gamesToday = await client.game.today();
