@@ -37,7 +37,7 @@ export const client = {
     },
     today: () => {
       const start = new Date();
-      const end = add(endOfToday(), { hours: 6 });
+      const end = add(endOfToday(), { hours: 3 });
       console.info(`Looking for games between ${start} and ${end}`);
       return prisma.game.findMany({
         where: {
