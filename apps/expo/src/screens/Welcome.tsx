@@ -2,6 +2,7 @@ import * as AppleAuthentication from "expo-apple-authentication";
 import { signIn } from "next-auth/expo";
 import { useState } from "react";
 import { ActivityIndicator, Image, Pressable, View } from "react-native";
+import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { useAppColorScheme } from "twrnc";
 import { appleLogin, googleLogin } from "../components/AuthProvider";
 import ModalLayout from "../components/ModalLayout";
@@ -17,22 +18,24 @@ export const Welcome = () => {
   const [colorScheme] = useAppColorScheme(tw);
   return (
     <ModalLayout>
-      <View style={tw`h-full w-full py-9 px-3`}>
-        <SpecialText style={tw`text-2xl font-bold mx-auto pb-9`}>
-          Welcome!
-        </SpecialText>
-        <PrimaryText style={tw`text-lg text-center pb-9`}>
-          Probable Pitcher is a notification service that sends you an alert on
-          the days your favorite players are scheduled to pitch.
-        </PrimaryText>
-        <PrimaryText style={tw`text-lg text-center pb-9`}>
-          Sign in with one of the options below. You will be asked to grant
-          permission for the app to send notifications to your device.
-        </PrimaryText>
+      <View style={tw`h-full w-full py-9 px-3 justify-evenly`}>
+        <View>
+          <SpecialText style={tw`text-2xl font-bold mx-auto pb-9`}>
+            Welcome!
+          </SpecialText>
+          <PrimaryText style={tw`text-lg text-center pb-9`}>
+            Probable Pitcher is a notification service that sends you an alert on
+            the days your favorite players are scheduled to pitch.
+          </PrimaryText>
+          <PrimaryText style={tw`text-lg text-center`}>
+            Sign in with one of the options below. You will be asked to grant
+            permission for the app to send notifications to your device.
+          </PrimaryText>
+        </View>
         {!isSigningIn ? (
-          <>
+          <View>
             <Pressable
-              style={tw`mx-auto pt-9 active:opacity-10`}
+              style={tw`mx-auto active:opacity-10`}
               onPress={async () => {
                 setIsSigningIn(true);
                 await signIn(() => googleLogin());
@@ -61,10 +64,10 @@ export const Welcome = () => {
                 setIsSigningIn(false);
               }}
             />
-          </>
+          </View>
         ) : (
           <ActivityIndicator
-            style={tw`pt-9`}
+            style={tw`mt-9 h-[86.48px]`}
             size="large"
             color={String(tw.style(specialTextColor).color)}
           />
