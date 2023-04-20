@@ -1,6 +1,7 @@
-import { add, endOfToday } from "date-fns";
+import { add, endOfToday, format } from "date-fns";
 import prisma from "./client.js";
 import { Pitcher, Team, Game } from "@probable/db";
+import { formatInTimeZone } from "date-fns-tz";
 
 export const client = {
   team: {
@@ -37,7 +38,7 @@ export const client = {
     },
     today: () => {
       const start = new Date();
-      const end = add(endOfToday(), { hours: 3 });
+      const end = add(endOfToday(), { hours: 6 });
       console.info(`Looking for games between ${start} and ${end}`);
       return prisma.game.findMany({
         where: {
@@ -98,7 +99,8 @@ export const client = {
     },
     withPendingNotifications: () => {
       const start = new Date();
-      const end = add(endOfToday(), { hours: 6 });
+      const hour = Number(format(start, "H"));
+      const end = add(hour < 6 ? start : endOfToday(), { hours: 6 });
 
       console.info(
         `Looking for devices with unsent notifications between ${start} and ${end}`
