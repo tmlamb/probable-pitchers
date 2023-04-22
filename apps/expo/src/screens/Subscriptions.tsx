@@ -311,7 +311,7 @@ export const Subscriptions = ({
             }
             return String(item.id);
           }}
-          contentContainerStyle={tw`pb-96`}
+          contentContainerStyle={tw.style(isSearchActive ? 'pb-96' : 'pb-48')}
           data={subscribedAndAvailablePitchers}
           keyboardShouldPersistTaps="handled"
           stickyHeaderIndices={[0]}
