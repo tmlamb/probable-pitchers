@@ -7,8 +7,8 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
-    "scheme": "probablepitcher",
-    "originalFullName": "tmlamb/probable-pitchers",
+    "scheme": "com.triplesight.probablepitchers",
+    "originalFullName": "@tmlamb/probable-pitchers",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
