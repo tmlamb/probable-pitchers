@@ -36,7 +36,7 @@ export const googleLogin = async (): Promise<SigninResult | null> => {
   const request = new AuthSession.AuthRequest({
     clientId,
     redirectUri,
-    scopes: ["openid", "email"],
+    scopes: ["openid"],
     usePKCE: true,
   });
 
@@ -77,7 +77,7 @@ export const appleLogin = async (): Promise<SigninResult | null> => {
   let credential = undefined;
   try {
     credential = await AppleAuthentication.signInAsync({
-      requestedScopes: [AppleAuthentication.AppleAuthenticationScope.EMAIL],
+      requestedScopes: [],
       state,
     });
   } catch (e) {
