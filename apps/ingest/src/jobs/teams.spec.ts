@@ -1,10 +1,10 @@
 import { test } from "@jest/globals";
-import { mlbTeams } from "../test/fixtures";
-import { mlbstatsMock, prismaMock } from "../test/mocks";
+import { mockedTeams } from "../test/fixtures";
+import { statsMock, prismaMock } from "../test/mocks";
 import { ingestTeams } from "./teams";
 
 test("should upsert one team", async () => {
-  mlbstatsMock.getTeams.mockResolvedValueOnce(mlbTeams);
+  statsMock.getTeams.mockResolvedValueOnce(mockedTeams);
 
   prismaMock.team.findUnique.mockResolvedValueOnce({
     id: 133,
@@ -12,8 +12,8 @@ test("should upsert one team", async () => {
     abbreviation: "ATH",
   });
 
-  for (let i = 1; i < mlbTeams.length; i++) {
-    const mockedTeam = mlbTeams[i];
+  for (let i = 1; i < mockedTeams.length; i++) {
+    const mockedTeam = mockedTeams[i];
     prismaMock.team.findUnique.mockResolvedValueOnce(
       mockedTeam || { id: -1, name: "Test Data Issue: Check Fixture", abbreviation: null }
     );
@@ -21,7 +21,7 @@ test("should upsert one team", async () => {
 
   await ingestTeams();
 
-  expect(mlbstatsMock.getTeams).toHaveBeenCalledTimes(1);
+  expect(statsMock.getTeams).toHaveBeenCalledTimes(1);
   expect(prismaMock.team.findUnique).toHaveBeenCalledTimes(30);
   expect(prismaMock.team.upsert).toHaveBeenCalledTimes(1);
   expect(prismaMock.team.upsert).toHaveBeenCalledWith({

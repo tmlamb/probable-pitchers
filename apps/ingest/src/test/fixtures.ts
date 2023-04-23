@@ -1,6 +1,6 @@
-import { MlbGame, MlbPlayer, MlbTeam } from "../services/mlbstats";
+import { Game, Player, Team } from "../services/stats-api";
 
-export const mlbTeams: MlbTeam[] = [
+export const mockedTeams: Team[] = [
   { id: 133, name: "Oakland Athletics", abbreviation: "OAK" },
   { id: 134, name: "Pittsburgh Pirates", abbreviation: "PIT" },
   { id: 135, name: "San Diego Padres", abbreviation: "SD" },
@@ -112,7 +112,7 @@ export const pendingNotifications = [
   } as any,
 ];
 
-export const fullSchedule: MlbGame[][] = [
+export const fullSchedule: Game[][] = [
   [
     {
       gamePk: 661420,
@@ -1917,7 +1917,7 @@ export const fullSchedule: MlbGame[][] = [
   ],
 ];
 
-export const mlbPitchers: MlbPlayer[] = [
+export const mockedPitchers: Player[] = [
   {
     id: 676265,
     fullName: "Cory Abbott",

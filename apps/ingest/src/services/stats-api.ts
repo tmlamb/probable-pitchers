@@ -1,21 +1,21 @@
 import fetch from "node-fetch";
 import { z } from "zod";
 
-const Team = z.object({
+const team = z.object({
   id: z.number(),
   name: z.string(),
   abbreviation: z.string(),
 });
 
-export type MlbTeam = z.infer<typeof Team>;
+export type Team = z.infer<typeof team>;
 
-const ProbablePitcher = z.object({
+const probablePitcher = z.object({
   id: z.number(),
   fullName: z.string(),
   primaryNumber: z.string().optional(),
 });
 
-const Player = ProbablePitcher.merge(
+const player = probablePitcher.merge(
   z.object({
     currentTeam: z.object({
       id: z.number(),
@@ -26,46 +26,46 @@ const Player = ProbablePitcher.merge(
   })
 );
 
-export type MlbPlayer = z.infer<typeof Player>;
+export type Player = z.infer<typeof player>;
 
-const TeamPitcher = z.object({
-  team: Team,
-  probablePitcher: ProbablePitcher.optional(),
+const teamPitcher = z.object({
+  team,
+  probablePitcher: probablePitcher.optional(),
 });
 
-const Game = z.object({
+const game = z.object({
   gamePk: z.number(),
   gameDate: z.string(),
   teams: z.object({
-    away: TeamPitcher,
-    home: TeamPitcher,
+    away: teamPitcher,
+    home: teamPitcher,
   }),
 });
 
-export type MlbGame = z.infer<typeof Game>;
+export type Game = z.infer<typeof game>;
 
-const ScheduleResponse = z.object({
+const scheduleResponse = z.object({
   dates: z.array(
     z.object({
       date: z.string(),
-      games: z.array(Game),
+      games: z.array(game),
     })
   ),
 });
 
-export async function getGames(date: string): Promise<MlbGame[]> {
+export async function getGames(date: string): Promise<Game[]> {
   console.log("Fetching games for date: ", date);
   return fetch(
     `https://statsapi.mlb.com/api/v1/schedule?sportId=1&date=${date}&hydrate=team,probablePitcher`
   )
     .then((res) => res.json())
     .then((data) => {
-      const schedule = ScheduleResponse.parse(data);
+      const schedule = scheduleResponse.parse(data);
       return schedule.dates
         .filter((d) => d.date === date)
         .reduce((acc, cur) => {
           return acc.concat(cur.games);
-        }, [] as z.infer<typeof Game>[]);
+        }, [] as z.infer<typeof game>[]);
     })
     .catch((err: Error) => {
       console.error(err);
@@ -73,18 +73,18 @@ export async function getGames(date: string): Promise<MlbGame[]> {
     });
 }
 
-const TeamsResponse = z.object({
-  teams: z.array(Team),
+const teamsResponse = z.object({
+  teams: z.array(team),
 });
 
-export async function getTeams(season: string): Promise<MlbTeam[]> {
+export async function getTeams(season: string): Promise<Team[]> {
   console.log("Season:",season);
   return fetch(
     `https://statsapi.mlb.com/api/v1/teams?sportId=1&season=${season}`
   )
     .then((res) => res.json())
     .then((data) => {
-      const teams = TeamsResponse.parse(data);
+      const teams = teamsResponse.parse(data);
       return teams.teams;
     })
     .catch((err: Error) => {
@@ -93,17 +93,17 @@ export async function getTeams(season: string): Promise<MlbTeam[]> {
     });
 }
 
-const PlayersResponse = z.object({
-  people: z.array(Player),
+const playersResponse = z.object({
+  people: z.array(player),
 });
 
-export async function getPitchers(season: string): Promise<MlbPlayer[]> {
+export async function getPitchers(season: string): Promise<Player[]> {
   return fetch(
     `https://statsapi.mlb.com/api/v1/sports/1/players?season=${season}`
   )
     .then((res) => res.json())
     .then((data) => {
-      const players = PlayersResponse.parse(data);
+      const players = playersResponse.parse(data);
       // "1" is a pitcher
       // "Y" is a two-way player (stupid sexy Ohtani)
       return players.people.filter(

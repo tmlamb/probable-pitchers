@@ -8,7 +8,7 @@ import {
   mockReset,
 } from "jest-mock-extended";
 import prisma from "../db/client";
-import { getGames, getPitchers, getTeams } from "../services/mlbstats";
+import { getGames, getPitchers, getTeams } from "../services/stats-api";
 
 jest.mock("../db/client", () => ({
   __esModule: true,
@@ -20,7 +20,7 @@ const getGamesMock = jest.fn<typeof getGames>();
 const getTeamsMock = jest.fn<typeof getTeams>();
 const getPitchersMock = jest.fn<typeof getPitchers>();
 
-jest.mock("../services/mlbstats", () => ({
+jest.mock("../services/stats-api", () => ({
   getGames: getGamesMock,
   getTeams: getTeamsMock,
   getPitchers: getPitchersMock,
@@ -28,13 +28,13 @@ jest.mock("../services/mlbstats", () => ({
 
 beforeEach(() => {
   mockReset(prismaMock);
-  mockReset(mlbstatsMock.getGames);
-  mockReset(mlbstatsMock.getTeams);
-  mockReset(mlbstatsMock.getPitchers);
+  mockReset(statsMock.getGames);
+  mockReset(statsMock.getTeams);
+  mockReset(statsMock.getPitchers);
 });
 
 export const prismaMock = prisma as unknown as DeepMockProxy<PrismaClient>;
-export const mlbstatsMock = {
+export const statsMock = {
   getGames: getGamesMock,
   getTeams: getTeamsMock,
   getPitchers: getPitchersMock,

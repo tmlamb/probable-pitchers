@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import { client } from "../db/db.js";
-import { getTeams } from "../services/mlbstats.js";
+import { getTeams } from "../services/stats-api.js";
 
 export async function ingestTeams() {
   const season = format(new Date(), "yyyy");

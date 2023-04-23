@@ -1,7 +1,7 @@
 import { add } from "date-fns";
 import formatISO from "date-fns/formatISO/index.js";
 import { client } from "../db/db.js";
-import { getGames } from "../services/mlbstats.js";
+import { getGames } from "../services/stats-api.js";
 import { processPitcher } from "./pitchers.js";
 
 export async function ingestGames() {

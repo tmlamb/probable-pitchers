@@ -1,8 +1,8 @@
 import { jest, test } from "@jest/globals";
 import { mockReset } from "jest-mock-extended";
-import { MlbGame } from "../services/mlbstats";
+import { Game } from "../services/stats-api";
 import { fullSchedule } from "../test/fixtures";
-import { mlbstatsMock, prismaMock } from "../test/mocks";
+import { statsMock, prismaMock } from "../test/mocks";
 import { ingestGames } from "./games";
 import { processPitcher } from "./pitchers";
 
@@ -15,7 +15,7 @@ beforeEach(() => {
 });
 
 test("should create one new game", async () => {
-  const mlbGame: MlbGame = {
+  const mockedGame: Game = {
     gamePk: 123,
     gameDate: "2022-11-01:20:15:00Z",
     teams: {
@@ -44,12 +44,12 @@ test("should create one new game", async () => {
     },
   };
 
-  mlbstatsMock.getGames.mockResolvedValueOnce([mlbGame]);
-  mlbstatsMock.getGames.mockResolvedValue([]);
+  statsMock.getGames.mockResolvedValueOnce([mockedGame]);
+  statsMock.getGames.mockResolvedValue([]);
 
   await ingestGames();
 
-  expect(mlbstatsMock.getGames).toHaveBeenCalledTimes(5);
+  expect(statsMock.getGames).toHaveBeenCalledTimes(5);
   expect(prismaMock.game.upsert).toHaveBeenCalledTimes(1);
   expect(prismaMock.game.upsert).toHaveBeenCalledWith({
     create: {
@@ -85,15 +85,15 @@ test("should create one new game", async () => {
 });
 
 test("should create a full schedule", async () => {
-  mlbstatsMock.getGames.mockResolvedValueOnce(fullSchedule[0] || []);
-  mlbstatsMock.getGames.mockResolvedValueOnce(fullSchedule[1] || []);
-  mlbstatsMock.getGames.mockResolvedValueOnce(fullSchedule[2] || []);
-  mlbstatsMock.getGames.mockResolvedValueOnce(fullSchedule[3] || []);
-  mlbstatsMock.getGames.mockResolvedValueOnce(fullSchedule[4] || []);
+  statsMock.getGames.mockResolvedValueOnce(fullSchedule[0] || []);
+  statsMock.getGames.mockResolvedValueOnce(fullSchedule[1] || []);
+  statsMock.getGames.mockResolvedValueOnce(fullSchedule[2] || []);
+  statsMock.getGames.mockResolvedValueOnce(fullSchedule[3] || []);
+  statsMock.getGames.mockResolvedValueOnce(fullSchedule[4] || []);
 
   await ingestGames();
 
-  expect(mlbstatsMock.getGames).toHaveBeenCalledTimes(5);
+  expect(statsMock.getGames).toHaveBeenCalledTimes(5);
   expect(prismaMock.game.upsert).toHaveBeenCalledTimes(64);
   expect(prismaMock.game.upsert).toHaveBeenNthCalledWith(22, {
     create: {

@@ -1,15 +1,15 @@
 import { beforeEach, test } from "@jest/globals";
-import { mlbPitchers } from "../test/fixtures";
-import { mlbstatsMock, prismaMock } from "../test/mocks";
+import { mockedPitchers } from "../test/fixtures";
+import { statsMock, prismaMock } from "../test/mocks";
 import { ingestPitchers } from "./pitchers";
 
 beforeEach(() => {
-  mlbstatsMock.getPitchers.mockResolvedValueOnce(mlbPitchers);
+  statsMock.getPitchers.mockResolvedValueOnce(mockedPitchers);
 });
 
 test("should upsert one existing pitcher", async () => {
   const pitcherToUpdate = {
-    id: mlbPitchers[0]!.id,
+    id: mockedPitchers[0]!.id,
     name: "Babe Ruth",
     teamId: 139,
     primaryNumber: "3",
@@ -17,8 +17,8 @@ test("should upsert one existing pitcher", async () => {
 
   prismaMock.pitcher.findUnique.mockResolvedValueOnce(pitcherToUpdate);
 
-  for (let i = 1; i < mlbPitchers.length; i++) {
-    const mockedPitcher = mlbPitchers[i];
+  for (let i = 1; i < mockedPitchers.length; i++) {
+    const mockedPitcher = mockedPitchers[i];
     prismaMock.pitcher.findUnique.mockResolvedValueOnce(
       !!mockedPitcher
         ? {
@@ -40,37 +40,37 @@ test("should upsert one existing pitcher", async () => {
 
   await ingestPitchers();
 
-  expect(mlbstatsMock.getPitchers).toHaveBeenCalledTimes(1);
+  expect(statsMock.getPitchers).toHaveBeenCalledTimes(1);
   expect(prismaMock.pitcher.findUnique).toHaveBeenCalledTimes(126);
   expect(prismaMock.pitcher.upsert).toHaveBeenCalledTimes(1);
   expect(prismaMock.pitcher.upsert).toHaveBeenCalledWith({
     where: {
-      id: mlbPitchers[0]!.id,
+      id: mockedPitchers[0]!.id,
     },
     create: {
-      id: mlbPitchers[0]!.id,
-      name: mlbPitchers[0]!.fullName,
-      teamId: mlbPitchers[0]!.currentTeam.id,
-      primaryNumber: mlbPitchers[0]!.primaryNumber,
+      id: mockedPitchers[0]!.id,
+      name: mockedPitchers[0]!.fullName,
+      teamId: mockedPitchers[0]!.currentTeam.id,
+      primaryNumber: mockedPitchers[0]!.primaryNumber,
     },
     update: {
-      name: mlbPitchers[0]!.fullName,
-      teamId: mlbPitchers[0]!.currentTeam.id,
-      primaryNumber: mlbPitchers[0]!.primaryNumber,
+      name: mockedPitchers[0]!.fullName,
+      teamId: mockedPitchers[0]!.currentTeam.id,
+      primaryNumber: mockedPitchers[0]!.primaryNumber,
     },
   });
 });
 
 test("should insert one new pitcher", async () => {
   const newPitcher = {
-    id: mlbPitchers[mlbPitchers.length - 1]!.id,
-    name: mlbPitchers[mlbPitchers.length - 1]!.fullName,
-    teamId: mlbPitchers[mlbPitchers.length - 1]!.currentTeam.id,
-    primaryNumber: mlbPitchers[mlbPitchers.length - 1]!.primaryNumber || null,
+    id: mockedPitchers[mockedPitchers.length - 1]!.id,
+    name: mockedPitchers[mockedPitchers.length - 1]!.fullName,
+    teamId: mockedPitchers[mockedPitchers.length - 1]!.currentTeam.id,
+    primaryNumber: mockedPitchers[mockedPitchers.length - 1]!.primaryNumber || null,
   };
 
-  for (let i = 0; i < mlbPitchers.length - 1; i++) {
-    const mockedPitcher = mlbPitchers[i];
+  for (let i = 0; i < mockedPitchers.length - 1; i++) {
+    const mockedPitcher = mockedPitchers[i];
     prismaMock.pitcher.findUnique.mockResolvedValueOnce(
       !!mockedPitcher
         ? {
@@ -94,7 +94,7 @@ test("should insert one new pitcher", async () => {
 
   await ingestPitchers();
 
-  expect(mlbstatsMock.getPitchers).toHaveBeenCalledTimes(1);
+  expect(statsMock.getPitchers).toHaveBeenCalledTimes(1);
   expect(prismaMock.pitcher.findUnique).toHaveBeenCalledTimes(126);
   expect(prismaMock.pitcher.upsert).toHaveBeenCalledTimes(1);
   expect(prismaMock.pitcher.upsert).toHaveBeenCalledWith({

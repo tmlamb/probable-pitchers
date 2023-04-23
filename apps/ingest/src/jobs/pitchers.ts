@@ -1,8 +1,8 @@
 import { format } from "date-fns";
 import { client } from "../db/db.js";
-import { getPitchers, MlbPlayer } from "../services/mlbstats.js";
+import { getPitchers, Player } from "../services/stats-api.js";
 
-export async function processPitcher(pitcher: MlbPlayer) {
+export async function processPitcher(pitcher: Player) {
   const existing = await client.pitcher.byId(pitcher.id);
   if (
     !existing ||

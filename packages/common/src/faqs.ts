@@ -2,7 +2,7 @@ export const faqs = [
   {
     question: "How does the Probable Pitcher service work?",
     answer:
-      "Our service monitors MLB's official API for game data. We then use that data to determine the probable pitcher for each game, and send you a mobile push notification if you are subscribed to that pitcher.",
+      "Probable Pitcher is a notification service that sends you a notification when a pitcher you are subscribed to is scheduled to pitch.",
   },
   {
     question: "What types of notifications will I receive?",

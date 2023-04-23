@@ -1,7 +1,6 @@
 import { add, endOfToday, format } from "date-fns";
 import prisma from "./client.js";
 import { Pitcher, Team, Game } from "@probable/db";
-import { formatInTimeZone } from "date-fns-tz";
 
 export const client = {
   team: {
