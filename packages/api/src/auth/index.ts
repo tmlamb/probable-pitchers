@@ -9,17 +9,6 @@ import { isValidProvider, nativeProviders, providerPairs } from "./providers";
 const adapter = PrismaAdapter(prisma);
 export const authOptions: NextAuthOptions = {
   adapter,
-  cookies: {
-    callbackUrl: {
-      name: `__Secure-next-auth.callback-url`,
-      options: {
-        httpOnly: false,
-        sameSite: "none",
-        path: "/",
-        secure: true,
-      },
-    },
-  },
   providers: [
     AppleProvider({
       clientId: process.env.APPLE_WEB_CLIENT_ID as string,
