@@ -31,7 +31,6 @@ export default function SignIn() {
                 {
                   callbackUrl,
                 }
-                // { redirect_uri: callbackUrl }
               )
             }
           >
@@ -53,7 +52,6 @@ export default function SignIn() {
                 {
                   callbackUrl,
                 }
-                // { redirect_uri: callbackUrl }
               )
             }
           >
