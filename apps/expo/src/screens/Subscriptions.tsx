@@ -96,7 +96,7 @@ export const Subscriptions = ({
     enabled: !!searchFilter && subscriptions.isSuccess,
   });
 
-  if (!search.isError) {
+  if (search.isError) {
     Sentry.Native.captureException(
       `Error fuzzy searching for pitchers on homepage: ${search.error}`
     );
