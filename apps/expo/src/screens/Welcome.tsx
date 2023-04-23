@@ -2,7 +2,6 @@ import * as AppleAuthentication from "expo-apple-authentication";
 import { signIn } from "next-auth/expo";
 import { useState } from "react";
 import { ActivityIndicator, Image, Pressable, View } from "react-native";
-import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { useAppColorScheme } from "twrnc";
 import { appleLogin, googleLogin } from "../components/AuthProvider";
 import ModalLayout from "../components/ModalLayout";

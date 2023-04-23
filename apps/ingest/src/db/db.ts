@@ -103,7 +103,7 @@ export const client = {
       const end = add(hour < 6 ? start : endOfToday(), { hours: 6 });
 
       console.info(
-        `Looking for devices with unsent notifications between ${start} and ${end}`
+        `Querying devices with unsent notifications between ${start} and ${end}`
       );
 
       const notificationsPendingToday = {

@@ -9,7 +9,7 @@ const Privacy: NextPage = () => {
       <div className="max-w-prose flex flex-col space-y-4">
         <p>
           Probable Pitcher operates the iOS/Android mobile apps and
-          probablepitcher.com website, which provide the SERVICE.
+          https://probablepitcher.com website, which provide the SERVICE.
         </p>
         <p>
           This page is used to inform mobile app users and website visitors
