@@ -12,7 +12,8 @@
     "clean": "find . -name node_modules -o -name .next -o -name .expo -type d -prune | xargs rm -rf",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "test": "turbo run test"
+    "test": "turbo run test",
+    "build:preview:ios": "eas build --profile preview --platform ios"
   },
   "devDependencies": {
     "patch-package": "^6.4.7",
