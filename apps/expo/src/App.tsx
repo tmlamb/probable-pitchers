@@ -3,7 +3,6 @@ import Constants from "expo-constants";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { Platform } from "react-native";
-import { enableLayoutAnimations } from "react-native-reanimated";
 import * as Sentry from "sentry-expo";
 import { useDeviceContext } from "twrnc";
 import AuthProvider from "./components/AuthProvider";
@@ -25,8 +24,7 @@ export default function App() {
   useDeviceContext(tw);
 
   if (Platform.OS === "android") {
-    //enableLayoutAnimations(false);
-
+    // Necessary for localization of date times on Android
     require('@formatjs/intl-getcanonicallocales/polyfill').default;
     require('@formatjs/intl-locale/polyfill').default;
     require('@formatjs/intl-pluralrules/polyfill').default;

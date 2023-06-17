@@ -34,45 +34,11 @@ import HeaderRightContainer from "../components/HeaderRightContainer";
 import HeaderLeftContainer from "../components/HeaderLeftContainer";
 import LinkButton from "../components/LinkButton";
 import { formatInTimeZone } from "date-fns-tz";
-import * as Localization from "expo-localization";
-import { Subscription as ExpoSubscription } from "expo-modules-core";
-import * as ExpoNotifications from "expo-notifications";
 import ScreenLayout from "../components/ScreenLayout";
-import { RootStackScreenProps } from "../components/Navigation";
+import { useNotifications } from "../hooks/use-notifications";
 
-export const Subscriptions = ({
-  navigation: { navigate },
-}: RootStackScreenProps<"Subscriptions">) => {
-  const [notification, setNotification] = useState(false);
-  const notificationListener = useRef<ExpoSubscription>();
-  const responseListener = useRef<ExpoSubscription>();
-
-  useEffect(() => {
-    // This listener is fired whenever a notification is received while the app is foregrounded
-    notificationListener.current =
-      ExpoNotifications.addNotificationReceivedListener((notification) => {
-        setNotification(!!notification);
-      });
-
-    // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
-    responseListener.current =
-      ExpoNotifications.addNotificationResponseReceivedListener((response) => {
-        navigate("Subscriptions");
-      });
-
-    return () => {
-      if (notificationListener?.current) {
-        ExpoNotifications.removeNotificationSubscription(
-          notificationListener.current
-        );
-      }
-      if (responseListener?.current) {
-        ExpoNotifications.removeNotificationSubscription(
-          responseListener.current
-        );
-      }
-    };
-  }, []);
+export const Subscriptions = () => {
+  useNotifications();
 
   const mutationTracker = useTrackParallelMutations();
 
@@ -494,7 +460,7 @@ const PitcherView = ({
               <SecondaryText style={tw`ml-1.5 text-sm`}>
                 {formatInTimeZone(
                   pitcher.nextGameDate,
-                  Localization.getCalendars()[0].timeZone || "America/New_York",
+                  Intl.DateTimeFormat().resolvedOptions().timeZone || "America/New_York",
                   "h:mmaaaaa"
                 )}
               </SecondaryText>
