@@ -1,7 +1,6 @@
 import { nativeProviders } from "@probable/api";
 import * as AppleAuthentication from "expo-apple-authentication";
 import * as AuthSession from "expo-auth-session";
-import * as Sentry from "sentry-expo";
 import { discovery as googleDiscovery } from "expo-auth-session/providers/google";
 import Constants from "expo-constants";
 import { CodedError } from "expo-modules-core";
@@ -66,8 +65,7 @@ export const appleLogin = async (): Promise<SigninResult | null> => {
   if (!signinInfo) {
     throw new Error("Couldn't get sign in info from server");
   }
-  const { state, codeChallenge, stateEncrypted, codeVerifier, clientId } =
-    signinInfo;
+  const { state, stateEncrypted, codeVerifier } = signinInfo;
   let credential = undefined;
   try {
     credential = await AppleAuthentication.signInAsync({
@@ -90,7 +88,7 @@ export const appleLogin = async (): Promise<SigninResult | null> => {
       error: null,
       errorCode: null,
       params: {
-        code: credential.authorizationCode!,
+        code: credential.authorizationCode || "",
         state,
       },
       type: "success",
@@ -102,9 +100,9 @@ export const appleLogin = async (): Promise<SigninResult | null> => {
 };
 
 function isCodedError(
-  possibleCodedError: any
+  possibleCodedError: unknown
 ): possibleCodedError is CodedError {
-  return possibleCodedError && !!(possibleCodedError as CodedError).code;
+  return !!possibleCodedError && !!(possibleCodedError as CodedError).code;
 }
 
 const AuthProvider: React.FC<{ children: React.ReactNode }> = ({

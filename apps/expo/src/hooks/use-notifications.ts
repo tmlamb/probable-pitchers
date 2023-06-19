@@ -7,14 +7,14 @@ import { AppState, Platform } from "react-native";
 import * as Sentry from "sentry-expo";
 import { trpc } from "../components/TRPCProvider";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
-import { RootStackParamList, RootStackScreenProps } from "../components/Navigation";
+import { RootStackParamList } from "../components/Navigation";
 
 export const useNotifications = () => {
   const { status } = useSession();
 
   const [expoPushToken, setExpoPushToken] = useState<string>();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const [,setNotification] = useState(false);
+  const [, setNotification] = useState(false);
 
   const appState = useRef(AppState.currentState);
   const notificationListener = useRef<ExpoSubscription>();
@@ -44,7 +44,7 @@ export const useNotifications = () => {
   }, [status]);
 
   const { data: device, isSuccess: deviceFetched } =
-    trpc.device.byPushToken.useQuery(expoPushToken!, {
+    trpc.device.byPushToken.useQuery(expoPushToken || "", {
       enabled: !!expoPushToken && status === "authenticated",
     });
 
@@ -65,7 +65,7 @@ export const useNotifications = () => {
 
   useEffect(() => {
     if (deviceFetched && expoPushToken) {
-      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
       console.log(timezone);
       if (!device) {
         registerDevice({ pushToken: expoPushToken, timezone });
@@ -77,7 +77,7 @@ export const useNotifications = () => {
         });
       }
     }
-  }, [device, deviceFetched, expoPushToken]);
+  }, [device, deviceFetched, expoPushToken, registerDevice, updateDevice]);
 
   useEffect(() => {
     // This listener is fired whenever a notification is received while the app is foregrounded
@@ -88,7 +88,7 @@ export const useNotifications = () => {
 
     // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
     responseListener.current =
-      ExpoNotifications.addNotificationResponseReceivedListener((_) => {
+      ExpoNotifications.addNotificationResponseReceivedListener(() => {
         navigation.navigate("Subscriptions");
       });
 
@@ -104,7 +104,7 @@ export const useNotifications = () => {
         );
       }
     };
-  }, []);
+  }, [navigation]);
 };
 
 const registerForPushNotifications = async () => {

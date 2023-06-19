@@ -23,8 +23,8 @@ export const Welcome = () => {
             Welcome!
           </SpecialText>
           <PrimaryText style={tw`text-lg text-center pb-9`}>
-            Probable Pitcher is a notification service that sends you an alert on
-            the days your favorite players are scheduled to pitch.
+            Probable Pitcher is a notification service that sends you an alert
+            on the days your favorite players are scheduled to pitch.
           </PrimaryText>
           <PrimaryText style={tw`text-lg text-center`}>
             Sign in with one of the options below. You will be asked to grant
@@ -42,6 +42,7 @@ export const Welcome = () => {
               }}
             >
               <Image
+                alt="Sign in with Google"
                 style={tw`w-[200px] h-[43.24px]`}
                 source={require("../../assets/google_signin_buttons/btn_google_signin_dark_normal_web.png")}
               />

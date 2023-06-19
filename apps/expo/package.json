@@ -7,7 +7,8 @@
     "dev": "expo start --dev-client",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@probable/api": "*",
@@ -57,6 +58,7 @@
     "@types/lodash": "^4.14.186",
     "@types/react": "~18.0.27",
     "@types/react-native": "~0.69.6",
+    "eslint-config-custom": "*",
     "tailwindcss": "^3.1.8",
     "typescript": "^4.9.4"
   },

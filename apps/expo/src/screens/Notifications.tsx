@@ -22,30 +22,37 @@ export const Notifications = () => {
 
   const mutationTracker = useTrackParallelMutations();
 
-  const [expoPushToken, setExpoPushToken] = useState<string>();
+  const [expoPushToken, setExpoPushToken] = useState<string>("");
 
   const { data: device, isSuccess: deviceFetched } =
-    trpc.device.byPushToken.useQuery(expoPushToken!, {
+    trpc.device.byPushToken.useQuery(expoPushToken, {
       enabled: !!expoPushToken && !mutationTracker.isMutating(),
     });
 
   const { mutate: toggleNotifications } =
     trpc.device.toggleNotifications.useMutation({
       onMutate: async ({ notificationsEnabled }) => {
-        await utils.device.byPushToken.cancel(expoPushToken!);
+        await utils.device.byPushToken.cancel(expoPushToken);
         mutationTracker.startOne();
-        const currentDevice = utils.device.byPushToken.getData(expoPushToken!);
-        utils.device.byPushToken.setData(expoPushToken!, (old) => ({ ...old!, notificationsEnabled }));
+        const currentDevice = utils.device.byPushToken.getData(expoPushToken);
+        utils.device.byPushToken.setData(expoPushToken, (old) =>
+          old
+            ? {
+                ...old,
+                notificationsEnabled,
+              }
+            : null
+        );
         return { currentDevice };
       },
       onError: (err, input, context) => {
-        utils.device.byPushToken.setData(expoPushToken!, context?.currentDevice);
+        utils.device.byPushToken.setData(expoPushToken, context?.currentDevice);
         Sentry.Native.captureException(err);
       },
       onSettled: () => {
         mutationTracker.endOne();
         if (mutationTracker.allEnded()) {
-          utils.device.byPushToken.invalidate(expoPushToken!);
+          utils.device.byPushToken.invalidate(expoPushToken);
         }
       },
     });
@@ -90,7 +97,14 @@ export const Notifications = () => {
               false: String(tw.style(secondaryTextColor).color),
             }}
             ios_backgroundColor={String(tw.style(secondaryTextColor).color)}
-            onValueChange={() => toggleNotifications({ id: device!.id, notificationsEnabled: !device!.notificationsEnabled })}
+            onValueChange={() =>
+              device
+                ? toggleNotifications({
+                    id: device.id,
+                    notificationsEnabled: !device.notificationsEnabled,
+                  })
+                : undefined
+            }
             value={device?.notificationsEnabled && permissionGranted}
             disabled={
               !deviceFetched ||
@@ -107,8 +121,8 @@ export const Notifications = () => {
               accessibilityRole="summary"
             >
               Permission to receive notifications from this app has been denied
-              in your device's settings. To receive Probable Pitcher alerts,
-              allow this app to send notifications.
+              in your device&apos;s settings. To receive Probable Pitcher
+              alerts, allow this app to send notifications.
             </SecondaryText>
             <ButtonContainer
               style={tw`mx-4 mt-1.5`}

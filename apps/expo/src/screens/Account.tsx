@@ -16,10 +16,9 @@ import { trpc } from "../components/TRPCProvider";
 import tw from "../tailwind";
 
 export const Account = () => {
-  const { data: accounts, isSuccess: accountsFetched } =
-    trpc.account.byUserId.useQuery(undefined, {
-      staleTime: Infinity,
-    });
+  const { data: accounts } = trpc.account.byUserId.useQuery(undefined, {
+    staleTime: Infinity,
+  });
 
   const provider = accounts?.map(
     (account) => providerLabels[account.provider as keyof typeof providerLabels]

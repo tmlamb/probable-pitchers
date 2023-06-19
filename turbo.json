@@ -4,6 +4,7 @@
       "dependsOn": ["^build"],
       "outputs": [".next/**", ".expo/**", "dist/**"],
       "env": [
+        "APP_ENV",
         "DATABASE_URL",
         "AUTH_GOOGLE_CLIENT_ID",
         "AUTH_GOOGLE_CLIENT_SECRET",
@@ -13,7 +14,8 @@
         "APPLE_WEB_CLIENT_SECRET",
         "NEXTAUTH_SECRET",
         "NEXTAUTH_URL",
-        "NEXTAUTH_EXPO_URL"
+        "NEXTAUTH_EXPO_URL",
+        "SENTRY_PUBLIC_DSN"
       ]
     },
     "lint": {
@@ -27,8 +29,5 @@
       "outputs": []
     }
   },
-  "globalDependencies": [
-      "tsconfig.json",
-      ".env"
-  ]
+  "globalDependencies": ["tsconfig.json", ".env"]
 }

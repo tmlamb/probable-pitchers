@@ -1,6 +1,13 @@
 import { AntDesign } from "@expo/vector-icons";
-import React, { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, NativeScrollEvent, NativeSyntheticEvent, StyleProp, View, ViewStyle } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  StyleProp,
+  View,
+  ViewStyle,
+} from "react-native";
 import Animated, {
   Easing,
   FadeIn,
@@ -27,7 +34,11 @@ import {
   ThemedView,
 } from "../components/Themed";
 import { trpc } from "../components/TRPCProvider";
-import { PitcherSubscription, subscriptionSchedule, useTrackParallelMutations } from "@probable/common";
+import {
+  PitcherSubscription,
+  subscriptionSchedule,
+  useTrackParallelMutations,
+} from "@probable/common";
 import tw from "../tailwind";
 import { ClassInput } from "twrnc/dist/esm/types";
 import HeaderRightContainer from "../components/HeaderRightContainer";
@@ -58,7 +69,7 @@ export const Subscriptions = () => {
   const [searchFilter, setSearchFilter] = useState<string>();
   const [isSearchActive, setIsSearchActive] = useState<boolean>(false);
 
-  const search = trpc.pitcher.byFuzzyName.useQuery(searchFilter!, {
+  const search = trpc.pitcher.byFuzzyName.useQuery(searchFilter || "", {
     enabled: !!searchFilter && subscriptions.isSuccess,
   });
 
@@ -73,7 +84,8 @@ export const Subscriptions = () => {
   const pitchers = search.data?.map((pitcher) => ({
     ...pitcher,
     subscription:
-      subscriptions.data?.find((sub) => sub.pitcherId === pitcher.id) || undefined,
+      subscriptions.data?.find((sub) => sub.pitcherId === pitcher.id) ||
+      undefined,
   }));
 
   const { mutate: subscribe } = trpc.subscription.create.useMutation({
@@ -94,7 +106,7 @@ export const Subscriptions = () => {
                 id: new Date().valueOf(),
                 enabled: true,
                 pitcherId: pitcherId,
-                userId: '',
+                userId: "",
                 pitcher: {
                   id: pitcherId,
                   name: pitcher.name,
@@ -102,7 +114,11 @@ export const Subscriptions = () => {
                   homeGames: pitcher.subscription?.pitcher.homeGames || [],
                   awayGames: pitcher.subscription?.pitcher.awayGames || [],
                   primaryNumber: pitcher.primaryNumber,
-                  team: { name: '', id: -1, abbreviation: pitcher.abbreviation || '' },
+                  team: {
+                    name: "",
+                    id: -1,
+                    abbreviation: pitcher.abbreviation || "",
+                  },
                 },
               },
             ];
@@ -111,8 +127,11 @@ export const Subscriptions = () => {
       });
       return { previousSubscriptions };
     },
-    onError: (err, newSubscription, context) => {
-      utils.subscription.byUserId.setData(undefined, context?.previousSubscriptions);
+    onError: (err, _, context) => {
+      utils.subscription.byUserId.setData(
+        undefined,
+        context?.previousSubscriptions
+      );
       Sentry.Native.captureException(err);
     },
     onSettled: () => {
@@ -134,8 +153,11 @@ export const Subscriptions = () => {
       );
       return { previousSubscriptions };
     },
-    onError: (err, newSubscription, context) => {
-      utils.subscription.byUserId.setData(undefined, context?.previousSubscriptions);
+    onError: (err, _, context) => {
+      utils.subscription.byUserId.setData(
+        undefined,
+        context?.previousSubscriptions
+      );
       Sentry.Native.captureException(err);
     },
     onSettled: () => {
@@ -149,15 +171,14 @@ export const Subscriptions = () => {
 
   // Why not just use section list? It doesn't have support from Reanimated's "itemLayoutAnimation"
   // prop, which we are depending on below for the cool layout transitions.
-  const subscribedAndAvailablePitchers: (
-    | string
-    | PitcherSubscription
-  )[] = [];
+  const subscribedAndAvailablePitchers: (string | PitcherSubscription)[] = [];
 
   if (isSearchActive) {
     if (subscriptions) {
-      const subscribedPitchers = pitchers?.filter((p) =>
-        p.subscription).map((p) => ({ ...p, team: { abbreviation: p.abbreviation } })) || [];
+      const subscribedPitchers =
+        pitchers
+          ?.filter((p) => p.subscription)
+          .map((p) => ({ ...p, team: { abbreviation: p.abbreviation } })) || [];
       if (!!subscribedPitchers.length) {
         subscribedAndAvailablePitchers.push("Subscribed");
         subscribedAndAvailablePitchers.push(...subscribedPitchers);
@@ -166,7 +187,9 @@ export const Subscriptions = () => {
 
     if (searchFilter) {
       const availablePitchers =
-        pitchers?.filter((p) => !p.subscription).map((p) => ({ ...p, team: { abbreviation: p.abbreviation } })) || [];
+        pitchers
+          ?.filter((p) => !p.subscription)
+          .map((p) => ({ ...p, team: { abbreviation: p.abbreviation } })) || [];
       if (!!availablePitchers.length) {
         subscribedAndAvailablePitchers.push("Available");
         subscribedAndAvailablePitchers.push(...availablePitchers);
@@ -191,7 +214,7 @@ export const Subscriptions = () => {
       duration: 150,
       easing: Easing.linear,
     });
-  }, [pauseMutations]);
+  }, [opacity, pauseMutations]);
 
   const style = useAnimatedStyle(() => ({ opacity: opacity.value }), []);
 
@@ -244,31 +267,32 @@ export const Subscriptions = () => {
         </Animated.View>
       </HeaderLeftContainer>
       <HeaderRightContainer>
-        {!!(subscriptions.data?.length) &&
-          (isEditing ?
+        {!!subscriptions.data?.length &&
+          (isEditing ? (
             <ButtonContainer
               onPress={() => setIsEditing((isEditing) => !isEditing)}
               style={tw`pl-8 pb-4 pr-3 -mb-4 -mr-4 flex flex-row items-center`}
-              accessibilityLabel={`${isEditing ? 'Disable' : 'Enable'} edit mode`}
+              accessibilityLabel={`${
+                isEditing ? "Disable" : "Enable"
+              } edit mode`}
             >
-              <SpecialText style={tw`font-bold`}>
-                Done
-              </SpecialText>
+              <SpecialText style={tw`font-bold`}>Done</SpecialText>
             </ButtonContainer>
-            :
+          ) : (
             <ButtonContainer
               onPress={() => setIsEditing((isEditing) => !isEditing)}
               style={tw`pl-6 pb-4 pr-3 -mb-4 -mr-4 flex flex-row items-center`}
-              accessibilityLabel={`${isEditing ? 'Disable' : 'Enable'} edit mode`}
+              accessibilityLabel={`${
+                isEditing ? "Disable" : "Enable"
+              } edit mode`}
             >
-              <SpecialText>
-                Edit
-              </SpecialText>
+              <SpecialText>Edit</SpecialText>
             </ButtonContainer>
-          )}
+          ))}
       </HeaderRightContainer>
       <View style={tw`flex-1`}>
         <Animated.FlatList
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore - there is a type bug in Reanimated 2.9.x
           itemLayoutAnimation={Layout.duration(175)}
           keyExtractor={(item) => {
@@ -277,24 +301,34 @@ export const Subscriptions = () => {
             }
             return String(item.id);
           }}
-          contentContainerStyle={tw.style(isSearchActive ? 'pb-96' : 'pb-48')}
+          contentContainerStyle={tw.style(isSearchActive ? "pb-96" : "pb-48")}
           data={subscribedAndAvailablePitchers}
           keyboardShouldPersistTaps="handled"
           stickyHeaderIndices={[0]}
           stickyHeaderHiddenOnScroll={!isSearchActive}
           onScroll={(event) => handleScroll(event)}
           ListHeaderComponent={
-            <View style={tw.style('px-3 bg-slate-50 dark:bg-black', isSearchActive && isScrolling ? 'bg-opacity-80' : 'bg-opacity-100')}>
+            <View
+              style={tw.style(
+                "px-3 bg-slate-50 dark:bg-black",
+                isSearchActive && isScrolling
+                  ? "bg-opacity-80"
+                  : "bg-opacity-100"
+              )}
+            >
               <Animated.View layout={Layout.duration(250)}>
                 <PrimaryText
-                  style={tw.style(isSearchActive ? 'text-transparent' : '', 'text-4xl font-bold tracking-tight mt-6 mb-3')}
+                  style={tw.style(
+                    isSearchActive ? "text-transparent" : "",
+                    "text-4xl font-bold tracking-tight mt-6 mb-3"
+                  )}
                   accessibilityRole="header"
                 >
                   Probable Pitcher
                 </PrimaryText>
               </Animated.View>
               <SearchInput
-                onChange={(text) => setSearchFilter(text)}
+                onChange={(text) => setSearchFilter(text || "")}
                 onActive={() => setIsSearchActive(true)}
                 onCancel={() => setIsSearchActive(false)}
               />
@@ -303,7 +337,11 @@ export const Subscriptions = () => {
           renderItem={({ index, item }) => {
             if (typeof item === "string") {
               return (
-                <Animated.View entering={FadeIn} exiting={FadeOut} style={tw`flex-row justify-between mt-3 mb-1 mx-6`}>
+                <Animated.View
+                  entering={FadeIn}
+                  exiting={FadeOut}
+                  style={tw`flex-row justify-between mt-3 mb-1 mx-6`}
+                >
                   <SecondaryText style={tw`uppercase text-sm`}>
                     {item}
                   </SecondaryText>
@@ -312,7 +350,11 @@ export const Subscriptions = () => {
                       (!search.isSuccess && !!searchFilter) ||
                       mutationTracker.isMutating() ||
                       subscriptions.isFetching) && (
-                      <Animated.View entering={FadeIn} exiting={FadeOut} style={tw`-mr-1`}>
+                      <Animated.View
+                        entering={FadeIn}
+                        exiting={FadeOut}
+                        style={tw`-mr-1`}
+                      >
                         <ActivityIndicator size="small" />
                       </Animated.View>
                     )}
@@ -327,9 +369,14 @@ export const Subscriptions = () => {
                         pitcherId: item.id,
                       });
                     }}
-                    unsubscribeHandler={isEditing || isSearchActive ? () => {
-                      unsubscribe(item.subscription!.id);
-                    } : undefined}
+                    unsubscribeHandler={
+                      isEditing || isSearchActive
+                        ? () =>
+                            item.subscription
+                              ? unsubscribe(item.subscription.id)
+                              : undefined
+                        : undefined
+                    }
                     pitcher={item}
                     disabled={pauseMutations}
                     style={tw.style(
@@ -340,7 +387,7 @@ export const Subscriptions = () => {
                         : undefined,
                       !subscribedAndAvailablePitchers[index + 1] ||
                         typeof subscribedAndAvailablePitchers[index + 1] ===
-                        "string"
+                          "string"
                         ? "border-b-0 rounded-b-xl"
                         : undefined
                     )}
@@ -380,7 +427,8 @@ export const Subscriptions = () => {
                       style={tw`mt-3 mb-6 mx-6 text-sm`}
                       accessibilityRole="summary"
                     >
-                      Search for your favorite pitcher to add them to your list of subscriptions.
+                      Search for your favorite pitcher to add them to your list
+                      of subscriptions.
                     </SecondaryText>
                   </Animated.View>
                 )
@@ -400,7 +448,7 @@ export const Subscriptions = () => {
           }
         />
       </View>
-    </ScreenLayout >
+    </ScreenLayout>
   );
 };
 
@@ -410,7 +458,7 @@ const PitcherView = ({
   pitcher,
   disabled,
   style,
-  buttonStyle
+  buttonStyle,
 }: {
   subscribeHandler: () => void;
   unsubscribeHandler?: () => void;
@@ -421,9 +469,7 @@ const PitcherView = ({
 }) => {
   return (
     <>
-      <ThemedView
-        style={tw.style("relative mx-3", style)}
-      >
+      <ThemedView style={tw.style("relative mx-3", style)}>
         {pitcher.subscription && unsubscribeHandler && (
           <Animated.View entering={FadeInLeft} exiting={FadeOutLeft}>
             <ButtonContainer
@@ -440,27 +486,40 @@ const PitcherView = ({
             </ButtonContainer>
           </Animated.View>
         )}
-        <Animated.View style={tw`flex-1 flex-row justify-between items-center`} layout={Layout}>
+        <Animated.View
+          style={tw`flex-1 flex-row justify-between items-center`}
+          layout={Layout}
+        >
           <Animated.View style={tw`flex-row items-center`} layout={Layout}>
             <PrimaryText style={tw``} numberOfLines={2}>
               {pitcher.name}
             </PrimaryText>
-            <Animated.View style={tw`items-center mx-3 -my-1.5`} layout={Layout}>
-              {pitcher.primaryNumber &&
+            <Animated.View
+              style={tw`items-center mx-3 -my-1.5`}
+              layout={Layout}
+            >
+              {pitcher.primaryNumber && (
                 <SecondaryText style={tw`text-xs -mb-0.5`}>
                   {pitcher.primaryNumber}
-                </SecondaryText>}
+                </SecondaryText>
+              )}
               <SecondaryText style={tw`text-xs`}>
                 {pitcher.team.abbreviation}
               </SecondaryText>
             </Animated.View>
           </Animated.View>
           {pitcher.nextGameDate && !unsubscribeHandler && (
-            <Animated.View style={tw``} entering={FadeInRight} exiting={FadeOutRight} layout={Layout}>
+            <Animated.View
+              style={tw``}
+              entering={FadeInRight}
+              exiting={FadeOutRight}
+              layout={Layout}
+            >
               <SecondaryText style={tw`ml-1.5 text-sm`}>
                 {formatInTimeZone(
                   pitcher.nextGameDate,
-                  Intl.DateTimeFormat().resolvedOptions().timeZone || "America/New_York",
+                  Intl.DateTimeFormat().resolvedOptions().timeZone ||
+                    "America/New_York",
                   "h:mmaaaaa"
                 )}
               </SecondaryText>

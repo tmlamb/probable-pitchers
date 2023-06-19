@@ -1,22 +1,22 @@
-import * as dotenv from 'dotenv'
-dotenv.config({path: '../../.env'});
+import * as dotenv from "dotenv";
+dotenv.config({ path: "../../.env" });
 
 const { APP_ENV, NEXTAUTH_URL, SENTRY_PUBLIC_DSN } = process.env;
 
-export default ({ config }) => {
+const AppConfig = ({ config }) => {
   const appConfig = {
     ...config,
     ios: {
       ...config.ios,
       bundleIdentifier: `${config.ios.bundleIdentifier}${
-        APP_ENV !== 'production' ? `.${APP_ENV}` : ''
-      }`
+        APP_ENV !== "production" ? `.${APP_ENV}` : ""
+      }`,
     },
     android: {
       ...config.android,
       package: `${config.android.package}${
-        APP_ENV !== 'production' ? `.${APP_ENV}` : ''
-      }`
+        APP_ENV !== "production" ? `.${APP_ENV}` : ""
+      }`,
     },
     name: `${config.name}${APP_ENV !== "production" ? ` (${APP_ENV})` : ""}`,
     extra: {
@@ -29,3 +29,5 @@ export default ({ config }) => {
   };
   return appConfig;
 };
+
+export default AppConfig;
