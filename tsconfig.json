@@ -14,8 +14,7 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "noUncheckedIndexedAccess": true,
-    "typeRoots": ["./node_modules/@types", "./types"]
+    "noUncheckedIndexedAccess": true
   },
   "exclude": ["node_modules"]
 }

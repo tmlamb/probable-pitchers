@@ -102,7 +102,7 @@ jobs:
 
   build-nextjs:
     name: Build nextjs image
-    needs: [test, checks]
+    needs: [test, lint, checks]
     runs-on: ubuntu-latest
     if: ${{ needs.checks.outputs.changed-nextjs }}
     steps:
@@ -125,7 +125,7 @@ jobs:
 
   build-ingest:
     name: Build ingest image
-    needs: [test, checks]
+    needs: [test, lint, checks]
     runs-on: ubuntu-latest
     if: ${{ needs.checks.outputs.changed-ingest }}
     steps:
