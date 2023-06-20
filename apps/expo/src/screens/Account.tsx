@@ -64,7 +64,7 @@ export const Account = () => {
               </AlertText>
             </ButtonContainer>
           }
-          accessibilityLabel={`Delete account and all user data`}
+          accessibilityLabel={`Irreversibly delete account and all user data`}
         />
       </View>
     </ScreenLayout>

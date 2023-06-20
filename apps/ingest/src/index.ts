@@ -1,4 +1,4 @@
-import * as dotenv from 'dotenv'
+import * as dotenv from "dotenv";
 dotenv.config({ path: "../../.env" });
 
 import { ingestGames } from "./jobs/games.js";
@@ -11,7 +11,7 @@ import { ingestTeams } from "./jobs/teams.js";
 
 const ingestJobs = process.env.INGEST_JOBS;
 
-console.info("INGEST_JOBS:", ingestJobs);
+console.info("Running INGEST_JOBS:", ingestJobs);
 
 if (ingestJobs) {
   if (ingestJobs.includes("teams")) {

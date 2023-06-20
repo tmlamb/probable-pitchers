@@ -14,7 +14,7 @@ export default function SignIn() {
     <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md flex flex-col items-center justify-between">
         <div className="bg-[#789d7c] h-[150px] w-[150px] p-4 rounded-md">
-          <Image className="" src="/logo.png" alt="" height={150} width={150} />
+          <Image src="/logo.png" alt="" height={150} width={150} />
         </div>
         <h2 className="mt-3 text-center text-3xl font-bold tracking-tight ">
           Sign in to your account
@@ -26,12 +26,9 @@ export default function SignIn() {
             type="button"
             className="mb-4 active:opacity-25"
             onClick={() =>
-              signIn(
-                "google",
-                {
-                  callbackUrl,
-                }
-              )
+              signIn("google", {
+                callbackUrl,
+              })
             }
           >
             <span className="sr-only">Sign in with Google</span>
@@ -47,12 +44,9 @@ export default function SignIn() {
             type="button"
             className="active:opacity-25"
             onClick={() =>
-              signIn(
-                "apple",
-                {
-                  callbackUrl,
-                }
-              )
+              signIn("apple", {
+                callbackUrl,
+              })
             }
           >
             <span className="sr-only">Sign in with Apple</span>
