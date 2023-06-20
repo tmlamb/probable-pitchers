@@ -1,5 +1,3 @@
-/// <reference path="../../../types/next-auth.d.ts" />
-
 export {
   isValidProvider,
   nativeProviders,

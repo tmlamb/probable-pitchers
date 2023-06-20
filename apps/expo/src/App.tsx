@@ -1,4 +1,3 @@
-/// <reference path="../../../types/next-auth.d.ts" />
 import Constants from "expo-constants";
 import { StatusBar } from "expo-status-bar";
 import React from "react";

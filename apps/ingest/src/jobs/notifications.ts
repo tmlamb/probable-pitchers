@@ -22,7 +22,7 @@ export async function ingestNotifications() {
             await client.notification.create({
               deviceId: device.id,
               gameId: game.id,
-              pitcherId: pitcher.id
+              pitcherId: pitcher.id,
             });
           } catch (e) {
             if (
@@ -45,17 +45,19 @@ export async function ingestNotifications() {
 }
 
 export async function sendNotifications() {
-
   const devicesWithNotifications =
     await client.device.withPendingNotifications();
 
   console.debug(
-    `Found ${devicesWithNotifications.length
+    `Found ${
+      devicesWithNotifications.length
     } devices with notifications: ${JSON.stringify(devicesWithNotifications)}`
   );
 
   for (const device of devicesWithNotifications) {
-    const localHour = Number(formatInTimeZone(Date.now(), device.timezone, "H"));
+    const localHour = Number(
+      formatInTimeZone(Date.now(), device.timezone, "H")
+    );
     if (localHour < 9 || localHour >= 21) {
       console.debug(
         `User device ${device.id} skipped alert because ${localHour} is in quiet hours for the timezone '${device.timezone}'.`
@@ -67,11 +69,13 @@ export async function sendNotifications() {
     );
 
     console.debug(
-      `Device ${device.id} has ${device.notifications.length} notifications: ${JSON.stringify(device.notifications)}`
+      `Device ${device.id} has ${
+        device.notifications.length
+      } notifications: ${JSON.stringify(device.notifications)}`
     );
 
     const fulfilled = new Set<number>();
-    let messages: string[] = [];
+    const messages: string[] = [];
 
     for (const notification of device.notifications) {
       const localizedGameTime = formatInTimeZone(
@@ -91,7 +95,10 @@ export async function sendNotifications() {
         messages.join("\n")
       );
     } catch (e) {
-      console.error(`Error sending push notification to ${device.pushToken} for device: ${device}`, e);
+      console.error(
+        `Error sending push notification to ${device.pushToken} for device: ${device}`,
+        e
+      );
       continue;
     }
 
@@ -99,7 +106,10 @@ export async function sendNotifications() {
       try {
         await client.notification.update(id, new Date());
       } catch (e) {
-        console.error(`Error marking notification ${id} for device ${device.id} as completed`, e);
+        console.error(
+          `Error marking notification ${id} for device ${device.id} as completed`,
+          e
+        );
         continue;
       }
     }

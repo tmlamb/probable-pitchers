@@ -15,7 +15,8 @@
         "NEXTAUTH_SECRET",
         "NEXTAUTH_URL",
         "NEXTAUTH_EXPO_URL",
-        "SENTRY_PUBLIC_DSN"
+        "SENTRY_PUBLIC_DSN",
+        "INGEST_JOBS"
       ]
     },
     "lint": {
