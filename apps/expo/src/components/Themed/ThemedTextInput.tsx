@@ -91,37 +91,35 @@ export default function TextInput({
   return (
     <ThemedView style={tw.style("relative py-0", style)}>
       <ThemedView style={tw`px-0 py-1.5 relative w-full bg-transparent`}>
-        {leftIcon || label && (
-          <Animated.View
-            entering={FadeIn}
-            exiting={FadeOut}
-            style={tw`absolute`}
-          >
-            <>
-              {leftIcon && (
-                { leftIcon }
-              )}
-              {label && (
-                <SecondaryText
-                  style={tw.style(
-                    "leading-tight text-lg tracking-tight pl-0",
-                    labelStyle
-                  )}
-                  accessible={false}
-                >
-                  {label}
-                </SecondaryText>
-              )}
-            </>
-          </Animated.View>
-        )}
+        {leftIcon ||
+          (label && (
+            <Animated.View
+              entering={FadeIn}
+              exiting={FadeOut}
+              style={tw`absolute`}
+            >
+              <>
+                {leftIcon && { leftIcon }}
+                {label && (
+                  <SecondaryText
+                    style={tw.style(
+                      "leading-tight text-lg tracking-tight pl-0",
+                      labelStyle
+                    )}
+                    accessible={false}
+                  >
+                    {label}
+                  </SecondaryText>
+                )}
+              </>
+            </Animated.View>
+          ))}
         {label && (
           <Animated.View
             entering={FadeIn}
             exiting={FadeOut}
             style={tw`absolute`}
-          >
-          </Animated.View>
+          ></Animated.View>
         )}
         <NativeTextInput
           onChangeText={handleChange}
