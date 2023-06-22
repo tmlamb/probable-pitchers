@@ -22,10 +22,10 @@ export const Notifications = () => {
 
   const mutationTracker = useTrackParallelMutations();
 
-  const [expoPushToken, setExpoPushToken] = useState<string>("");
+  const [expoPushToken, setExpoPushToken] = useState<string>();
 
   const { data: device, isSuccess: deviceFetched } =
-    trpc.device.byPushToken.useQuery(expoPushToken, {
+    trpc.device.byPushToken.useQuery(expoPushToken!, {
       enabled: !!expoPushToken && !mutationTracker.isMutating(),
     });
 
@@ -35,7 +35,7 @@ export const Notifications = () => {
         await utils.device.byPushToken.cancel(expoPushToken);
         mutationTracker.startOne();
         const currentDevice = utils.device.byPushToken.getData(expoPushToken);
-        utils.device.byPushToken.setData(expoPushToken, (old) =>
+        utils.device.byPushToken.setData(expoPushToken!, (old) =>
           old
             ? {
                 ...old,
@@ -46,7 +46,10 @@ export const Notifications = () => {
         return { currentDevice };
       },
       onError: (err, _, context) => {
-        utils.device.byPushToken.setData(expoPushToken, context?.currentDevice);
+        utils.device.byPushToken.setData(
+          expoPushToken!,
+          context?.currentDevice
+        );
         Sentry.Native.captureException(err);
       },
       onSettled: () => {
