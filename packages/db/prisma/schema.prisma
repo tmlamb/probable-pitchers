@@ -48,7 +48,7 @@ model User {
 
 model Device {
   id                   String  @id @default(cuid())
-  pushToken            String  @unique
+  pushToken            String
   timezone             String
   userId               String
   notificationsEnabled Boolean @default(true)
@@ -56,6 +56,7 @@ model Device {
   notifications        Notification[]
 
   @@unique([id, userId])
+  @@unique([pushToken, userId])
 }
 
 model Team {

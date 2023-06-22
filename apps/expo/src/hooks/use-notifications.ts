@@ -43,11 +43,6 @@ export const useNotifications = () => {
     };
   }, [status]);
 
-  const { data: device, isSuccess: deviceFetched } =
-    trpc.device.byPushToken.useQuery(expoPushToken || "", {
-      enabled: !!expoPushToken && status === "authenticated",
-    });
-
   const trpcContext = trpc.useContext();
 
   const { mutate: registerDevice } = trpc.device.create.useMutation({
@@ -63,10 +58,15 @@ export const useNotifications = () => {
     onSettled: () => trpcContext.device.byPushToken.invalidate(),
   });
 
+  const { data: device, isSuccess: deviceFetched } =
+    trpc.device.byPushToken.useQuery(expoPushToken || "", {
+      enabled: !!expoPushToken && status === "authenticated",
+    });
+
   useEffect(() => {
     if (deviceFetched && expoPushToken) {
+      console.log("PUSH TOKEN:", expoPushToken);
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      console.log(timezone);
       if (!device) {
         registerDevice({ pushToken: expoPushToken, timezone });
       } else if (device.timezone !== timezone) {

@@ -45,7 +45,7 @@ export const Notifications = () => {
         );
         return { currentDevice };
       },
-      onError: (err, input, context) => {
+      onError: (err, _, context) => {
         utils.device.byPushToken.setData(expoPushToken, context?.currentDevice);
         Sentry.Native.captureException(err);
       },

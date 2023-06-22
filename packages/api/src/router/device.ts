@@ -45,7 +45,9 @@ export const deviceRouter = t.router({
     .input(z.string())
     .query(({ input, ctx }) => {
       return ctx.prisma.device.findUnique({
-        where: { pushToken: input },
+        where: {
+          pushToken_userId: { pushToken: input, userId: ctx.session.user.id },
+        },
       });
     }),
   toggleNotifications: t.procedure
