@@ -24,7 +24,7 @@ export const deviceRouter = t.router({
             if (devices.length > 164) {
               throw new TRPCError({
                 code: "TOO_MANY_REQUESTS",
-                message: `Error: User has way too many devices and is past the 164 count limit. User ID: ${ctx.session.user.id}.`,
+                message: `Error: User has way too many devices. User ID: ${ctx.session.user.id}.`,
               });
             }
           }
