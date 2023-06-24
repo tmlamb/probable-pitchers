@@ -78,7 +78,9 @@ const seedJob = new k8s.batch.v1.CronJob(
                 {
                   name: seedLabels.app,
 
-                  image: `ghcr.io/tmlamb/probable-pitchers-ingest:${changedIngest ? imageTag : 'latest'}`,
+                  image: `ghcr.io/tmlamb/probable-pitchers-ingest:${
+                    changedIngest ? imageTag : "latest"
+                  }`,
                   env: [
                     {
                       name: "DATABASE_URL",
@@ -124,7 +126,9 @@ const playerJob = new k8s.batch.v1.CronJob(
                 {
                   name: playerLabels.app,
 
-                  image: `ghcr.io/tmlamb/probable-pitchers-ingest:${changedIngest ? imageTag : 'latest'}`,
+                  image: `ghcr.io/tmlamb/probable-pitchers-ingest:${
+                    changedIngest ? imageTag : "latest"
+                  }`,
                   env: [
                     {
                       name: "DATABASE_URL",
@@ -170,7 +174,9 @@ const notifyJob = new k8s.batch.v1.CronJob(
                 {
                   name: notifyLabels.app,
 
-                  image: `ghcr.io/tmlamb/probable-pitchers-ingest:${changedIngest ? imageTag : 'latest'}`,
+                  image: `ghcr.io/tmlamb/probable-pitchers-ingest:${
+                    changedIngest ? imageTag : "latest"
+                  }`,
                   env: [
                     {
                       name: "DATABASE_URL",
@@ -195,17 +201,16 @@ const notifyJob = new k8s.batch.v1.CronJob(
   }
 );
 
-const appleClientSecret = pulumi.all([
-  config.requireSecret("appleTeamId"),
-  config.requireSecret("appleKeyId"),
-  config.requireSecret("applePrivateKey"),
-  config.requireSecret("appleClientId")
-]).apply(([
-  teamId,
-  keyId,
-  privateKey,
-  clientId
-]) => generateSecret({ teamId, keyId, privateKey, clientId }));
+const appleClientSecret = pulumi
+  .all([
+    config.requireSecret("appleTeamId"),
+    config.requireSecret("appleKeyId"),
+    config.requireSecret("applePrivateKey"),
+    config.requireSecret("appleClientId"),
+  ])
+  .apply(([teamId, keyId, privateKey, clientId]) =>
+    generateSecret({ teamId, keyId, privateKey, clientId })
+  );
 
 const appLabels = { app: `probable-nextjs-${env}` };
 
@@ -232,7 +237,9 @@ const deployment = new k8s.apps.v1.Deployment(
           containers: [
             {
               name: appLabels.app,
-              image: `ghcr.io/tmlamb/probable-pitchers-nextjs:${changedNextjs ? imageTag : "latest"}`,
+              image: `ghcr.io/tmlamb/probable-pitchers-nextjs:${
+                changedNextjs ? imageTag : "latest"
+              }`,
               ports: [{ name: "http", containerPort: 3000 }],
               resources: {
                 requests: {
