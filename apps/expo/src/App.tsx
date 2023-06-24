@@ -2,15 +2,13 @@
 /// <reference path="../../../types/next-auth.d.ts" />
 import Constants from "expo-constants";
 
-
-
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-    import * as Sentry from "sentry-expo";
+import * as Sentry from "sentry-expo";
 import { useDeviceContext } from "twrnc";
 
 import AuthProvider from "./components/AuthProvider";
-import {    Navigation } from "./components/Navigation";
+import { Navigation } from "./components/Navigation";
 import TRPCProvider from "./components/TRPCProvider";
 import tw from "./tailwind";
 //import { Platform } from "react-native";
