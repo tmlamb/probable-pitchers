@@ -65,7 +65,6 @@ export const useNotifications = () => {
 
   useEffect(() => {
     if (deviceFetched && expoPushToken) {
-      console.log("PUSH TOKEN:", expoPushToken);
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
       if (!device) {
         registerDevice({ pushToken: expoPushToken, timezone });
