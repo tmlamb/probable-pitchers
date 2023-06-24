@@ -12,6 +12,7 @@
     "clean": "find . -name node_modules -o -name .next -o -name .expo -type d -prune | xargs rm -rf",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "format:check": "prettier  --check \"**/*.{ts,tsx,md}\"",
     "test": "turbo run test",
     "build:preview:ios": "eas build --profile preview --platform ios"
   },
