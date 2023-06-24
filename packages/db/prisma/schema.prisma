@@ -94,7 +94,7 @@ model Subscription {
   id        Int     @id @default(autoincrement())
   user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
-  pitcher   Pitcher @relation(fields: [pitcherId], references: [id], onDelete: Cascade)
+  pitcher   Pitcher @relation(fields: [pitcherId], references: [id], onDelete: Restrict)
   pitcherId Int
 
   @@unique([userId, pitcherId])
@@ -105,9 +105,9 @@ model Notification {
   id        Int       @id @default(autoincrement())
   device    Device    @relation(fields: [deviceId], references: [id], onDelete: Cascade)
   deviceId  String
-  game      Game      @relation(fields: [gameId], references: [id])
+  game      Game      @relation(fields: [gameId], references: [id], onDelete: Restrict)
   gameId    Int
-  pitcher   Pitcher   @relation(fields: [pitcherId], references: [id])
+  pitcher   Pitcher   @relation(fields: [pitcherId], references: [id], onDelete: Restrict)
   pitcherId Int
   sentOn    DateTime?
 

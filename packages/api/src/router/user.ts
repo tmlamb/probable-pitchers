@@ -1,4 +1,3 @@
-import { z } from "zod";
 import { isAuthed, t } from "../trpc";
 
 export const userRouter = t.router({
