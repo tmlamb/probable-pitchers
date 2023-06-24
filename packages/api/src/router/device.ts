@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { isAuthed, t } from "../trpc";
 
@@ -11,12 +12,30 @@ export const deviceRouter = t.router({
       })
     )
     .mutation(({ input, ctx }) => {
-      return ctx.prisma.device.create({
-        data: {
-          ...input,
-          userId: ctx.session.user.id,
-        },
-      });
+      ctx.prisma.device
+        .findMany({
+          where: { userId: ctx.session.user.id },
+        })
+        .then((devices) => {
+          if (devices.length > 64) {
+            console.warn(
+              `Warning: Approaching 164 device per user system limit for User ID: ${ctx.session.user.id}`
+            );
+            if (devices.length > 164) {
+              throw new TRPCError({
+                code: "TOO_MANY_REQUESTS",
+                message: `Error: User has way too many devices and is past the 164 count limit. User ID: ${ctx.session.user.id}.`,
+              });
+            }
+          }
+
+          return ctx.prisma.device.create({
+            data: {
+              ...input,
+              userId: ctx.session.user.id,
+            },
+          });
+        });
     }),
   update: t.procedure
     .use(isAuthed)
