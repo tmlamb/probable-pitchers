@@ -3,7 +3,7 @@ import fetch from "node-fetch";
 export async function sendPushNotification(
   expoPushToken: string,
   title: string,
-  body: string,
+  body: string
 ) {
   const message = {
     to: expoPushToken,

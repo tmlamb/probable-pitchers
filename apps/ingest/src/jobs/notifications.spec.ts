@@ -58,13 +58,10 @@ test("should ignore existing notification", async () => {
   ]);
 
   prismaMock.notification.create.mockRejectedValueOnce(
-    new Prisma.PrismaClientKnownRequestError(
-      "Unique constraint violation",
-      {
-        code: "P2002",
-        clientVersion: "1"
-      }
-    )
+    new Prisma.PrismaClientKnownRequestError("Unique constraint violation", {
+      code: "P2002",
+      clientVersion: "1",
+    })
   );
   prismaMock.notification.create.mockResolvedValueOnce({
     id: 10,
@@ -239,8 +236,8 @@ test("should ingest multiple game notifications", async () => {
 });
 
 test("should trigger notifications for users", async () => {
-  jest.useFakeTimers()
-  jest.setSystemTime(new Date('2023-04-04T13:30:00.000Z'))
+  jest.useFakeTimers();
+  jest.setSystemTime(new Date("2023-04-04T13:30:00.000Z"));
 
   prismaMock.device.findMany.mockResolvedValueOnce(pendingNotifications);
 
@@ -249,7 +246,7 @@ test("should trigger notifications for users", async () => {
     deviceId: "DEVICE_A",
     gameId: -1,
     pitcherId: -1,
-    sentOn: new Date('2023-04-04T13:30:00.000Z'),
+    sentOn: new Date("2023-04-04T13:30:00.000Z"),
   });
 
   await sendNotifications();
@@ -295,12 +292,12 @@ test("should trigger notifications for users", async () => {
     data: { sentOn: expect.any(Date) },
   });
 
-  jest.useRealTimers()
+  jest.useRealTimers();
 });
 
 test("should recover after error", async () => {
-  jest.useFakeTimers()
-  jest.setSystemTime(new Date('2023-04-04T16:30:00.000Z'))
+  jest.useFakeTimers();
+  jest.setSystemTime(new Date("2023-04-04T16:30:00.000Z"));
 
   prismaMock.device.findMany.mockResolvedValueOnce(pendingNotifications);
 
@@ -366,5 +363,5 @@ test("should recover after error", async () => {
     data: { sentOn: expect.any(Date) },
   });
 
-  jest.useRealTimers()
+  jest.useRealTimers();
 });

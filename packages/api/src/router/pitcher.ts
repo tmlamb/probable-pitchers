@@ -9,12 +9,13 @@ export const pitcherRouter = t.router({
     .query(async ({ ctx, input }) => {
       const words = input.trim().split(" ");
 
-      const query = words.reduce((acc, word, index) =>
-        `${acc}${!!index && index < words.length ? ' ' : ''}*${word}*`, ''
+      const query = words.reduce(
+        (acc, word, index) =>
+          `${acc}${!!index && index < words.length ? " " : ""}*${word}*`,
+        ""
       );
 
-      return await ctx.prisma.$queryRaw<(Pitcher & { abbreviation: string })[]>
-      `
+      return await ctx.prisma.$queryRaw<(Pitcher & { abbreviation: string })[]>`
         SELECT
             p.id,
             p.name,
@@ -25,6 +26,6 @@ export const pitcherRouter = t.router({
             Pitcher p
         INNER JOIN Team t ON t.id = p.teamId
         WHERE MATCH (p.name) AGAINST (${query} IN BOOLEAN MODE)
-      `
+      `;
     }),
 });

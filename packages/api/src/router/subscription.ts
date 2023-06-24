@@ -51,8 +51,8 @@ export const subscriptionRouter = t.router({
     .mutation(async ({ ctx, input }) => {
       return ctx.prisma.subscription.delete({
         where: {
-          id_userId: { id: input, userId: ctx.session.user.id }
-        }
+          id_userId: { id: input, userId: ctx.session.user.id },
+        },
       });
     }),
 });

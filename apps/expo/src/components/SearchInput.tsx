@@ -21,7 +21,12 @@ type Props = {
   style?: ClassInput;
 };
 
-export default function SearchInput({ onChange, onActive, onCancel, style }: Props) {
+export default function SearchInput({
+  onChange,
+  onActive,
+  onCancel,
+  style,
+}: Props) {
   const navigation = useNavigation();
   const [searchText, setSearchText] = React.useState<string>();
   const [showCancelButton, setShowCancelButton] = React.useState(false);
@@ -101,11 +106,13 @@ export default function SearchInput({ onChange, onActive, onCancel, style }: Pro
           }}
           value={searchText || ""}
           style={tw.style("rounded-xl px-3")}
-          leftIcon={<>
-            <SecondaryText style={tw`-ml-1.5 mr-1.5`}>
-              <AntDesign name="search1" size={18} />
-            </SecondaryText>
-          </>}
+          leftIcon={
+            <>
+              <SecondaryText style={tw`-ml-1.5 mr-1.5`}>
+                <AntDesign name="search1" size={18} />
+              </SecondaryText>
+            </>
+          }
           placeholder="Search"
           accessibilityLabel="Filter list of pitchers by name"
         />

@@ -4,10 +4,11 @@ export const prisma = new PrismaClient({
   log:
     process.env.NODE_ENV === "development"
       ? [
-        //"debug",
-        "info",
-        "warn",
-        "error"]
+          //"debug",
+          "info",
+          "warn",
+          "error",
+        ]
       : ["info", "warn", "error"],
 });
 

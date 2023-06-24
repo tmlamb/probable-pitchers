@@ -1,3 +1,3 @@
-export * from './utils';
-export * from './faqs';
-export * from './hooks';
+export * from "./utils";
+export * from "./faqs";
+export * from "./hooks";

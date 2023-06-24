@@ -18,7 +18,7 @@ export async function ingestTeams() {
       await client.team.upsert({
         id: team.id,
         name: team.name,
-        abbreviation: team.abbreviation || null
+        abbreviation: team.abbreviation || null,
       });
     }
   }

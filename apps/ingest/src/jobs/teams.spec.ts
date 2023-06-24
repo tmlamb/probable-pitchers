@@ -15,7 +15,11 @@ test("should upsert one team", async () => {
   for (let i = 1; i < mockedTeams.length; i++) {
     const mockedTeam = mockedTeams[i];
     prismaMock.team.findUnique.mockResolvedValueOnce(
-      mockedTeam || { id: -1, name: "Test Data Issue: Check Fixture", abbreviation: null }
+      mockedTeam || {
+        id: -1,
+        name: "Test Data Issue: Check Fixture",
+        abbreviation: null,
+      }
     );
   }
 

@@ -1,5 +1,5 @@
 import { createPrivateKey } from "crypto";
-import { SignJWT } from 'jose'
+import { SignJWT } from "jose";
 
 interface AppleClientInfo {
   teamId: string;
@@ -17,7 +17,12 @@ interface AppleClientInfo {
     privateKey   The private key to use to sign the JWT. (Starts with -----BEGIN PRIVATE KEY-----)
     clientId     The client id to use in the JWT.
 */
-export async function generateSecret({ teamId, keyId, privateKey, clientId }: AppleClientInfo) {
+export async function generateSecret({
+  teamId,
+  keyId,
+  privateKey,
+  clientId,
+}: AppleClientInfo) {
   const expirationTime = Math.ceil(Date.now() / 1000) + 86400 * 180;
   privateKey = privateKey.replace(/\\n/g, "\n");
 

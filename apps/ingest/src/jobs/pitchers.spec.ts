@@ -66,7 +66,8 @@ test("should insert one new pitcher", async () => {
     id: mockedPitchers[mockedPitchers.length - 1]!.id,
     name: mockedPitchers[mockedPitchers.length - 1]!.fullName,
     teamId: mockedPitchers[mockedPitchers.length - 1]!.currentTeam.id,
-    primaryNumber: mockedPitchers[mockedPitchers.length - 1]!.primaryNumber || null,
+    primaryNumber:
+      mockedPitchers[mockedPitchers.length - 1]!.primaryNumber || null,
   };
 
   for (let i = 0; i < mockedPitchers.length - 1; i++) {

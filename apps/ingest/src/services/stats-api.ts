@@ -20,9 +20,11 @@ const player = probablePitcher.merge(
     currentTeam: z.object({
       id: z.number(),
     }),
-    primaryPosition: z.object({
-      code: z.string(),
-    }).optional(),
+    primaryPosition: z
+      .object({
+        code: z.string(),
+      })
+      .optional(),
   })
 );
 
@@ -78,7 +80,7 @@ const teamsResponse = z.object({
 });
 
 export async function getTeams(season: string): Promise<Team[]> {
-  console.log("Season:",season);
+  console.log("Season:", season);
   return fetch(
     `https://statsapi.mlb.com/api/v1/teams?sportId=1&season=${season}`
   )
@@ -107,7 +109,8 @@ export async function getPitchers(season: string): Promise<Player[]> {
       // "1" is a pitcher
       // "Y" is a two-way player (stupid sexy Ohtani)
       return players.people.filter(
-        (p) => p.primaryPosition?.code === "1" || p.primaryPosition?.code === "Y"
+        (p) =>
+          p.primaryPosition?.code === "1" || p.primaryPosition?.code === "Y"
       );
     })
     .catch((err: Error) => {

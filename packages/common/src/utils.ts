@@ -24,25 +24,23 @@ function nextGameDate(
   }
 }
 
-
-export type PitcherSubscription =
-  Pitcher & {
-    team: { abbreviation: string | null },
-    homeGames?: Game[],
-    awayGames?: Game[],
-    nextGameDate?: Date,
-    subscription?: Subscription
-  };
+export type PitcherSubscription = Pitcher & {
+  team: { abbreviation: string | null };
+  homeGames?: Game[];
+  awayGames?: Game[];
+  nextGameDate?: Date;
+  subscription?: Subscription;
+};
 
 export const subscriptionSchedule = (
   subscriptions:
     | (Subscription & {
-      pitcher: Pitcher & {
-        team: { abbreviation: string | null },
-        homeGames: Game[];
-        awayGames: Game[];
-      };
-    })[]
+        pitcher: Pitcher & {
+          team: { abbreviation: string | null };
+          homeGames: Game[];
+          awayGames: Game[];
+        };
+      })[]
     | undefined
 ): {
   nextGameDay: string;
@@ -56,7 +54,7 @@ export const subscriptionSchedule = (
         id: s.id,
         userId: s.userId,
         pitcherId: s.pitcherId,
-      }
+      },
     }))
     .orderBy((p) => p.nextGameDate)
     .groupBy((p) => {
@@ -68,9 +66,7 @@ export const subscriptionSchedule = (
         } else if (isTomorrow(date)) {
           return `Tomorrow (${dateForSection})`;
         } else {
-          return `In ${formatDistanceToNowStrict(
-            date
-          )} (${dateForSection})`;
+          return `In ${formatDistanceToNowStrict(date)} (${dateForSection})`;
         }
       } else {
         return "Unscheduled";
@@ -79,4 +75,3 @@ export const subscriptionSchedule = (
     .map((data, nextGameDay) => ({ nextGameDay, data }))
     .value();
 };
-
