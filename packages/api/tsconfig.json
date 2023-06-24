@@ -1,4 +1,11 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["src", "index.ts", "transformer.ts"]
+  "include": [
+    ".eslintrc.cjs",
+    "src/index.ts",
+    "src",
+    "index.ts",
+    "transformer.ts",
+    "backend.ts"
+  ]
 }

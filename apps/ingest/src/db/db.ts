@@ -76,8 +76,14 @@ export const client = {
     },
   },
   notification: {
-    create: ({ deviceId, gameId, pitcherId }: {
-      deviceId: string, gameId: number, pitcherId: number
+    create: ({
+      deviceId,
+      gameId,
+      pitcherId,
+    }: {
+      deviceId: string;
+      gameId: number;
+      pitcherId: number;
     }) => {
       return prisma.notification.create({
         data: { deviceId, gameId, pitcherId },

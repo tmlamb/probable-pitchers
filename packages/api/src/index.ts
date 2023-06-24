@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="../../../types/next-auth.d.ts" />
 export {
   isValidProvider,
