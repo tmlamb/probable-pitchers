@@ -125,12 +125,7 @@ const playerJob = new k8s.batch.v1.CronJob(
               containers: [
                 {
                   name: playerLabels.app,
-                  resources: {
-                    requests: {
-                      cpu: "2000m",
-                      memory: "4Gi",
-                    },
-                  },
+
                   image: `ghcr.io/tmlamb/probable-pitchers-ingest:${
                     changedIngest ? imageTag : "latest"
                   }`,
