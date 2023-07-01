@@ -249,7 +249,7 @@ const deployment = new k8s.apps.v1.Deployment(
               resources: {
                 requests: {
                   cpu: "250m",
-                  memory: "256mi",
+                  memory: "256Mi",
                 },
               },
               livenessProbe: {
