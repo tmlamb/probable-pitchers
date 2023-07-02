@@ -35,9 +35,6 @@ jobs:
         id: changeset
         run: |
           content=`npm run --silent build -- --filter=...\[HEAD^\] --dry-run=json`
-          content="${content//'%'/'%25'}"
-          content="${content//$'\n'/'%0A'}"
-          content="${content//$'\r'/'%0D'}"
           echo "result=$content" >> "$GITHUB_OUTPUT"
 
       - name: echo changeset
