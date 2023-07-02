@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "@types/jest": "^29.2.0",
+    "eslint-config-custom": "*",
     "jest": "^29.2.1",
     "jest-mock-extended": "^3.0.1",
     "ts-jest": "^29.1.0",
