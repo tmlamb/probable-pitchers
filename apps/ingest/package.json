@@ -10,7 +10,8 @@
     "pitchers": "INGEST_JOBS=pitchers ts-node-esm ./src/index.ts",
     "notifications": "INGEST_JOBS=notifications ts-node-esm ./src/index.ts",
     "teams": "INGEST_JOBS=teams ts-node-esm ./src/index.ts",
-    "test": "jest --silent"
+    "test": "jest --silent",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@probable/db": "*",
