@@ -38,25 +38,28 @@ jobs:
           content="${content//'%'/'%25'}"
           content="${content//$'\n'/'%0A'}"
           content="${content//$'\r'/'%0D'}"
-          echo "{result}={$content}" >> $GITHUB_OUTPUT
+          echo "result=$content" >> "$GITHUB_OUTPUT"
+
+      - name: echo changeset
+        run: echo "The changeset is ${{ steps.changeset.outputs.result }}"
 
       - name: Changed nextjs?
         id: changed-nextjs
         if: ${{ contains(fromJSON(steps.changeset.outputs.result).packages, '@probable/nextjs') }}
         run: |
-          echo "{result}={true}" >> $GITHUB_OUTPUT
+          echo "result=true" >> "$GITHUB_OUTPUT"
 
       - name: Changed ingest?
         id: changed-ingest
         if: ${{ contains(fromJSON(steps.changeset.outputs.result).packages, '@probable/ingest') }}
         run: |
-          echo "{result}={true}" >> $GITHUB_OUTPUT
+          echo "result=true" >> "$GITHUB_OUTPUT"
 
       - name: Changed expo?
         id: changed-expo
         if: ${{ contains(fromJSON(steps.changeset.outputs.result).packages, '@probable/expo') }}
         run: |
-          echo "{result}={true}" >> $GITHUB_OUTPUT
+          echo "result=true" >> "$GITHUB_OUTPUT"
 
   test:
     name: Automated Testing
