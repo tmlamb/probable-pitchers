@@ -39,6 +39,9 @@ jobs:
           content="${content//$'\r'/''}"
           echo "result=$content" >> "$GITHUB_OUTPUT"
 
+      - name: echo changeset
+        run: echo "The changeset is ${{ steps.changeset.outputs.result }}"
+
       - name: Changed nextjs?
         id: changed-nextjs
         if: ${{ contains(fromJSON(steps.changeset.outputs.result).packages, '@probable/nextjs') }}
