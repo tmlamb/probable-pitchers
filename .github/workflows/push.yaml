@@ -200,10 +200,10 @@ jobs:
           cluster_name: "probable-pitcher"
           location: "us-west1"
 
-      - name: "Install dependencies"
+      - name: Install dependencies
         run: cd infrastructure && npm ci
 
-      - name: "Update test stack"
+      - name: Update test stack
         uses: pulumi/actions@v3
         with:
           command: up
