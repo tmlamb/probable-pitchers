@@ -166,17 +166,6 @@ jobs:
           docker build . --file apps/ingest/Dockerfile --tag ghcr.io/tmlamb/probable-pitchers-ingest:sha-${{ github.sha }} --tag ghcr.io/tmlamb/probable-pitchers-ingest:latest --build-arg TURBO_TEAM=${{ env.TURBO_TEAM }} --build-arg TURBO_TOKEN=${{ env.TURBO_TOKEN }}
           docker push --all-tags ghcr.io/tmlamb/probable-pitchers-ingest
 
-  tag-git:
-    name: Preview Tag Git
-    runs-on: ubuntu-latest
-    steps:
-      - name: "Check out repository code"
-        uses: actions/checkout@v3
-      - name: "Push preview tag"
-        uses: EndBug/latest-tag@latest
-        with:
-          tag-name: preview
-
   deploy-infra:
     name: Deploy Preview Infrastructure
     needs: [checks, build-nextjs, build-ingest]
@@ -267,3 +256,19 @@ jobs:
 
           #- name: App Store Build
           #  run: cd apps/expo && eas build --profile preview --platform all --non-interactive
+
+  tag-git:
+    name: Preview Tag Git
+    needs: [deploy-infra, update-preview]
+    if: always() &&
+      (needs.deploy-infra.result == 'skipped' || needs.deploy-infra.result == 'success') &&
+      (needs.update-preview.result == 'skipped' || needs.update-preview.result == 'success')
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Check out repository code"
+        uses: actions/checkout@v3
+
+      - name: "Push preview tag"
+        uses: EndBug/latest-tag@latest
+        with:
+          ref: preview
