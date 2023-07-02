@@ -17,6 +17,6 @@ export const faqs = [
   {
     question: "My subscriptions are gone, where are they?",
     answer:
-      "Subscriptions are tied to the account linked with your identity manager, like Google or Apple. For instance, if you logged in previously with your Google account and added subscriptions, then later accessed the service with your Apple account, your Google account's subscriptions will not be available.",
+      "Subscriptions are tied to the account linked with your identity manager, like Google or Apple. For instance, if you log in with your Google account and add subscriptions, then later access the service with your Apple account, your Google account's subscriptions will not be available.",
   },
 ];
