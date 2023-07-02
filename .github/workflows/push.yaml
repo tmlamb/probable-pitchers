@@ -1,4 +1,4 @@
-name: Push Staging
+name: Integrate and Deploy Main
 on:
   push:
     branches:
