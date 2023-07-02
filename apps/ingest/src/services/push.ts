@@ -10,7 +10,6 @@ export async function sendPushNotification(
     sound: "default",
     title: title,
     body: body,
-    ttl: 86400,
   };
   try {
     console.log(`sending push notification: ${JSON.stringify(message)}`);
