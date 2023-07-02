@@ -2,12 +2,12 @@ export const faqs = [
   {
     question: "How does the Probable Pitcher service work?",
     answer:
-      "Probable Pitcher is a service that sends you notification when a pitcher you are subscribed to is scheduled to start a game.",
+      "Probable Pitcher is a service that sends you a notification on the days your favorite pitchers are scheduled to start",
   },
   {
     question: "What types of notifications will I receive?",
     answer:
-      "You will receive one notification in the morning if one or more pitchers you are subscribed to are scheduled to start that day. You may receive additional notifications throughout the day if there are late lineup changes for a pitcher you are subscribed to.",
+      "You will receive one notification on the morning of days where one or more pitchers you are subscribed to are scheduled to start. You may receive additional notifications throughout the day if there are late lineup changes for a pitcher you are subscribed to.",
   },
   {
     question: "Why am I not receiving notifications?",
