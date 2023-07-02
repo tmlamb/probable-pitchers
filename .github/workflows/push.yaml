@@ -10,7 +10,7 @@ env:
 
 jobs:
   checks:
-    name: Check Changeset
+    name: Changeset
     runs-on: ubuntu-latest
     outputs:
       changed-nextjs: ${{ steps.changed-nextjs.outputs.result }}
@@ -58,7 +58,7 @@ jobs:
           echo "result=true" >> "$GITHUB_OUTPUT"
 
   test:
-    name: Automated Testing
+    name: Test
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
@@ -79,7 +79,7 @@ jobs:
         run: npm run test
 
   lint:
-    name: Lint Code
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
@@ -100,7 +100,7 @@ jobs:
         run: npm run lint
 
   format:
-    name: Code Format
+    name: Format
     runs-on: ubuntu-latest
     steps:
       - name: Check out code

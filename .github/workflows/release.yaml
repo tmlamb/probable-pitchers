@@ -5,7 +5,7 @@ on:
 
 jobs:
   tag-images:
-    name: Tag Container Images
+    name: Tag Images
     runs-on: ubuntu-latest
     steps:
       - name: Login to container registry
@@ -39,7 +39,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
-          cache: 'npm'
+          cache: "npm"
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
@@ -97,7 +97,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
-          cache: 'npm'
+          cache: "npm"
 
       - name: Setup Expo
         uses: expo/expo-github-action@v7
