@@ -80,7 +80,7 @@ const teamsResponse = z.object({
 });
 
 export async function getTeams(season: string): Promise<Team[]> {
-  console.log("Season:", season);
+  console.log("Fetching teams for season:", season);
   return fetch(
     `https://statsapi.mlb.com/api/v1/teams?sportId=1&season=${season}`
   )
