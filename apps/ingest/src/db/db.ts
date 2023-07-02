@@ -8,7 +8,6 @@ export const client = {
       return prisma.team.findUnique({ where: { id } });
     },
     upsert: ({ id, name, abbreviation }: Team) => {
-      console.info(`Upserting team ${id} ${name} ${abbreviation}`);
       return prisma.team.upsert({
         where: { id },
         create: { id, name, abbreviation },
@@ -38,7 +37,6 @@ export const client = {
     today: () => {
       const start = new Date();
       const end = add(endOfToday(), { hours: 6 });
-      console.info(`Looking for games between ${start} and ${end}`);
       return prisma.game.findMany({
         where: {
           date: {
@@ -106,11 +104,6 @@ export const client = {
       const start = new Date();
       const hour = Number(format(start, "H"));
       const end = add(hour < 6 ? start : endOfToday(), { hours: 6 });
-
-      console.info(
-        `Querying devices with unsent notifications between ${start} and ${end}`
-      );
-
       const notificationsPendingToday = {
         AND: [
           {
