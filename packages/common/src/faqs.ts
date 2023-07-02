@@ -12,10 +12,10 @@ export const faqs = [
   {
     question: "Why am I not receiving notifications?",
     answer:
-      "Check your application settings and make sure notifications are enabled. Our service makes a best effort to send you notifications, but we cannot guarantee that you will receive them.",
+      "Check your application settings and confirm notifications are enabled. Our service makes a best effort to send you notifications, but we cannot guarantee that you will receive them.",
   },
   {
-    question: "I don't see my subscriptions, where are they?",
+    question: "My subscriptions are missing, where are they?",
     answer:
       "Subscriptions are tied to the account linked with your identity manager, like Google or Apple. For instance, if you log in with your Google account and add subscriptions, then later access the service with your Apple account, your Google account's subscriptions will not be available.",
   },
