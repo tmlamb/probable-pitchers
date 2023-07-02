@@ -70,8 +70,8 @@ jobs:
       - name: Run Tests
         run: npm run format:check
 
-  preview-infra:
-    name: Preview Infrastructure
+  dry-run-infra:
+    name: Infra Deploy Dry-run
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
