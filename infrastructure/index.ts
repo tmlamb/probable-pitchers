@@ -91,6 +91,12 @@ const seedJob = new k8s.batch.v1.CronJob(
                       value: "teams,pitchers",
                     },
                   ],
+                  resources: {
+                    requests: {
+                      cpu: "250m",
+                      memory: "256Mi",
+                    },
+                  },
                 },
               ],
               restartPolicy: "OnFailure",
@@ -139,6 +145,12 @@ const playerJob = new k8s.batch.v1.CronJob(
                       value: "pitchers,games",
                     },
                   ],
+                  resources: {
+                    requests: {
+                      cpu: "250m",
+                      memory: "256Mi",
+                    },
+                  },
                 },
               ],
               restartPolicy: "OnFailure",
@@ -187,6 +199,12 @@ const notifyJob = new k8s.batch.v1.CronJob(
                       value: "games,notifications",
                     },
                   ],
+                  resources: {
+                    requests: {
+                      cpu: "250m",
+                      memory: "256Mi",
+                    },
+                  },
                 },
               ],
               restartPolicy: "OnFailure",
