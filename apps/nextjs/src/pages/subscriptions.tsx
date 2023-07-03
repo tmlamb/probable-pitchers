@@ -5,7 +5,7 @@ import type {
   GetServerSidePropsContext,
   NextPage,
 } from "next";
-import { unstable_getServerSession } from "next-auth";
+import { getServerSession } from "next-auth";
 import { useSession } from "next-auth/react";
 import { trpc } from "../utils/trpc";
 
@@ -46,7 +46,7 @@ const Subscriptions: NextPage = () => {
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  const session = await unstable_getServerSession(
+  const session = await getServerSession(
     context?.req,
     context.res,
     authOptions
