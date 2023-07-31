@@ -114,13 +114,6 @@ export default function TextInput({
               </>
             </Animated.View>
           ))}
-        {label && (
-          <Animated.View
-            entering={FadeIn}
-            exiting={FadeOut}
-            style={tw`absolute`}
-          ></Animated.View>
-        )}
         <NativeTextInput
           onChangeText={handleChange}
           onChange={onChange}
