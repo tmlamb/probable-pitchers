@@ -1,17 +1,17 @@
 diff --git a/node_modules/next-auth/core/index.js b/node_modules/next-auth/core/index.js
-index c9ad566..0784165 100644
+index 2da9698..4e8d304 100644
 --- a/node_modules/next-auth/core/index.js
 +++ b/node_modules/next-auth/core/index.js
-@@ -59,7 +59,7 @@ async function toInternalRequest(req) {
+@@ -66,7 +66,7 @@ async function toInternalRequest(req) {
  }
  
- async function NextAuthHandler(params) {
+ async function AuthHandler(params) {
 -  var _req$body$callbackUrl, _req$body, _req$query2, _req$body2;
 +  var _req$body$callbackUrl, _req$body, _req$query2, _req$body2, _req$body3;
  
    const {
-     options: userOptions,
-@@ -75,31 +75,16 @@ async function NextAuthHandler(params) {
+     options: authOptions,
+@@ -82,31 +82,16 @@ async function AuthHandler(params) {
    if (Array.isArray(assertionResult)) {
      assertionResult.forEach(_logger.default.warn);
    } else if (assertionResult instanceof Error) {
@@ -39,7 +39,7 @@ index c9ad566..0784165 100644
      const {
        pages,
        theme
-     } = userOptions;
+     } = authOptions;
 -    const authOnErrorPage = (pages === null || pages === void 0 ? void 0 : pages.error) && ((_req$query = req.query) === null || _req$query === void 0 ? void 0 : (_req$query$callbackUr = _req$query.callbackUrl) === null || _req$query$callbackUr === void 0 ? void 0 : _req$query$callbackUr.startsWith(pages.error));
 +
 +    _logger.default.error(assertionResult.code, assertionResult);
@@ -48,7 +48,7 @@ index c9ad566..0784165 100644
  
      if (!(pages !== null && pages !== void 0 && pages.error) || authOnErrorPage) {
        if (authOnErrorPage) {
-@@ -248,6 +233,201 @@ async function NextAuthHandler(params) {
+@@ -255,6 +240,201 @@ async function AuthHandler(params) {
      }
    } else if (method === "POST") {
      switch (action) {
@@ -61,12 +61,12 @@ index c9ad566..0784165 100644
 +              {
 +                var _csrfTokenRes$cookies, _csrfTokenRes$cookies2, _req$body4, _req$body5, _signInRes$cookies, _signInRes$cookies$fi, _signInRes$cookies2, _signInRes$cookies2$f;
 +
-+                const csrfTokenRes = await NextAuthHandler({
++                const csrfTokenRes = await AuthHandler({
 +                  req: {
 +                    host: req.host,
 +                    action: "csrf"
 +                  },
-+                  options: userOptions
++                  options
 +                });
 +                const csrfToken = csrfTokenRes.body.csrfToken;
 +                const csrfTokenCookie = (_csrfTokenRes$cookies = csrfTokenRes.cookies) === null || _csrfTokenRes$cookies === void 0 ? void 0 : (_csrfTokenRes$cookies2 = _csrfTokenRes$cookies.find(c => c.name === options.cookies.csrfToken.name)) === null || _csrfTokenRes$cookies2 === void 0 ? void 0 : _csrfTokenRes$cookies2.value;
@@ -77,7 +77,7 @@ index c9ad566..0784165 100644
 +
 +                const callbackUrl = (_req$body4 = req.body) === null || _req$body4 === void 0 ? void 0 : _req$body4.callbackUrl;
 +                cookies[options.cookies.callbackUrl.name] = callbackUrl;
-+                const signInRes = await NextAuthHandler({
++                const signInRes = await AuthHandler({
 +                  req: {
 +                    host: req.host,
 +                    action: "signin",
@@ -89,7 +89,7 @@ index c9ad566..0784165 100644
 +                    },
 +                    providerId: (_req$body5 = req.body) === null || _req$body5 === void 0 ? void 0 : _req$body5.providerId
 +                  },
-+                  options: userOptions
++                  options
 +                });
 +                const authorizationUrl = signInRes.redirect;
 +                const url = new URL(authorizationUrl);
@@ -138,7 +138,7 @@ index c9ad566..0784165 100644
 +                  cookies[options.cookies.state.name] = req.body.stateEncrypted;
 +                }
 +
-+                const callbackRes = await NextAuthHandler({
++                const callbackRes = await AuthHandler({
 +                  req: {
 +                    host: req.host,
 +                    action: "callback",
@@ -149,7 +149,7 @@ index c9ad566..0784165 100644
 +                      code: (_req$body11 = req.body) === null || _req$body11 === void 0 ? void 0 : _req$body11.code
 +                    }
 +                  },
-+                  options: userOptions
++                  options
 +                });
 +                const location = callbackRes.redirect;
 +                const url = new URL(location);
@@ -180,12 +180,12 @@ index c9ad566..0784165 100644
 +                  cookies[options.cookies.sessionToken.name] = req.body.sessionToken;
 +                }
 +
-+                const csrfTokenRes = await NextAuthHandler({
++                const csrfTokenRes = await AuthHandler({
 +                  req: {
 +                    host: req.host,
 +                    action: "csrf"
 +                  },
-+                  options: userOptions
++                  options
 +                });
 +                const csrfToken = csrfTokenRes.body.csrfToken;
 +                const csrfTokenCookie = (_csrfTokenRes$cookies3 = csrfTokenRes.cookies) === null || _csrfTokenRes$cookies3 === void 0 ? void 0 : (_csrfTokenRes$cookies4 = _csrfTokenRes$cookies3.find(c => c.name === options.cookies.csrfToken.name)) === null || _csrfTokenRes$cookies4 === void 0 ? void 0 : _csrfTokenRes$cookies4.value;
@@ -194,7 +194,7 @@ index c9ad566..0784165 100644
 +                  cookies[options.cookies.csrfToken.name] = csrfTokenCookie;
 +                }
 +
-+                await NextAuthHandler({
++                await AuthHandler({
 +                  req: {
 +                    host: req.host,
 +                    action: "signout",
@@ -204,7 +204,7 @@ index c9ad566..0784165 100644
 +                      csrfToken
 +                    }
 +                  },
-+                  options: userOptions
++                  options
 +                });
 +                return {
 +                  body: {
@@ -221,23 +221,23 @@ index c9ad566..0784165 100644
 +                  cookies[options.cookies.sessionToken.name] = req.body.sessionToken;
 +                }
 +
-+                return await NextAuthHandler({
++                return await AuthHandler({
 +                  req: {
 +                    host: req.host,
 +                    cookies,
 +                    action: "session"
 +                  },
-+                  options: userOptions
++                  options
 +                });
 +              }
 +
 +            case "providers":
 +              {
-+                return await NextAuthHandler({
++                return await AuthHandler({
 +                  req: {
 +                    action: "providers"
 +                  },
-+                  options: userOptions
++                  options
 +                });
 +              }
 +          }
@@ -250,32 +250,33 @@ index c9ad566..0784165 100644
        case "signin":
          if (options.csrfTokenVerified && options.provider) {
            const signin = await routes.signin({
-@@ -312,13 +492,13 @@ async function NextAuthHandler(params) {
-       case "_log":
-         if (userOptions.logger) {
-           try {
--            var _req$body3;
-+            var _req$body14;
+@@ -320,13 +500,13 @@ async function AuthHandler(params) {
+         {
+           if (authOptions.logger) {
+             try {
+-              var _req$body3;
++              var _req$body14;
  
-             const {
-               code,
-               level,
-               ...metadata
--            } = (_req$body3 = req.body) !== null && _req$body3 !== void 0 ? _req$body3 : {};
-+            } = (_req$body14 = req.body) !== null && _req$body14 !== void 0 ? _req$body14 : {};
+               const {
+                 code,
+                 level,
+                 ...metadata
+-              } = (_req$body3 = req.body) !== null && _req$body3 !== void 0 ? _req$body3 : {};
++              } = (_req$body14 = req.body) !== null && _req$body14 !== void 0 ? _req$body14 : {};
  
-             _logger.default[level](code, metadata);
-           } catch (error) {
+               _logger.default[level](code, metadata);
+             } catch (error) {
 diff --git a/node_modules/next-auth/core/types.d.ts b/node_modules/next-auth/core/types.d.ts
-index d828ced..43e170f 100644
+index de0d9eb..2d47e1c 100644
 --- a/node_modules/next-auth/core/types.d.ts
 +++ b/node_modules/next-auth/core/types.d.ts
-@@ -473,4 +473,4 @@ export interface DefaultUser {
+@@ -518,5 +518,5 @@ export interface DefaultUser {
   */
- export interface User extends Record<string, unknown>, DefaultUser {
+ export interface User extends DefaultUser {
  }
--export declare type NextAuthAction = "providers" | "session" | "csrf" | "signin" | "signout" | "callback" | "verify-request" | "error" | "_log";
-+export declare type NextAuthAction = "providers" | "session" | "csrf" | "signin" | "signout" | "callback" | "verify-request" | "error" | "_log" | "proxy";
+-export type AuthAction = "providers" | "session" | "csrf" | "signin" | "signout" | "callback" | "verify-request" | "error" | "_log";
++export type AuthAction = "providers" | "session" | "csrf" | "signin" | "signout" | "callback" | "verify-request" | "error" | "_log" | "proxy";
+ //# sourceMappingURL=types.d.ts.map
 diff --git a/node_modules/next-auth/expo/index.d.ts b/node_modules/next-auth/expo/index.d.ts
 new file mode 100644
 index 0000000..b80bc7f
@@ -284,14 +285,14 @@ index 0000000..b80bc7f
 @@ -0,0 +1,73 @@
 +/// <reference types="react" />
 +import { Session } from "..";
-+import { NextAuthClientConfig } from "../client/_utils";
++import { AuthClientConfig } from "../client/_utils";
 +import { LoggerInstance } from "../utils/logger";
 +import type { ClientSafeProvider, LiteralUnion, SessionProviderProps, SignInOptions, SignInResponse, UseSessionOptions } from "./types";
 +import type { BuiltInProviderType, RedirectableProviderType } from "../providers";
 +import * as AuthSession from "expo-auth-session";
 +import "react-native-url-polyfill/auto";
-+export declare function apiBaseUrl(__NEXTAUTH: NextAuthClientConfig): string;
-+export declare function fetchData<T = any>(path: string, __NEXTAUTH: NextAuthClientConfig, logger: LoggerInstance, params?: Record<string, any>): Promise<T | null>;
++export declare function apiBaseUrl(__NEXTAUTH: AuthClientConfig): string;
++export declare function fetchData<T = any>(path: string, __NEXTAUTH: AuthClientConfig, logger: LoggerInstance, params?: Record<string, any>): Promise<T | null>;
 +export declare function getSignInInfo({ provider, proxyRedirectUri, }: {
 +    provider: string;
 +    proxyRedirectUri: string;
@@ -357,7 +358,7 @@ index 0000000..b80bc7f
 +export declare function SessionProvider(props: SessionProviderProps): JSX.Element;
 diff --git a/node_modules/next-auth/expo/index.js b/node_modules/next-auth/expo/index.js
 new file mode 100644
-index 0000000..596ab43
+index 0000000..6c7bef1
 --- /dev/null
 +++ b/node_modules/next-auth/expo/index.js
 @@ -0,0 +1,262 @@
@@ -623,7 +624,6 @@ index 0000000..596ab43
 +  }), [session, loading]);
 +  return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
 +}
-\ No newline at end of file
 diff --git a/node_modules/next-auth/expo/types.d.ts b/node_modules/next-auth/expo/types.d.ts
 new file mode 100644
 index 0000000..5a7b497
@@ -683,7 +683,7 @@ index 0000000..5a7b497
 +}
 diff --git a/node_modules/next-auth/expo/types.js b/node_modules/next-auth/expo/types.js
 new file mode 100644
-index 0000000..430afc1
+index 0000000..e8650c9
 --- /dev/null
 +++ b/node_modules/next-auth/expo/types.js
 @@ -0,0 +1,5 @@
@@ -692,4 +692,3 @@ index 0000000..430afc1
 +Object.defineProperty(exports, "__esModule", {
 +  value: true
 +});
-\ No newline at end of file

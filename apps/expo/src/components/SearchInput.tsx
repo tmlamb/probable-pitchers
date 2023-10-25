@@ -151,7 +151,7 @@ export default function SearchInput({
               onCancel();
               Keyboard.dismiss();
             }}
-            accessibilityLabel="Clear exercise filter"
+            accessibilityLabel="Clear search filter"
           >
             <SpecialText style={tw`pl-3 font-bold text-lg tracking-tight`}>
               Done
