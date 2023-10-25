@@ -56,9 +56,7 @@ export default function Header() {
               <div className="flex flex-1 items-center justify-center sm:justify-start">
                 <div className="flex flex-shrink-0 items-center">
                   <Link href="/" className="flex items-center">
-
                     <Image src="/logo.png" alt="" height={40} width={40} />
-
                   </Link>
                 </div>
                 <div className="hidden sm:ml-6 sm:block">
@@ -115,10 +113,9 @@ export default function Header() {
                               className={classNames(
                                 active ? "bg-gray-100" : "",
                                 "block px-4 py-2 text-sm text-gray-700"
-                              )}>
-                              
-                                Settings
-                              
+                              )}
+                            >
+                              Settings
                             </Link>
                           )}
                         </Menu.Item>
@@ -129,10 +126,9 @@ export default function Header() {
                               className={classNames(
                                 active ? "bg-gray-100" : "",
                                 "block px-4 py-2 text-sm text-gray-700"
-                              )}>
-                              
-                                Support
-                              
+                              )}
+                            >
+                              Support
                             </Link>
                           )}
                         </Menu.Item>
