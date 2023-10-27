@@ -2,8 +2,8 @@
 #        PRUNER        #
 ########################
 
-FROM node:16-alpine AS pruner
-RUN apk add --no-cache libc6-compat openssl
+FROM node:18-alpine AS pruner
+# RUN apk add --no-cache libc6-compat openssl
 RUN apk update
 
 WORKDIR /probable-pitchers
@@ -18,8 +18,8 @@ RUN turbo prune --scope=@probable/ingest --docker
 #        BUILDER       #
 ########################
 
-FROM node:16-alpine AS builder
-RUN apk add --no-cache libc6-compat openssl
+FROM node:18-alpine AS builder
+# RUN apk add --no-cache libc6-compat openssl
 RUN apk update
 
 WORKDIR /probable-pitchers
@@ -48,7 +48,7 @@ RUN npm run build -- --filter=ingest
 #        RUNNER        #
 ########################
 
-FROM node:16-alpine AS runner
+FROM node:18-alpine AS runner
 WORKDIR /probable-pitchers
 
 ENV NODE_ENV production

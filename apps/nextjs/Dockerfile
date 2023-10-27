@@ -2,8 +2,8 @@
 #        PRUNER        #
 ########################
 
-FROM node:16-alpine AS pruner
-RUN apk add --no-cache libc6-compat openssl
+FROM node:18-alpine AS pruner
+# RUN apk add --no-cache libc6-compat openssl
 RUN apk update
 
 WORKDIR /probable-pitchers
@@ -18,8 +18,8 @@ RUN turbo prune --scope=@probable/nextjs --docker
 #        BUILDER       #
 ########################
 
-FROM node:16-alpine AS builder
-RUN apk add --no-cache libc6-compat openssl
+FROM node:18-alpine AS builder
+# RUN apk add --no-cache libc6-compat openssl
 RUN apk update
 
 WORKDIR /probable-pitchers
@@ -60,7 +60,7 @@ RUN npm run build -- --filter=nextjs
 ########################
 
 # Production image, copy all the files and run next
-FROM node:16-alpine AS runner
+FROM node:18-alpine AS runner
 WORKDIR /probable-pitchers
 
 ENV NODE_ENV production
@@ -87,4 +87,4 @@ EXPOSE 3000
 
 ENV PORT 3000
 
-CMD ["node", "apps/nextjs/server.js"]
+CMD ["node", "apps/nextjs/apps/nextjs/server.js"]
