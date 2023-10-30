@@ -4,9 +4,9 @@
 
 # Install dependencies only when needed
 # TODO: re-evaluate if emulation is still necessary on arm64 after moving to node 18
-FROM --platform=linux/amd64 node:16-alpine AS deps
+FROM --platform=linux/amd64 node:18-alpine AS deps
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-RUN apk add --no-cache libc6-compat openssl
+# RUN apk add --no-cache libc6-compat openssl
 WORKDIR /probable-pitchers
 
 COPY packages/db ./packages/db

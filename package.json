@@ -1,4 +1,5 @@
 {
+  "name": "probable-pitcher",
   "private": true,
   "workspaces": [
     "apps/*",
