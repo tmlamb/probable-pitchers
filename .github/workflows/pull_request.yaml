@@ -101,7 +101,7 @@ jobs:
         run: cd infrastructure && npm ci
 
       - name: Preview Test Stack
-        uses: pulumi/actions@v3
+        uses: pulumi/actions@v4
         with:
           command: preview
           stack-name: preview
