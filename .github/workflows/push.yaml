@@ -204,7 +204,7 @@ jobs:
         run: cd infrastructure && npm ci
 
       - name: Update test stack
-        uses: pulumi/actions@v3
+        uses: pulumi/actions@v4
         with:
           command: up
           stack-name: preview
