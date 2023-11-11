@@ -38,7 +38,7 @@ jobs:
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 18.x
           cache: "npm"
 
       - name: Authenticate to Google Cloud
@@ -59,7 +59,7 @@ jobs:
         run: cd infrastructure && npm ci
 
       - name: Update production stack
-        uses: pulumi/actions@v3
+        uses: pulumi/actions@v4
         with:
           command: up
           stack-name: production
@@ -96,7 +96,7 @@ jobs:
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 18.x
           cache: "npm"
 
       - name: Setup Expo
