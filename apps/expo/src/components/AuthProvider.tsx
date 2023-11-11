@@ -53,19 +53,15 @@ export const googleLogin = async (): Promise<SigninResult | null> => {
 };
 
 export const appleLogin = async (): Promise<SigninResult | null> => {
-  console.log("Apple");
   const redirectUri = AuthSession.makeRedirectUri({
     useProxy: true,
     projectNameForProxy,
   });
-  console.log("redirectUri", redirectUri);
   const provider = nativeProviders.apple;
-  console.log("provider", provider);
   const signinInfo = await getSignInInfo({
     provider,
     proxyRedirectUri: redirectUri,
   });
-  console.log("signinInfo", signinInfo);
   if (!signinInfo) {
     throw new Error("Couldn't get sign in info from server");
   }
