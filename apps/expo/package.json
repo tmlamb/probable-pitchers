@@ -29,7 +29,7 @@
     "expo": "^49.0.18",
     "expo-apple-authentication": "~6.1.0",
     "expo-application": "~5.3.0",
-    "expo-auth-session": "~5.0.2",
+    "expo-auth-session": "^4",
     "expo-constants": "~14.4.2",
     "expo-dev-client": "~2.4.12",
     "expo-device": "~5.4.0",
