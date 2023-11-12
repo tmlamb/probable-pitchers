@@ -71,7 +71,7 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ account }) {
-      const userByAccount = await adapter.getUserByAccount({
+      const userByAccount = await adapter?.getUserByAccount?.({
         providerAccountId: account!.providerAccountId,
         provider: account!.provider,
       });
@@ -79,12 +79,12 @@ export const authOptions: NextAuthOptions = {
         const provider = account!.provider;
         if (isValidProvider(provider)) {
           const counterpart = providerPairs[provider];
-          const userByAccount = await adapter.getUserByAccount({
+          const userByAccount = await adapter?.getUserByAccount?.({
             providerAccountId: account!.providerAccountId,
             provider: counterpart,
           });
           if (userByAccount) {
-            await adapter.linkAccount({
+            await adapter?.linkAccount?.({
               ...account!,
               userId: userByAccount.id,
             });
