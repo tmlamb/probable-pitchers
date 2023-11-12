@@ -4,13 +4,17 @@ This monorepo contains several apps and packages used to build and distribute th
 
 ## Packages
 
+### [api](packages/api)
+
+Defines a tRPC backend API with nextauth, used by clients that interact with the database.
+
+### [common](packages/common)
+
+Generic reusable logic.
+
 ### [db](packages/db)
 
 Contains the prisma schema for the MySQL database and exports Prisma client for reuse in other packages/apps
-
-### [api](packages/api)
-
-Defines the tRPC backend API with nextauth, used by clients that interact with the database.
 
 ## Applications
 

@@ -7,7 +7,7 @@ import { CodedError } from "expo-modules-core";
 import { getSignInInfo, SessionProvider, SigninResult } from "next-auth/expo";
 import { getBaseUrl } from "../api";
 
-const projectNameForProxy = Constants.manifest2?.extra?.scopeKey;
+const projectNameForProxy = Constants.expoConfig?.extra?.scopeKey;
 
 export const googleLogin = async (): Promise<SigninResult | null> => {
   const redirectUri = AuthSession.makeRedirectUri({
