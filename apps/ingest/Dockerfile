@@ -30,12 +30,13 @@ COPY tsconfig.json tsconfig.json
 COPY patches/ patches/
 COPY types/ types/
 COPY --from=pruner /probable-pitchers/out/package-lock.json ./package-lock.json
-COPY --from=pruner /probable-pitchers/out/full/ . 
+COPY --from=pruner /probable-pitchers/out/full/ .
 
 RUN npm install --package-lock=false
 
 ARG INGEST_JOBS
-ARG DATABASE_URL
+ARG TURSO_DATABASE_URL
+ARG TURSO_AUTH_TOKEN
 
 ARG TURBO_TEAM
 ENV TURBO_TEAM=$TURBO_TEAM

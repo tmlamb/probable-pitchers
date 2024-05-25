@@ -5,7 +5,8 @@
       "outputs": [".next/**", ".expo/**", "dist/**"],
       "env": [
         "APP_ENV",
-        "DATABASE_URL",
+        "TURSO_DATABASE_URL",
+        "TURSO_AUTH_TOKEN",
         "AUTH_GOOGLE_CLIENT_ID",
         "AUTH_GOOGLE_CLIENT_SECRET",
         "APPLE_CLIENT_ID",

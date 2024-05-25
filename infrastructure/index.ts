@@ -83,8 +83,12 @@ const seedJob = new k8s.batch.v1.CronJob(
                   }`,
                   env: [
                     {
-                      name: "DATABASE_URL",
+                      name: "TURSO_DATABASE_URL",
                       value: config.requireSecret("dbUrl"),
+                    },
+                    {
+                      name: "TURSO_AUTH_TOKEN",
+                      value: config.requireSecret("dbToken"),
                     },
                     {
                       name: "INGEST_JOBS",
@@ -137,8 +141,12 @@ const playerJob = new k8s.batch.v1.CronJob(
                   }`,
                   env: [
                     {
-                      name: "DATABASE_URL",
+                      name: "TURSO_DATABASE_URL",
                       value: config.requireSecret("dbUrl"),
+                    },
+                    {
+                      name: "TURSO_AUTH_TOKEN",
+                      value: config.requireSecret("dbToken"),
                     },
                     {
                       name: "INGEST_JOBS",
@@ -191,8 +199,12 @@ const notifyJob = new k8s.batch.v1.CronJob(
                   }`,
                   env: [
                     {
-                      name: "DATABASE_URL",
+                      name: "TURSO_DATABASE_URL",
                       value: config.requireSecret("dbUrl"),
+                    },
+                    {
+                      name: "TURSO_AUTH_TOKEN",
+                      value: config.requireSecret("dbToken"),
                     },
                     {
                       name: "INGEST_JOBS",
@@ -270,8 +282,12 @@ const deployment = new k8s.apps.v1.Deployment(
               },
               env: [
                 {
-                  name: "DATABASE_URL",
+                  name: "TURSO_DATABASE_URL",
                   value: config.requireSecret("dbUrl"),
+                },
+                {
+                  name: "TURSO_AUTH_TOKEN",
+                  value: config.requireSecret("dbToken"),
                 },
                 {
                   name: "AUTH_GOOGLE_CLIENT_ID",

@@ -27,7 +27,8 @@ FROM deps as db_push
 USER root
 RUN chmod 777 ./node_modules/.prisma/client/index.js
 
-ARG DATABASE_URL
+ARG TURSO_DATABASE_URL
+ARG TURSO_AUTH_TOKEN
 
 WORKDIR /probable-pitchers/packages/db
 CMD ["npm", "run", "db-push", "--", "--accept-data-loss"]
