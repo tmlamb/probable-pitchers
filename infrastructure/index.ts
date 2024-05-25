@@ -342,6 +342,15 @@ const service = new k8s.core.v1.Service(
   }
 );
 
+const main = new gcp.sql.DatabaseInstance(`probable-db-${env}`, {
+    name: "main-instance",
+    databaseVersion: "MYSQL_8",
+    region: "us-west1",
+    settings: {
+        tier: "db-f1-micro",
+    },
+});
+
 const ipAddress = new gcp.compute.GlobalAddress(`probable-address-${env}`, {
   project: gcp.config.project,
   addressType: "EXTERNAL",
