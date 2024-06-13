@@ -94,7 +94,7 @@ const seedJob = new k8s.batch.v1.CronJob(
                   resources: {
                     requests: {
                       cpu: "250m",
-                      memory: "256Mi",
+                      memory: "512Mi",
                     },
                   },
                 },
@@ -148,7 +148,7 @@ const playerJob = new k8s.batch.v1.CronJob(
                   resources: {
                     requests: {
                       cpu: "250m",
-                      memory: "256Mi",
+                      memory: "512Mi",
                     },
                   },
                 },
@@ -202,7 +202,7 @@ const notifyJob = new k8s.batch.v1.CronJob(
                   resources: {
                     requests: {
                       cpu: "250m",
-                      memory: "256Mi",
+                      memory: "512Mi",
                     },
                   },
                 },
@@ -262,7 +262,7 @@ const deployment = new k8s.apps.v1.Deployment(
               resources: {
                 requests: {
                   cpu: "250m",
-                  memory: "256Mi",
+                  memory: "512Mi",
                 },
               },
               livenessProbe: {
