@@ -39,6 +39,7 @@ const database = new gcp.sql.Database(`probable-db-${env}`, {
 const databaseUser = new gcp.sql.User(`probable-db-user-${env}`, {
   name: `probable-db-user-${env}`,
   instance: databaseInstance.name,
+  password: config.requireSecret("databasePassword"),
 });
 
 const databaseUrl = pulumi
