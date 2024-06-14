@@ -13,20 +13,43 @@ const changedIngest = process.env.CHANGED_INGEST === "true" || false;
 const domains = config.requireObject<string[]>("domains");
 const replicas = config.requireNumber("nextjsReplicas");
 
-const database = new gcp.sql.DatabaseInstance(`probable-db-instance-${env}`, {
-  name: `probable-db-instance-${env}`,
-  databaseVersion: "MYSQL_8_0",
-  region: "us-west1",
-  settings: {
-    tier: "db-f1-micro",
-    availabilityType: "REGIONAL",
-    backupConfiguration: {
-      enabled: true,
-      binaryLogEnabled: true,
-      location: "us-east1",
+const databaseInstance = new gcp.sql.DatabaseInstance(
+  `probable-db-instance-${env}`,
+  {
+    name: `probable-db-instance-${env}`,
+    databaseVersion: "MYSQL_8_0",
+    region: "us-west1",
+    settings: {
+      tier: "db-f1-micro",
+      availabilityType: "REGIONAL",
+      backupConfiguration: {
+        enabled: true,
+        binaryLogEnabled: true,
+        location: "us-east1",
+      },
     },
-  },
+  }
+);
+
+const database = new gcp.sql.Database(`probable-db-${env}`, {
+  name: `probable-db-${env}`,
+  instance: databaseInstance.name,
 });
+
+const databaseUser = new gcp.sql.User(`probable-db-user-${env}`, {
+  name: `probable-db-user-${env}`,
+  instance: databaseInstance.name,
+});
+
+const databaseUrl = pulumi
+  .all([
+    databaseInstance.connectionName,
+    databaseUser.name,
+    databaseUser.password,
+  ])
+  .apply(([connectionName, username, password]) => {
+    return `mysql://${username}:${password}@/${connectionName}`;
+  });
 
 const clusterProvider = new k8s.Provider(`probable-pitchers-${env}`, {
   kubeconfig: process.env.KUBECONFIG,
@@ -99,7 +122,7 @@ const seedJob = new k8s.batch.v1.CronJob(
                   env: [
                     {
                       name: "DATABASE_URL",
-                      value: config.requireSecret("dbUrl"),
+                      value: databaseUrl,
                     },
                     {
                       name: "INGEST_JOBS",
@@ -153,7 +176,7 @@ const playerJob = new k8s.batch.v1.CronJob(
                   env: [
                     {
                       name: "DATABASE_URL",
-                      value: config.requireSecret("dbUrl"),
+                      value: databaseUrl,
                     },
                     {
                       name: "INGEST_JOBS",
@@ -207,7 +230,7 @@ const notifyJob = new k8s.batch.v1.CronJob(
                   env: [
                     {
                       name: "DATABASE_URL",
-                      value: config.requireSecret("dbUrl"),
+                      value: databaseUrl,
                     },
                     {
                       name: "INGEST_JOBS",
@@ -286,7 +309,7 @@ const deployment = new k8s.apps.v1.Deployment(
               env: [
                 {
                   name: "DATABASE_URL",
-                  value: config.requireSecret("dbUrl"),
+                  value: databaseUrl,
                 },
                 {
                   name: "AUTH_GOOGLE_CLIENT_ID",
