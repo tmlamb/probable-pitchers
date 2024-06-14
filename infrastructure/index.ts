@@ -344,7 +344,7 @@ const service = new k8s.core.v1.Service(
 
 const database = new gcp.sql.DatabaseInstance(`probable-db-${env}`, {
   name: "probable-db-main-instance",
-  databaseVersion: "MYSQL_8",
+  databaseVersion: "MYSQL_8_0",
   region: "us-west1",
   settings: {
     tier: "db-f1-micro",
