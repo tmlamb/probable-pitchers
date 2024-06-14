@@ -26,6 +26,8 @@ config:
       secure: AAABAJuIu5CUh+072PCwnCXzoiCUii3YPvmlg/w52MoeZ4FJC0myxj/wHVx2j9+S+8NOIWPctvzKiI2S5NMQlaxonwrn5nll
     user:
       secure: AAABALVc4iI7wVbkla7Fc8hJq10TJJxwLv00qLMxXstmzpixqEs=
+  probable-pitchers:databasePassword:
+    secure: AAABAFIC+xXP6esshV8Qszav4VPNN4UvtFs/Aar5tEjeftS6MFD7pnNCBTFGCNax9osv74RkQvBlRoSJjVkVjA5g6RmwFhtbLO3PtIEDnsPA+17uZA==
   probable-pitchers:dbUrl:
     secure: AAABAPSKsxH9iMER4uU8hputFHXNY04l99qCStTDhJcTqs89OC3+3Hi0YAiWL1SAwG0k9sURT3IMPS+EptDvOJE0bKiayzHTScWYsERtU56O1D4km1OaZe9mt/z7xRhwOzjXMEQeWuzRI7kk5cSL9g+W5H/8htKmEV3rQguGZ35DHOGzJJ1haDGjQVF7M9MWMry811UDz7W7lKpVqQe0wD3Uy16kUzvZXZ1KopfZq6Q=
   probable-pitchers:domains:
