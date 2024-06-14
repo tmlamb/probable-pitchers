@@ -13,6 +13,21 @@ const changedIngest = process.env.CHANGED_INGEST === "true" || false;
 const domains = config.requireObject<string[]>("domains");
 const replicas = config.requireNumber("nextjsReplicas");
 
+const database = new gcp.sql.DatabaseInstance(`probable-db-${env}`, {
+  name: `probable-db-${env}`,
+  databaseVersion: "MYSQL_8_0",
+  region: "us-west1",
+  settings: {
+    tier: "db-f1-micro",
+    availabilityType: "REGIONAL",
+    backupConfiguration: {
+      enabled: true,
+      binaryLogEnabled: true,
+      location: "us-east1",
+    },
+  },
+});
+
 const clusterProvider = new k8s.Provider(`probable-pitchers-${env}`, {
   kubeconfig: process.env.KUBECONFIG,
 });
@@ -341,21 +356,6 @@ const service = new k8s.core.v1.Service(
     provider: clusterProvider,
   }
 );
-
-const database = new gcp.sql.DatabaseInstance(`probable-db-${env}`, {
-  name: "probable-db-main-instance",
-  databaseVersion: "MYSQL_8_0",
-  region: "us-west1",
-  settings: {
-    tier: "db-f1-micro",
-    availabilityType: "REGIONAL",
-    backupConfiguration: {
-      enabled: true,
-      binaryLogEnabled: true,
-      location: "us-east1",
-    },
-  },
-});
 
 const ipAddress = new gcp.compute.GlobalAddress(`probable-address-${env}`, {
   project: gcp.config.project,
