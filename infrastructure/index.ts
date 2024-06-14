@@ -13,8 +13,8 @@ const changedIngest = process.env.CHANGED_INGEST === "true" || false;
 const domains = config.requireObject<string[]>("domains");
 const replicas = config.requireNumber("nextjsReplicas");
 
-const database = new gcp.sql.DatabaseInstance(`probable-db-${env}`, {
-  name: `probable-db-${env}`,
+const database = new gcp.sql.DatabaseInstance(`probable-db-instance-${env}`, {
+  name: `probable-db-instance-${env}`,
   databaseVersion: "MYSQL_8_0",
   region: "us-west1",
   settings: {
