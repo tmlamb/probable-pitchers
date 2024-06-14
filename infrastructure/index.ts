@@ -44,12 +44,13 @@ const databaseUser = new gcp.sql.User(`probable-db-user-${env}`, {
 
 const databaseUrl = pulumi
   .all([
+    databaseInstance.publicIpAddress,
     databaseInstance.connectionName,
     databaseUser.name,
     databaseUser.password,
   ])
-  .apply(([connectionName, username, password]) => {
-    return `mysql://${username}:${password}@/${connectionName}`;
+  .apply(([ipAddress, connectionName, username, password]) => {
+    return `mysql://${username}:${password}@${ipAddress}/${connectionName}`;
   });
 
 const clusterProvider = new k8s.Provider(`probable-pitchers-${env}`, {
