@@ -31,11 +31,6 @@ const databaseInstance = new gcp.sql.DatabaseInstance(
   }
 );
 
-const database = new gcp.sql.Database(`probable-db-${env}`, {
-  name: `probable-db-${env}`,
-  instance: databaseInstance.name,
-});
-
 const databaseUser = new gcp.sql.User(`probable-db-user-${env}`, {
   name: `probable-db-user-${env}`,
   instance: databaseInstance.name,
