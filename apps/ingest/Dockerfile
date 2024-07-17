@@ -8,7 +8,7 @@ RUN apk update
 
 WORKDIR /probable-pitchers
 
-RUN npm -g install turbo
+RUN npm -g install turbo@^1
 
 COPY . .
 
@@ -30,7 +30,7 @@ COPY tsconfig.json tsconfig.json
 COPY patches/ patches/
 COPY types/ types/
 COPY --from=pruner /probable-pitchers/out/package-lock.json ./package-lock.json
-COPY --from=pruner /probable-pitchers/out/full/ . 
+COPY --from=pruner /probable-pitchers/out/full/ .
 
 RUN npm install --package-lock=false
 
