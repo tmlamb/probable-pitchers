@@ -37,15 +37,21 @@ const databaseUser = new gcp.sql.User(`probable-db-user-${env}`, {
   password: config.requireSecret("databasePassword"),
 });
 
+const database = new gcp.sql.Database(`probable-db-${env}`, {
+  name: `probable-db-${env}`,
+  instance: databaseInstance.name,
+  charset: "utf8",
+});
+
 const databaseUrl = pulumi
   .all([
     databaseInstance.publicIpAddress,
-    databaseInstance.connectionName,
+    database.name,
     databaseUser.name,
     databaseUser.password,
   ])
-  .apply(([ipAddress, connectionName, username, password]) => {
-    return `mysql://${username}:${password}@${ipAddress}/${connectionName}`;
+  .apply(([ipAddress, database, username, password]) => {
+    return `mysql://${username}:${password}@${ipAddress}/${database}`;
   });
 
 const clusterProvider = new k8s.Provider(`probable-pitchers-${env}`, {
