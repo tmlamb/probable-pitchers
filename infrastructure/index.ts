@@ -494,42 +494,6 @@ const deployment = new k8s.apps.v1.Deployment(
                   name: "NEXTAUTH_EXPO_URL",
                   value: config.requireSecret("nextAuthExpoUrl"),
                 },
-                {
-                  name: "AUTH_GOOGLE_CLIENT_ID",
-                  value: config.requireSecret("authGoogleClientId"),
-                },
-                {
-                  name: "AUTH_GOOGLE_CLIENT_SECRET",
-                  value: config.requireSecret("authGoogleClientSecret"),
-                },
-                {
-                  name: "APPLE_CLIENT_ID",
-                  value: config.requireSecret("appleClientId"),
-                },
-                {
-                  name: "APPLE_CLIENT_SECRET",
-                  value: appleClientSecret,
-                },
-                {
-                  name: "APPLE_WEB_CLIENT_ID",
-                  value: config.requireSecret("appleWebClientId"),
-                },
-                {
-                  name: "APPLE_WEB_CLIENT_SECRET",
-                  value: config.requireSecret("appleWebClientSecret"),
-                },
-                {
-                  name: "NEXTAUTH_SECRET",
-                  value: config.requireSecret("nextAuthSecret"),
-                },
-                {
-                  name: "NEXTAUTH_URL",
-                  value: config.requireSecret("nextAuthUrl"),
-                },
-                {
-                  name: "NEXTAUTH_EXPO_URL",
-                  value: config.requireSecret("nextAuthExpoUrl"),
-                },
               ],
             },
             {
