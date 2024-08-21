@@ -60,7 +60,7 @@ const cloudSqlAdminPolicy = gsa.email.apply((email) =>
   })
 );
 
-const serviceAccountPolicy = new gcp.serviceaccount.IAMPolicy(
+const serviceAccountIamPolicy = new gcp.serviceaccount.IAMPolicy(
   `probable-sql-admin-iam-${env}`,
   {
     serviceAccountId: gsa.name,
