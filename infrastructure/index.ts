@@ -207,11 +207,13 @@ const dbcred = new k8s.core.v1.Secret(
       namespace: namespaceName,
     },
     type: "Opaque",
-    data: {
-      username: databaseUser.name,
-      password: databaseUser.password.apply((p) => p || ""),
-      database: database.name,
-    },
+    data: pulumi
+      .all([databaseUser.name, databaseUser.password, database.name])
+      .apply(([username, password, databaseName]) => ({
+        username: btoa(username),
+        password: btoa(password!),
+        database: btoa(databaseName),
+      })),
   },
   { provider: clusterProvider }
 );
