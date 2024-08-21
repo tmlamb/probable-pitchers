@@ -49,20 +49,24 @@ const gsa = new gcp.serviceaccount.Account(`probable-service-account-${env}`, {
   project: gcp.config.project,
 });
 
-const cloudSqlAdminPolicy = gcp.organizations.getIAMPolicy({
-  bindings: [
-    {
-      role: "roles/cloudsql.admin",
-      members: [gsa.email.get()],
-    },
-  ],
-});
+const cloudSqlAdminPolicy = gsa.email.apply((email) =>
+  gcp.organizations.getIAMPolicy({
+    bindings: [
+      {
+        role: "roles/cloudsql.admin",
+        members: [email],
+      },
+    ],
+  })
+);
 
 const serviceAccountPolicy = new gcp.serviceaccount.IAMPolicy(
   `probable-sql-admin-iam-${env}`,
   {
     serviceAccountId: gsa.name,
-    policyData: cloudSqlAdminPolicy.then((admin) => admin.policyData),
+    policyData: cloudSqlAdminPolicy.apply(
+      (adminPolicy) => adminPolicy.policyData
+    ),
   }
 );
 
