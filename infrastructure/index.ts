@@ -154,7 +154,7 @@ const iamBinding = new gcp.projects.IAMBinding(
   }
 );
 
-const annotation = new k8s.core.v1.ServiceAccountPatch(
+const gsaAnnotation = new k8s.core.v1.ServiceAccountPatch(
   `probable-gke-service-account-annotation-${env}`,
   {
     metadata: {
