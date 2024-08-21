@@ -23,7 +23,7 @@ RUN \
 #       DB PUSH        #
 ########################
 
-FROM deps as db_push
+FROM deps AS db_push
 USER root
 RUN chmod 777 ./node_modules/.prisma/client/index.js
 
