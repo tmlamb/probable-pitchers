@@ -60,11 +60,6 @@ const replicas = config.requireNumber("nextjsReplicas");
 //  })
 //);
 //
-//pulumi.all([gsa.email, cloudSqlAdminPolicy]).apply(([email, policy]) => {
-//  console.log("EMAIL", email);
-//  console.log("POLICY", policy);
-//});
-//
 //const serviceAccountPolicy = new gcp.serviceaccount.IAMPolicy(
 //  `probable-sql-admin-iam-${env}`,
 //  {
