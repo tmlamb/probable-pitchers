@@ -141,16 +141,15 @@ const ksa = new k8s.core.v1.ServiceAccount(
   { provider: clusterProvider }
 );
 
-namespaceName.apply((nsName) => {
+pulumi.all([namespaceName, ksa.metadata.name]).apply(([nsName, ksaName]) => {
   const iamBinding = new gcp.projects.IAMBinding(
     `${gsa.name}@${gcp.config.project}.iam.gserviceaccount.com`,
     {
       project: gcp.config.project!,
       role: "roles/iam.workloadIdentityUser",
       members: [
-        `serviceAccount:${gcp.config.project!}.svc.id.goog[${nsName}/${
-          ksa.metadata.name
-        }]`,
+        `serviceAccount:${gcp.config
+          .project!}.svc.id.goog[${nsName}/${ksaName}]`,
       ],
     }
   );
