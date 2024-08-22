@@ -36,14 +36,14 @@ const replicas = config.requireNumber("nextjsReplicas");
 //  }
 //);
 
-//const projectCloudSql = new gcp.projects.Service(
-//  `probable-cloudsql-api-${env}`,
-//  {
-//    service: "sqladmin.googleapis.com",
-//    project: gcp.config.project,
-//  }
-//);
-//
+const projectCloudSql = new gcp.projects.Service(
+ `probable-cloudsql-api-${env}`,
+ {
+   service: "sqladmin.googleapis.com",
+   project: gcp.config.project,
+ }
+);
+
 //const gsa = new gcp.serviceaccount.Account(`probable-service-account-${env}`, {
 //  accountId: `probableserviceaccount${env}`,
 //  project: gcp.config.project,
