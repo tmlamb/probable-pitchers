@@ -36,13 +36,13 @@ const replicas = config.requireNumber("nextjsReplicas");
 //  }
 //);
 
-//const projectCloudSql = new gcp.projects.Service(
-//  `probable-cloudsql-api-${env}`,
-//  {
-//    service: "sqladmin.googleapis.com",
-//    project: gcp.config.project,
-//  }
-//);
+const projectCloudSql = new gcp.projects.Service(
+  `probable-cloudsql-api-${env}`,
+  {
+    service: "sqladmin.googleapis.com",
+    project: gcp.config.project,
+  }
+);
 
 const gsa = new gcp.serviceaccount.Account(`probable-service-account-${env}`, {
   accountId: `probableserviceaccount${env}`,
@@ -141,18 +141,20 @@ const ksa = new k8s.core.v1.ServiceAccount(
   { provider: clusterProvider }
 );
 
+namespaceName.apply((nsName) => {
 const iamBinding = new gcp.projects.IAMBinding(
   `${gsa.name}@${gcp.config.project}.iam.gserviceaccount.com`,
   {
     project: gcp.config.project!,
     role: "roles/iam.workloadIdentityUser",
     members: [
-      `serviceAccount:${gcp.config.project!}.svc.id.goog[${namespaceName}/${
+      `serviceAccount:${gcp.config.project!}.svc.id.goog[${nsName}/${
         ksa.metadata.name
       }]`,
     ],
   }
 );
+}
 
 const gsaAnnotation = new k8s.core.v1.ServiceAccountPatch(
   `probable-gke-service-account-annotation-${env}`,
