@@ -37,11 +37,11 @@ const replicas = config.requireNumber("nextjsReplicas");
 //);
 //
 const projectCloudSql = new gcp.projects.Service(
- `probable-cloudsql-api-${env}`,
- {
-   service: "sqladmin.googleapis.com",
-   project: gcp.config.project,
- }
+  `probable-cloudsql-api-${env}`,
+  {
+    service: "sqladmin.googleapis.com",
+    project: gcp.config.project,
+  }
 );
 
 //const gsa = new gcp.serviceaccount.Account(`probable-service-account-${env}`, {
