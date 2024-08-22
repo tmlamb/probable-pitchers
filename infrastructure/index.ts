@@ -36,39 +36,39 @@ const replicas = config.requireNumber("nextjsReplicas");
 //  }
 //);
 
-//const projectCloudSql = new gcp.projects.Service(
-//  `probable-cloudsql-api-${env}`,
-//  {
-//    service: "sqladmin.googleapis.com",
-//    project: gcp.config.project,
-//  }
-//);
-//
-//const gsa = new gcp.serviceaccount.Account(`probable-service-account-${env}`, {
-//  accountId: `probableserviceaccount${env}`,
-//  project: gcp.config.project,
-//});
-//
-//const cloudSqlAdminPolicy = gsa.email.apply((email) =>
-//  gcp.organizations.getIAMPolicy({
-//    bindings: [
-//      {
-//        role: "roles/cloudsql.admin",
-//        members: [email],
-//      },
-//    ],
-//  })
-//);
-//
-//const serviceAccountPolicy = new gcp.serviceaccount.IAMPolicy(
-//  `probable-sql-admin-iam-${env}`,
-//  {
-//    serviceAccountId: gsa.name,
-//    policyData: cloudSqlAdminPolicy.apply(
-//      (adminPolicy) => adminPolicy.policyData
-//    ),
-//  }
-//);
+const projectCloudSql = new gcp.projects.Service(
+  `probable-cloudsql-api-${env}`,
+  {
+    service: "sqladmin.googleapis.com",
+    project: gcp.config.project,
+  }
+);
+
+const gsa = new gcp.serviceaccount.Account(`probable-service-account-${env}`, {
+  accountId: `probableserviceaccount${env}`,
+  project: gcp.config.project,
+});
+
+gsa.email.apply((email) => {
+  const cloudSqlAdminPolicy = gcp.organizations.getIAMPolicy({
+    bindings: [
+      {
+        role: "roles/cloudsql.admin",
+        members: [email],
+      },
+    ],
+  });
+
+  cloudSqlAdminPolicy.then((adminPolicy) => {
+    const serviceAccountPolicy = new gcp.serviceaccount.IAMPolicy(
+      `probable-sql-admin-iam-${env}`,
+      {
+        serviceAccountId: gsa.name,
+        policyData: adminPolicy.policyData,
+      }
+    );
+  });
+});
 
 const databaseInstance = new gcp.sql.DatabaseInstance(
   `probable-db-instance-${env}`,
@@ -141,34 +141,34 @@ const ksa = new k8s.core.v1.ServiceAccount(
   { provider: clusterProvider }
 );
 
-//namespaceName.apply((nsName) => {
-//  const iamBinding = new gcp.projects.IAMBinding(
-//    `${gsa.name}@${gcp.config.project}.iam.gserviceaccount.com`,
-//    {
-//      project: gcp.config.project!,
-//      role: "roles/iam.workloadIdentityUser",
-//      members: [
-//        `serviceAccount:${gcp.config.project!}.svc.id.goog[${nsName}/${
-//          ksa.metadata.name
-//        }]`,
-//      ],
-//    }
-//  );
-//});
-//
-//const gsaAnnotation = new k8s.core.v1.ServiceAccountPatch(
-//  `probable-gke-service-account-annotation-${env}`,
-//  {
-//    metadata: {
-//      namespace: namespaceName,
-//      name: ksa.metadata.name,
-//      annotations: {
-//        "iam.gke.io/gcp-service-account": `${gsa.name}@${gcp.config.project}.iam.gserviceaccount.com`,
-//      },
-//    },
-//  },
-//  { provider: clusterProvider }
-//);
+namespaceName.apply((nsName) => {
+  const iamBinding = new gcp.projects.IAMBinding(
+    `${gsa.name}@${gcp.config.project}.iam.gserviceaccount.com`,
+    {
+      project: gcp.config.project!,
+      role: "roles/iam.workloadIdentityUser",
+      members: [
+        `serviceAccount:${gcp.config.project!}.svc.id.goog[${nsName}/${
+          ksa.metadata.name
+        }]`,
+      ],
+    }
+  );
+});
+
+const gsaAnnotation = new k8s.core.v1.ServiceAccountPatch(
+  `probable-gke-service-account-annotation-${env}`,
+  {
+    metadata: {
+      namespace: namespaceName,
+      name: ksa.metadata.name,
+      annotations: {
+        "iam.gke.io/gcp-service-account": `${gsa.name}@${gcp.config.project}.iam.gserviceaccount.com`,
+      },
+    },
+  },
+  { provider: clusterProvider }
+);
 
 const regcred = new k8s.core.v1.Secret(
   `probable-regcred-${env}`,
