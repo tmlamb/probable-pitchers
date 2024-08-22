@@ -35,7 +35,7 @@ const replicas = config.requireNumber("nextjsReplicas");
 //    reservedPeeringRanges: [privateIpAddress.name],
 //  }
 //);
-
+//
 const projectCloudSql = new gcp.projects.Service(
  `probable-cloudsql-api-${env}`,
  {
