@@ -60,6 +60,8 @@ pulumi.all([gsa.email, gsa.name]).apply(([gsaEmail, gsaName]) => {
   });
 
   cloudSqlAdminPolicy.then((adminPolicy) => {
+    console.error("adminPolicy", adminPolicy);
+    console.error("policyData", adminPolicy.policyData);
     const serviceAccountPolicy = new gcp.serviceaccount.IAMPolicy(
       `probable-sql-admin-iam-${env}`,
       {
