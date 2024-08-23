@@ -50,50 +50,6 @@ const gsa = new gcp.serviceaccount.Account(`probable-service-account-${env}`, {
 });
 
 //pulumi
-//  .all([gsa.email, gsa.name, gsa.accountId, gsa.member])
-//  .apply(([email, name, id, member]) => {
-//    const ksa = new k8s.core.v1.ServiceAccount(
-//      `probable-gke-service-account-${env}`,
-//      {
-//        metadata: {
-//          name: `probable-gke-service-account-${env}`,
-//          namespace: namespaceName,
-//          annotations: {
-//            "iam.gke.io/gcp-service-account": email,
-//          },
-//        },
-//      },
-//      { provider: clusterProvider }
-//    );
-//
-//    const ksaIamMember = new gcp.serviceaccount.IAMMember(
-//      `probable-gke-service-account-iam-${env}`,
-//      {
-//        serviceAccountId: name,
-//        role: "roles/iam.workloadIdentityUser",
-//        member: pulumi.concat(
-//          `serviceAccount:`,
-//          gcp.config.project,
-//          ".svc.id.goog[",
-//          namespaceName,
-//          "/",
-//          ksa.metadata.name,
-//          "]"
-//        ),
-//      }
-//    );
-//
-//    const gsaIamMember = new gcp.projects.IAMMember(
-//      `probable-gcp-service-account-iam-${env}`,
-//      {
-//        project: gcp.config.project!,
-//        role: "roles/cloudsql.admin",
-//        member: member,
-//      }
-//    );
-//  });
-
-//pulumi
 //  .all([gsa.email, gsa.name, gsa.accountId])
 //  .apply(([gsaEmail, gsaName, gsaAccountId]) => {
 //    //const cloudSqlAdminPolicy = gcp.organizations.getIAMPolicy({
@@ -186,6 +142,60 @@ const ns = new k8s.core.v1.Namespace(
 );
 
 export const namespaceName = ns.metadata.name;
+
+const ksa = new k8s.core.v1.ServiceAccount(
+  `probable-gke-service-account-${env}`,
+  {
+    metadata: {
+      name: `probable-gke-service-account-${env}`,
+      namespace: namespaceName,
+    },
+  },
+  { provider: clusterProvider }
+);
+
+pulumi
+  .all([gsa.email, gsa.name, gsa.member, namespaceName])
+  .apply(([email, gsaName, member, namespaceName]) => {
+    const gsaAnnotation = new k8s.core.v1.ServiceAccountPatch(
+      `probable-gke-service-account-annotation-${env}`,
+      {
+        metadata: {
+          namespace: namespaceName,
+          annotations: {
+            "iam.gke.io/gcp-service-account": email,
+          },
+        },
+      },
+      { provider: clusterProvider }
+    );
+
+    const ksaIamMember = new gcp.serviceaccount.IAMMember(
+      `probable-gke-service-account-iam-${env}`,
+      {
+        serviceAccountId: gsaName,
+        role: "roles/iam.workloadIdentityUser",
+        member: pulumi.concat(
+          `serviceAccount:`,
+          gcp.config.project,
+          ".svc.id.goog[",
+          namespaceName,
+          "/",
+          ksa.metadata.name,
+          "]"
+        ),
+      }
+    );
+
+    const gsaIamMember = new gcp.projects.IAMMember(
+      `probable-gcp-service-account-iam-${env}`,
+      {
+        project: gcp.config.project!,
+        role: "roles/cloudsql.admin",
+        member: member,
+      }
+    );
+  });
 
 //pulumi
 //  .all([namespaceName, ksa.metadata.name, gsa.name])
