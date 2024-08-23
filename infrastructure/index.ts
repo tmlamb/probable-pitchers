@@ -122,13 +122,14 @@ const ksa = new k8s.core.v1.ServiceAccount(
 );
 
 pulumi
-  .all([gsa.email, gsa.name, gsa.member, namespaceName])
-  .apply(([email, gsaName, member, namespaceName]) => {
+  .all([gsa.email, gsa.name, gsa.member, ksa.metadata.name, namespaceName])
+  .apply(([email, gsaName, member, ksaName, namespaceName]) => {
     const gsaAnnotation = new k8s.core.v1.ServiceAccountPatch(
       `probable-gke-service-account-annotation-${env}`,
       {
         metadata: {
           namespace: namespaceName,
+          name: ksaName,
           annotations: {
             "iam.gke.io/gcp-service-account": email,
           },
