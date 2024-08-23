@@ -49,28 +49,38 @@ const gsa = new gcp.serviceaccount.Account(`probable-service-account-${env}`, {
   project: gcp.config.project,
 });
 
-pulumi.all([gsa.email, gsa.name]).apply(([gsaEmail, gsaName]) => {
-  const cloudSqlAdminPolicy = gcp.organizations.getIAMPolicy({
-    bindings: [
+pulumi
+  .all([gsa.email, gsa.name, gsa.accountId])
+  .apply(([gsaEmail, gsaName, gsaAccountId]) => {
+    //const cloudSqlAdminPolicy = gcp.organizations.getIAMPolicy({
+    //  bindings: [
+    //    {
+    //      role: "roles/cloudsql.admin",
+    //      members: [gsaEmail],
+    //    },
+    //  ],
+    //});
+    const gsaIam = new gcp.serviceaccount.IAMBinding(
+      `probable-cloud-sql-admin-policy-${env}`,
       {
+        serviceAccountId: gsaAccountId,
         role: "roles/cloudsql.admin",
         members: [gsaEmail],
-      },
-    ],
-  });
-
-  cloudSqlAdminPolicy.then((adminPolicy) => {
-    console.error("adminPolicy", adminPolicy);
-    console.error("policyData", adminPolicy.policyData);
-    const serviceAccountPolicy = new gcp.serviceaccount.IAMPolicy(
-      `probable-sql-admin-iam-${env}`,
-      {
-        serviceAccountId: gsaName,
-        policyData: adminPolicy.policyData,
       }
     );
+
+    //cloudSqlAdminPolicy.then((adminPolicy) => {
+    //  console.error("adminPolicy", adminPolicy);
+    //  console.error("policyData", adminPolicy.policyData);
+    //  const serviceAccountPolicy = new gcp.serviceaccount.IAMPolicy(
+    //    `probable-sql-admin-iam-${env}`,
+    //    {
+    //      serviceAccountId: gsaName,
+    //      policyData: adminPolicy.policyData,
+    //    }
+    //  );
+    //});
   });
-});
 
 const databaseInstance = new gcp.sql.DatabaseInstance(
   `probable-db-instance-${env}`,
