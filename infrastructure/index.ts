@@ -210,6 +210,9 @@ const dbcred = new k8s.core.v1.Secret(
         username: btoa(username),
         password: btoa(password!),
         database: btoa(databaseName),
+        databaseUrl: btoa(
+          `mysql://${username}:${password}@127.0.0.1:3306/${databaseName}`
+        ),
       })),
   },
   { provider: clusterProvider }
@@ -429,32 +432,41 @@ const deployment = new k8s.apps.v1.Deployment(
               },
               env: [
                 {
-                  name: "DB_USER",
+                  name: "DATABASE_URL",
                   valueFrom: {
                     secretKeyRef: {
                       name: dbcred.metadata.apply((m) => m.name),
-                      key: "username",
+                      key: "databaseUrl",
                     },
                   },
                 },
-                {
-                  name: "DB_PASSWORD",
-                  valueFrom: {
-                    secretKeyRef: {
-                      name: dbcred.metadata.apply((m) => m.name),
-                      key: "password",
-                    },
-                  },
-                },
-                {
-                  name: "DB_NAME",
-                  valueFrom: {
-                    secretKeyRef: {
-                      name: dbcred.metadata.apply((m) => m.name),
-                      key: "database",
-                    },
-                  },
-                },
+                //{
+                //  name: "DB_USER",
+                //  valueFrom: {
+                //    secretKeyRef: {
+                //      name: dbcred.metadata.apply((m) => m.name),
+                //      key: "username",
+                //    },
+                //  },
+                //},
+                //{
+                //  name: "DB_PASSWORD",
+                //  valueFrom: {
+                //    secretKeyRef: {
+                //      name: dbcred.metadata.apply((m) => m.name),
+                //      key: "password",
+                //    },
+                //  },
+                //},
+                //{
+                //  name: "DB_NAME",
+                //  valueFrom: {
+                //    secretKeyRef: {
+                //      name: dbcred.metadata.apply((m) => m.name),
+                //      key: "database",
+                //    },
+                //  },
+                //},
                 {
                   name: "AUTH_GOOGLE_CLIENT_ID",
                   value: config.requireSecret("authGoogleClientId"),
