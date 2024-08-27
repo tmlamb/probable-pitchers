@@ -235,7 +235,7 @@ const migrationJob = new k8s.batch.v1.Job(
               },
               resources: {
                 requests: {
-                  cpu: "1",
+                  cpu: "250m",
                   memory: "512Mi",
                 },
               },
@@ -307,7 +307,7 @@ const seedJob = new k8s.batch.v1.CronJob(
                   },
                   resources: {
                     requests: {
-                      cpu: "1",
+                      cpu: "250m",
                       memory: "512Mi",
                     },
                   },
@@ -381,7 +381,7 @@ const playerJob = new k8s.batch.v1.CronJob(
                   },
                   resources: {
                     requests: {
-                      cpu: "1",
+                      cpu: "250m",
                       memory: "512Mi",
                     },
                   },
@@ -455,7 +455,7 @@ const notifyJob = new k8s.batch.v1.CronJob(
                   },
                   resources: {
                     requests: {
-                      cpu: "1",
+                      cpu: "250m",
                       memory: "512Mi",
                     },
                   },
@@ -580,7 +580,7 @@ const deployment = new k8s.apps.v1.Deployment(
               },
               resources: {
                 requests: {
-                  cpu: "1",
+                  cpu: "250m",
                   memory: "512Mi",
                 },
               },
