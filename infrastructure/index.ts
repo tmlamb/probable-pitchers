@@ -9,32 +9,10 @@ const env = pulumi.getStack();
 const imageTag = process.env.DEPLOY_COMMIT_TAG || "latest";
 const changedNextjs = process.env.CHANGED_NEXTJS === "true" || false;
 const changedIngest = process.env.CHANGED_INGEST === "true" || false;
+const changedDatabase = process.env.CHANGED_DB === "true" || false;
 
 const domains = config.requireObject<string[]>("domains");
 const replicas = config.requireNumber("nextjsReplicas");
-
-//const privateNetwork = new gcp.compute.Network(
-//  `probable-private-network-${env}`,
-//  { name: `probable-private-network-${env}` }
-//);
-//const privateIpAddress = new gcp.compute.GlobalAddress(
-//  `probable-private-ip-address-${env}`,
-//  {
-//    name: `probable-private-ip-address-${env}`,
-//    purpose: "VPC_PEERING",
-//    addressType: "INTERNAL",
-//    prefixLength: 16,
-//    network: privateNetwork.id,
-//  }
-//);
-//const privateVpcConnection = new gcp.servicenetworking.Connection(
-//  `probable-private-vpc-connection-${env}`,
-//  {
-//    network: privateNetwork.id,
-//    service: "servicenetworking.googleapis.com",
-//    reservedPeeringRanges: [privateIpAddress.name],
-//  }
-//);
 
 const projectCloudSql = new gcp.projects.Service(
   `probable-cloudsql-api-${env}`,
@@ -63,16 +41,8 @@ const databaseInstance = new gcp.sql.DatabaseInstance(
         binaryLogEnabled: true,
         location: "us-east1",
       },
-      //ipConfiguration: {
-      //  ipv4Enabled: false,
-      //  privateNetwork: privateNetwork.id,
-      //  enablePrivatePathForGoogleCloudServices: true,
-      //},
     },
   }
-  //{
-  //  dependsOn: [privateVpcConnection],
-  //}
 );
 
 const databaseUser = new gcp.sql.User(`probable-db-user-${env}`, {
@@ -218,6 +188,69 @@ const dbcred = new k8s.core.v1.Secret(
   { provider: clusterProvider }
 );
 
+const migrationLabels = { app: `probable-migration-${env}` };
+
+const migrationJob = new k8s.batch.v1.Job(
+  migrationLabels.app,
+  {
+    metadata: {
+      namespace: namespaceName,
+    },
+    spec: {
+      template: {
+        spec: {
+          imagePullSecrets: [{ name: regcred.metadata.apply((m) => m.name) }],
+          serviceAccountName: ksa.metadata.apply((m) => m.name),
+          containers: [
+            {
+              name: migrationLabels.app,
+
+              image: `ghcr.io/tmlamb/probable-pitchers-migration:${
+                changedDatabase ? imageTag : "latest"
+              }`,
+              env: [
+                {
+                  name: "DATABASE_URL",
+                  valueFrom: {
+                    secretKeyRef: {
+                      name: dbcred.metadata.apply((m) => m.name),
+                      key: "databaseUrl",
+                    },
+                  },
+                },
+              ],
+              resources: {
+                requests: {
+                  cpu: "250m",
+                  memory: "512Mi",
+                },
+              },
+            },
+            {
+              name: "cloudsql-proxy",
+              image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.13.0",
+              args: ["--port=3306", databaseInstance.connectionName],
+              securityContext: {
+                runAsNonRoot: true,
+              },
+              resources: {
+                requests: {
+                  cpu: "1",
+                  memory: "512Mi",
+                },
+              },
+            },
+          ],
+          restartPolicy: "OnFailure",
+        },
+      },
+    },
+  },
+  {
+    provider: clusterProvider,
+  }
+);
+
 const seedLabels = { app: `probable-seed-${env}` };
 
 const seedJob = new k8s.batch.v1.CronJob(
@@ -235,6 +268,7 @@ const seedJob = new k8s.batch.v1.CronJob(
               imagePullSecrets: [
                 { name: regcred.metadata.apply((m) => m.name) },
               ],
+              serviceAccountName: ksa.metadata.apply((m) => m.name),
               containers: [
                 {
                   name: seedLabels.app,
@@ -245,7 +279,12 @@ const seedJob = new k8s.batch.v1.CronJob(
                   env: [
                     {
                       name: "DATABASE_URL",
-                      value: databaseUrl,
+                      valueFrom: {
+                        secretKeyRef: {
+                          name: dbcred.metadata.apply((m) => m.name),
+                          key: "databaseUrl",
+                        },
+                      },
                     },
                     {
                       name: "INGEST_JOBS",
@@ -255,6 +294,20 @@ const seedJob = new k8s.batch.v1.CronJob(
                   resources: {
                     requests: {
                       cpu: "250m",
+                      memory: "512Mi",
+                    },
+                  },
+                },
+                {
+                  name: "cloudsql-proxy",
+                  image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.13.0",
+                  args: ["--port=3306", databaseInstance.connectionName],
+                  securityContext: {
+                    runAsNonRoot: true,
+                  },
+                  resources: {
+                    requests: {
+                      cpu: "1",
                       memory: "512Mi",
                     },
                   },
@@ -289,6 +342,7 @@ const playerJob = new k8s.batch.v1.CronJob(
               imagePullSecrets: [
                 { name: regcred.metadata.apply((m) => m.name) },
               ],
+              serviceAccountName: ksa.metadata.apply((m) => m.name),
               containers: [
                 {
                   name: playerLabels.app,
@@ -299,7 +353,12 @@ const playerJob = new k8s.batch.v1.CronJob(
                   env: [
                     {
                       name: "DATABASE_URL",
-                      value: databaseUrl,
+                      valueFrom: {
+                        secretKeyRef: {
+                          name: dbcred.metadata.apply((m) => m.name),
+                          key: "databaseUrl",
+                        },
+                      },
                     },
                     {
                       name: "INGEST_JOBS",
@@ -309,6 +368,20 @@ const playerJob = new k8s.batch.v1.CronJob(
                   resources: {
                     requests: {
                       cpu: "250m",
+                      memory: "512Mi",
+                    },
+                  },
+                },
+                {
+                  name: "cloudsql-proxy",
+                  image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.13.0",
+                  args: ["--port=3306", databaseInstance.connectionName],
+                  securityContext: {
+                    runAsNonRoot: true,
+                  },
+                  resources: {
+                    requests: {
+                      cpu: "1",
                       memory: "512Mi",
                     },
                   },
@@ -343,6 +416,7 @@ const notifyJob = new k8s.batch.v1.CronJob(
               imagePullSecrets: [
                 { name: regcred.metadata.apply((m) => m.name) },
               ],
+              serviceAccountName: ksa.metadata.apply((m) => m.name),
               containers: [
                 {
                   name: notifyLabels.app,
@@ -353,7 +427,12 @@ const notifyJob = new k8s.batch.v1.CronJob(
                   env: [
                     {
                       name: "DATABASE_URL",
-                      value: databaseUrl,
+                      valueFrom: {
+                        secretKeyRef: {
+                          name: dbcred.metadata.apply((m) => m.name),
+                          key: "databaseUrl",
+                        },
+                      },
                     },
                     {
                       name: "INGEST_JOBS",
@@ -363,6 +442,20 @@ const notifyJob = new k8s.batch.v1.CronJob(
                   resources: {
                     requests: {
                       cpu: "250m",
+                      memory: "512Mi",
+                    },
+                  },
+                },
+                {
+                  name: "cloudsql-proxy",
+                  image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.13.0",
+                  args: ["--port=3306", databaseInstance.connectionName],
+                  securityContext: {
+                    runAsNonRoot: true,
+                  },
+                  resources: {
+                    requests: {
+                      cpu: "1",
                       memory: "512Mi",
                     },
                   },
@@ -440,33 +533,6 @@ const deployment = new k8s.apps.v1.Deployment(
                     },
                   },
                 },
-                //{
-                //  name: "DB_USER",
-                //  valueFrom: {
-                //    secretKeyRef: {
-                //      name: dbcred.metadata.apply((m) => m.name),
-                //      key: "username",
-                //    },
-                //  },
-                //},
-                //{
-                //  name: "DB_PASSWORD",
-                //  valueFrom: {
-                //    secretKeyRef: {
-                //      name: dbcred.metadata.apply((m) => m.name),
-                //      key: "password",
-                //    },
-                //  },
-                //},
-                //{
-                //  name: "DB_NAME",
-                //  valueFrom: {
-                //    secretKeyRef: {
-                //      name: dbcred.metadata.apply((m) => m.name),
-                //      key: "database",
-                //    },
-                //  },
-                //},
                 {
                   name: "AUTH_GOOGLE_CLIENT_ID",
                   value: config.requireSecret("authGoogleClientId"),

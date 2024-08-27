@@ -69,6 +69,7 @@ jobs:
           DEPLOY_COMMIT_TAG: ${{ github.ref_name }}
           CHANGED_INGEST: "true"
           CHANGED_NEXTJS: "true"
+          CHANGED_DB: "true"
 
   update-production:
     name: Update Production App

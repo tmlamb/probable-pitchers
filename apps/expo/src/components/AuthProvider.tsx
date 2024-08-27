@@ -20,7 +20,7 @@ export const googleLogin = async (): Promise<SigninResult | null> => {
     proxyRedirectUri: redirectUri,
   });
   if (!signinInfo) {
-    throw new Error("Error getting sign-in info from server");
+    throw new Error("ZError getting sign-in info from server");
   }
   const { state, codeChallenge, stateEncrypted, codeVerifier, clientId } =
     signinInfo;
