@@ -180,7 +180,7 @@ jobs:
     name: Build Migration image
     needs: [test, lint, format, checks]
     runs-on: ubuntu-latest
-    if: ${{ needs.checks.outputs.changed-db }}
+    #if: ${{ needs.checks.outputs.changed-db }}
     steps:
       - name: Check out code
         uses: actions/checkout@v3
