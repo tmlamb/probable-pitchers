@@ -304,13 +304,44 @@ const seedJob = new k8s.batch.v1.CronJob(
                       value: "teams,pitchers",
                     },
                   ],
+
+                  readinessProbe: {
+                    httpGet: { path: "/", port: "http" },
+                  },
+
+                  resources: {
+                    limits: {
+                      cpu: "250m",
+                      memory: "512Mi",
+                      "ephemeral-storage": "1Gi",
+                    },
+                    requests: {
+                      cpu: "250m",
+                      memory: "512Mi",
+                      "ephemeral-storage": "1Gi",
+                    },
+                  },
                 },
+              ],
+              initContainers: [
                 {
                   name: "cloudsql-proxy",
                   image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.13.0",
                   args: ["--port=3306", databaseInstance.connectionName],
                   securityContext: {
                     runAsNonRoot: true,
+                  },
+                  resources: {
+                    limits: {
+                      cpu: "250m",
+                      memory: "512Mi",
+                      "ephemeral-storage": "1Gi",
+                    },
+                    requests: {
+                      cpu: "250m",
+                      memory: "512Mi",
+                      "ephemeral-storage": "1Gi",
+                    },
                   },
                 },
               ],
