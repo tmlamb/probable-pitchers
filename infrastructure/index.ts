@@ -10,6 +10,7 @@ const imageTag = process.env.DEPLOY_COMMIT_TAG || "latest";
 const changedNextjs = process.env.CHANGED_NEXTJS === "true" || false;
 const changedIngest = process.env.CHANGED_INGEST === "true" || false;
 const changedDatabase = process.env.CHANGED_DB === "true" || false;
+const isProd = env === "production";
 
 const domains = config.requireObject<string[]>("domains");
 const replicas = config.requireNumber("nextjsReplicas");
@@ -35,7 +36,7 @@ const databaseInstance = new gcp.sql.DatabaseInstance(
     region: "us-west1",
     settings: {
       tier: "db-f1-micro",
-      availabilityType: "REGIONAL",
+      availabilityType: isProd ? "REGIONAL" : "ZONAL",
       backupConfiguration: {
         enabled: true,
         binaryLogEnabled: true,
