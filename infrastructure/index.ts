@@ -233,12 +233,6 @@ const migrationJob = new k8s.batch.v1.Job(
               securityContext: {
                 runAsNonRoot: true,
               },
-              resources: {
-                limits: {
-                  cpu: "250m",
-                  memory: "512Mi",
-                },
-              },
             },
           ],
           restartPolicy: "OnFailure",
@@ -304,12 +298,6 @@ const seedJob = new k8s.batch.v1.CronJob(
                   args: ["--port=3306", databaseInstance.connectionName],
                   securityContext: {
                     runAsNonRoot: true,
-                  },
-                  resources: {
-                    limits: {
-                      cpu: "250m",
-                      memory: "512Mi",
-                    },
                   },
                 },
               ],
@@ -379,12 +367,6 @@ const playerJob = new k8s.batch.v1.CronJob(
                   securityContext: {
                     runAsNonRoot: true,
                   },
-                  resources: {
-                    limits: {
-                      cpu: "250m",
-                      memory: "512Mi",
-                    },
-                  },
                 },
               ],
               restartPolicy: "OnFailure",
@@ -452,12 +434,6 @@ const notifyJob = new k8s.batch.v1.CronJob(
                   args: ["--port=3306", databaseInstance.connectionName],
                   securityContext: {
                     runAsNonRoot: true,
-                  },
-                  resources: {
-                    limits: {
-                      cpu: "250m",
-                      memory: "512Mi",
-                    },
                   },
                 },
               ],
