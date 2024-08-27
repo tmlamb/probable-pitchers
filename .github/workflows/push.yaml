@@ -16,6 +16,7 @@ jobs:
       changed-nextjs: ${{ steps.changed-nextjs.outputs.result }}
       changed-ingest: ${{ steps.changed-ingest.outputs.result }}
       changed-expo: ${{ steps.changed-expo.outputs.result }}
+      changed-db: ${{ steps.changed-db.outputs.result }}
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -57,6 +58,12 @@ jobs:
       - name: Changed expo?
         id: changed-expo
         if: ${{ contains(fromJSON(steps.changeset.outputs.result).packages, '@probable/expo') }}
+        run: |
+          echo "result=true" >> "$GITHUB_OUTPUT"
+
+      - name: Changed db?
+        id: changed-db
+        if: ${{ contains(fromJSON(steps.changeset.outputs.result).packages, '@probable/db') }}
         run: |
           echo "result=true" >> "$GITHUB_OUTPUT"
 
@@ -169,10 +176,34 @@ jobs:
           docker build . --file apps/ingest/Dockerfile --tag ghcr.io/tmlamb/probable-pitchers-ingest:sha-${{ github.sha }} --tag ghcr.io/tmlamb/probable-pitchers-ingest:latest --build-arg TURBO_TEAM=${{ env.TURBO_TEAM }} --build-arg TURBO_TOKEN=${{ env.TURBO_TOKEN }}
           docker push --all-tags ghcr.io/tmlamb/probable-pitchers-ingest
 
+  build-migration:
+    name: Build Migration image
+    needs: [test, lint, format, checks]
+    runs-on: ubuntu-latest
+    if: ${{ needs.checks.outputs.changed-db }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - name: Login to container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.GHCR_USER }}
+          password: ${{ secrets.GHCR_ACCESS_TOKEN }}
+
+      - name: Build and publish db migration image
+        run: |
+          docker build . --file packages/db/Dockerfile --tag ghcr.io/tmlamb/probable-pitchers-migration:sha-${{ github.sha }} --tag ghcr.io/tmlamb/probable-pitchers-migration:latest --build-arg TURBO_TEAM=${{ env.TURBO_TEAM }} --build-arg TURBO_TOKEN=${{ env.TURBO_TOKEN }}
+          docker push --all-tags ghcr.io/tmlamb/probable-pitchers-migration
+
   deploy-infra:
     name: Deploy Preview Infrastructure
-    needs: [checks, build-nextjs, build-ingest]
+    needs: [checks, build-nextjs, build-ingest, build-migration]
     if: always() &&
+      (needs.build-migration.result == 'skipped' || needs.build-migration.result == 'success') &&
       (needs.build-nextjs.result == 'skipped' || needs.build-nextjs.result == 'success') &&
       (needs.build-ingest.result == 'skipped' || needs.build-ingest.result == 'success')
     runs-on: ubuntu-latest
@@ -214,6 +245,7 @@ jobs:
           DEPLOY_COMMIT_TAG: sha-${{ github.sha }}
           CHANGED_INGEST: ${{ needs.checks.outputs.changed-ingest }}
           CHANGED_NEXTJS: ${{ needs.checks.outputs.changed-nextjs }}
+          CHANGED_DB: ${{ needs.checks.outputs.changed-db }}
 
   update-preview:
     name: Update Preview Mobile App
