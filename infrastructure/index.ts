@@ -587,6 +587,33 @@ const deployment = new k8s.apps.v1.Deployment(
                     },
                   },
                 },
+                //{
+                //  name: "DB_USER",
+                //  valueFrom: {
+                //    secretKeyRef: {
+                //      name: dbcred.metadata.apply((m) => m.name),
+                //      key: "username",
+                //    },
+                //  },
+                //},
+                //{
+                //  name: "DB_PASSWORD",
+                //  valueFrom: {
+                //    secretKeyRef: {
+                //      name: dbcred.metadata.apply((m) => m.name),
+                //      key: "password",
+                //    },
+                //  },
+                //},
+                //{
+                //  name: "DB_NAME",
+                //  valueFrom: {
+                //    secretKeyRef: {
+                //      name: dbcred.metadata.apply((m) => m.name),
+                //      key: "database",
+                //    },
+                //  },
+                //},
                 {
                   name: "AUTH_GOOGLE_CLIENT_ID",
                   value: config.requireSecret("authGoogleClientId"),
