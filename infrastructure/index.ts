@@ -220,7 +220,7 @@ const migrationJob = new k8s.batch.v1.Job(
                 },
               ],
               resources: {
-                requests: {
+                limits: {
                   cpu: "250m",
                   memory: "512Mi",
                 },
@@ -234,9 +234,10 @@ const migrationJob = new k8s.batch.v1.Job(
                 runAsNonRoot: true,
               },
               resources: {
-                requests: {
+                limits: {
                   cpu: "250m",
                   memory: "512Mi",
+                  ephemeralStorage: "1Gi",
                 },
               },
             },
@@ -292,7 +293,7 @@ const seedJob = new k8s.batch.v1.CronJob(
                     },
                   ],
                   resources: {
-                    requests: {
+                    limits: {
                       cpu: "250m",
                       memory: "512Mi",
                     },
@@ -306,9 +307,10 @@ const seedJob = new k8s.batch.v1.CronJob(
                     runAsNonRoot: true,
                   },
                   resources: {
-                    requests: {
+                    limits: {
                       cpu: "250m",
                       memory: "512Mi",
+                      ephemeralStorage: "1Gi",
                     },
                   },
                 },
@@ -366,7 +368,7 @@ const playerJob = new k8s.batch.v1.CronJob(
                     },
                   ],
                   resources: {
-                    requests: {
+                    limits: {
                       cpu: "250m",
                       memory: "512Mi",
                     },
@@ -380,9 +382,10 @@ const playerJob = new k8s.batch.v1.CronJob(
                     runAsNonRoot: true,
                   },
                   resources: {
-                    requests: {
+                    limits: {
                       cpu: "250m",
                       memory: "512Mi",
+                      ephemeralStorage: "1Gi",
                     },
                   },
                 },
@@ -440,7 +443,7 @@ const notifyJob = new k8s.batch.v1.CronJob(
                     },
                   ],
                   resources: {
-                    requests: {
+                    limits: {
                       cpu: "250m",
                       memory: "512Mi",
                     },
@@ -454,9 +457,10 @@ const notifyJob = new k8s.batch.v1.CronJob(
                     runAsNonRoot: true,
                   },
                   resources: {
-                    requests: {
+                    limits: {
                       cpu: "250m",
                       memory: "512Mi",
+                      ephemeralStorage: "1Gi",
                     },
                   },
                 },
@@ -515,7 +519,7 @@ const deployment = new k8s.apps.v1.Deployment(
               }`,
               ports: [{ name: "http", containerPort: 3000 }],
               resources: {
-                requests: {
+                limits: {
                   cpu: "250m",
                   memory: "512Mi",
                 },
@@ -579,7 +583,7 @@ const deployment = new k8s.apps.v1.Deployment(
                 runAsNonRoot: true,
               },
               resources: {
-                requests: {
+                limits: {
                   cpu: "250m",
                   memory: "512Mi",
                 },
