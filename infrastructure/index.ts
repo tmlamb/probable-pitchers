@@ -276,8 +276,12 @@ const seedJob = new k8s.batch.v1.CronJob(
       schedule: "0 0 1 2,3,4 *",
       jobTemplate: {
         spec: {
+          activeDeadlineSeconds: 600,
+          parallelism: 1,
+          completions: 1,
           template: {
             spec: {
+              restartPolicy: "Never",
               imagePullSecrets: [
                 { name: regcred.metadata.apply((m) => m.name) },
               ],
@@ -305,10 +309,6 @@ const seedJob = new k8s.batch.v1.CronJob(
                     },
                   ],
 
-                  readinessProbe: {
-                    httpGet: { path: "/", port: "http" },
-                  },
-
                   resources: {
                     limits: {
                       cpu: "250m",
@@ -316,13 +316,20 @@ const seedJob = new k8s.batch.v1.CronJob(
                       "ephemeral-storage": "1Gi",
                     },
                   },
+                  args: [
+                    ";exit_code=$?; curl -X POST localhost:9091/quitquitquit; exit $exit_code",
+                  ],
                 },
               ],
               initContainers: [
                 {
                   name: "cloudsql-proxy",
                   image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.13.0",
-                  args: ["--port=3306", databaseInstance.connectionName],
+                  args: [
+                    "--port=3306",
+                    databaseInstance.connectionName,
+                    "--quitquitquit",
+                  ],
                   securityContext: {
                     runAsNonRoot: true,
                   },
@@ -335,7 +342,6 @@ const seedJob = new k8s.batch.v1.CronJob(
                   },
                 },
               ],
-              restartPolicy: "OnFailure",
             },
           },
         },
