@@ -223,10 +223,12 @@ const migrationJob = new k8s.batch.v1.Job(
                 limits: {
                   cpu: "250m",
                   memory: "512Mi",
+                  "ephemeral-storage": "1Gi",
                 },
                 requests: {
                   cpu: "250m",
                   memory: "512Mi",
+                  "ephemeral-storage": "1Gi",
                 },
               },
             },
@@ -241,10 +243,12 @@ const migrationJob = new k8s.batch.v1.Job(
                 limits: {
                   cpu: "250m",
                   memory: "512Mi",
+                  "ephemeral-storage": "1Gi",
                 },
                 requests: {
                   cpu: "250m",
                   memory: "512Mi",
+                  "ephemeral-storage": "1Gi",
                 },
               },
             },
@@ -303,10 +307,12 @@ const seedJob = new k8s.batch.v1.CronJob(
                     limits: {
                       cpu: "250m",
                       memory: "512Mi",
+                      "ephemeral-storage": "1Gi",
                     },
                     requests: {
                       cpu: "250m",
                       memory: "512Mi",
+                      "ephemeral-storage": "1Gi",
                     },
                   },
                 },
@@ -321,10 +327,12 @@ const seedJob = new k8s.batch.v1.CronJob(
                     limits: {
                       cpu: "250m",
                       memory: "512Mi",
+                      "ephemeral-storage": "1Gi",
                     },
                     requests: {
                       cpu: "250m",
                       memory: "512Mi",
+                      "ephemeral-storage": "1Gi",
                     },
                   },
                 },
@@ -385,10 +393,12 @@ const playerJob = new k8s.batch.v1.CronJob(
                     limits: {
                       cpu: "250m",
                       memory: "512Mi",
+                      "ephemeral-storage": "1Gi",
                     },
                     requests: {
                       cpu: "250m",
                       memory: "512Mi",
+                      "ephemeral-storage": "1Gi",
                     },
                   },
                 },
@@ -403,10 +413,12 @@ const playerJob = new k8s.batch.v1.CronJob(
                     limits: {
                       cpu: "250m",
                       memory: "512Mi",
+                      "ephemeral-storage": "1Gi",
                     },
                     requests: {
                       cpu: "250m",
                       memory: "512Mi",
+                      "ephemeral-storage": "1Gi",
                     },
                   },
                 },
@@ -467,10 +479,12 @@ const notifyJob = new k8s.batch.v1.CronJob(
                     limits: {
                       cpu: "250m",
                       memory: "512Mi",
+                      "ephemeral-storage": "1Gi",
                     },
                     requests: {
                       cpu: "250m",
                       memory: "512Mi",
+                      "ephemeral-storage": "1Gi",
                     },
                   },
                 },
@@ -485,10 +499,12 @@ const notifyJob = new k8s.batch.v1.CronJob(
                     limits: {
                       cpu: "250m",
                       memory: "512Mi",
+                      "ephemeral-storage": "1Gi",
                     },
                     requests: {
                       cpu: "250m",
                       memory: "512Mi",
+                      "ephemeral-storage": "1Gi",
                     },
                   },
                 },
@@ -550,10 +566,12 @@ const deployment = new k8s.apps.v1.Deployment(
                 limits: {
                   cpu: "250m",
                   memory: "512Mi",
+                  "ephemeral-storage": "1Gi",
                 },
                 requests: {
                   cpu: "250m",
                   memory: "512Mi",
+                  "ephemeral-storage": "1Gi",
                 },
               },
               livenessProbe: {
@@ -618,10 +636,12 @@ const deployment = new k8s.apps.v1.Deployment(
                 limits: {
                   cpu: "250m",
                   memory: "512Mi",
+                  "ephemeral-storage": "1Gi",
                 },
                 requests: {
                   cpu: "250m",
                   memory: "512Mi",
+                  "ephemeral-storage": "1Gi",
                 },
               },
             },
