@@ -189,72 +189,158 @@ const dbcred = new k8s.core.v1.Secret(
   { provider: clusterProvider }
 );
 
-//const migrationLabels = { app: `probable-migration-${env}` };
+const migrationLabels = { app: `probable-migration-${env}` };
+
+const migrationJob = new k8s.batch.v1.Job(
+  migrationLabels.app,
+  {
+    metadata: {
+      namespace: namespaceName,
+    },
+    spec: {
+      template: {
+        spec: {
+          imagePullSecrets: [{ name: regcred.metadata.apply((m) => m.name) }],
+          serviceAccountName: ksa.metadata.apply((m) => m.name),
+          containers: [
+            {
+              name: migrationLabels.app,
+
+              image: `ghcr.io/tmlamb/probable-pitchers-migration:${
+                changedDatabase ? imageTag : "latest"
+              }`,
+              env: [
+                {
+                  name: "DATABASE_URL",
+                  valueFrom: {
+                    secretKeyRef: {
+                      name: dbcred.metadata.apply((m) => m.name),
+                      key: "databaseUrl",
+                    },
+                  },
+                },
+              ],
+              resources: {
+                limits: {
+                  cpu: "250m",
+                  memory: "512Mi",
+                  "ephemeral-storage": "1Gi",
+                },
+                requests: {
+                  cpu: "250m",
+                  memory: "512Mi",
+                  "ephemeral-storage": "1Gi",
+                },
+              },
+            },
+            {
+              name: "cloudsql-proxy",
+              image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.13.0",
+              args: ["--port=3306", databaseInstance.connectionName],
+              securityContext: {
+                runAsNonRoot: true,
+              },
+              resources: {
+                limits: {
+                  cpu: "250m",
+                  memory: "512Mi",
+                  "ephemeral-storage": "1Gi",
+                },
+                requests: {
+                  cpu: "250m",
+                  memory: "512Mi",
+                  "ephemeral-storage": "1Gi",
+                },
+              },
+            },
+          ],
+          restartPolicy: "OnFailure",
+        },
+      },
+    },
+  },
+  {
+    provider: clusterProvider,
+  }
+);
+
+//const seedLabels = { app: `probable-seed-${env}` };
 //
-//const migrationJob = new k8s.batch.v1.Job(
-//  migrationLabels.app,
+//const seedJob = new k8s.batch.v1.CronJob(
+//  seedLabels.app,
 //  {
 //    metadata: {
 //      namespace: namespaceName,
 //    },
 //    spec: {
-//      template: {
+//      schedule: "0 0 1 2,3,4 *",
+//      jobTemplate: {
 //        spec: {
-//          imagePullSecrets: [{ name: regcred.metadata.apply((m) => m.name) }],
-//          serviceAccountName: ksa.metadata.apply((m) => m.name),
-//          containers: [
-//            {
-//              name: migrationLabels.app,
-//
-//              image: `ghcr.io/tmlamb/probable-pitchers-migration:${
-//                changedDatabase ? imageTag : "latest"
-//              }`,
-//              env: [
+//          template: {
+//            spec: {
+//              imagePullSecrets: [
+//                { name: regcred.metadata.apply((m) => m.name) },
+//              ],
+//              serviceAccountName: ksa.metadata.apply((m) => m.name),
+//              containers: [
 //                {
-//                  name: "DATABASE_URL",
-//                  valueFrom: {
-//                    secretKeyRef: {
-//                      name: dbcred.metadata.apply((m) => m.name),
-//                      key: "databaseUrl",
+//                  name: seedLabels.app,
+//
+//                  image: `ghcr.io/tmlamb/probable-pitchers-ingest:${
+//                    changedIngest ? imageTag : "latest"
+//                  }`,
+//                  env: [
+//                    {
+//                      name: "DATABASE_URL",
+//                      valueFrom: {
+//                        secretKeyRef: {
+//                          name: dbcred.metadata.apply((m) => m.name),
+//                          key: "databaseUrl",
+//                        },
+//                      },
+//                    },
+//                    {
+//                      name: "INGEST_JOBS",
+//                      value: "teams,pitchers",
+//                    },
+//                  ],
+//                  resources: {
+//                    limits: {
+//                      cpu: "250m",
+//                      memory: "512Mi",
+//                      "ephemeral-storage": "1Gi",
+//                    },
+//                    requests: {
+//                      cpu: "250m",
+//                      memory: "512Mi",
+//                      "ephemeral-storage": "1Gi",
+//                    },
+//                  },
+//                },
+//                {
+//                  name: "cloudsql-proxy",
+//                  image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.13.0",
+//                  args: ["--port=3306", databaseInstance.connectionName],
+//                  securityContext: {
+//                    runAsNonRoot: true,
+//                  },
+//                  resources: {
+//                    limits: {
+//                      cpu: "250m",
+//                      memory: "512Mi",
+//                      "ephemeral-storage": "1Gi",
+//                    },
+//                    requests: {
+//                      cpu: "250m",
+//                      memory: "512Mi",
+//                      "ephemeral-storage": "1Gi",
 //                    },
 //                  },
 //                },
 //              ],
-//              resources: {
-//                limits: {
-//                  cpu: "250m",
-//                  memory: "512Mi",
-//                  "ephemeral-storage": "1Gi",
-//                },
-//                requests: {
-//                  cpu: "250m",
-//                  memory: "512Mi",
-//                  "ephemeral-storage": "1Gi",
-//                },
-//              },
+//              restartPolicy: "OnFailure",
 //            },
-//            {
-//              name: "cloudsql-proxy",
-//              image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.13.0",
-//              args: ["--port=3306", databaseInstance.connectionName],
-//              securityContext: {
-//                runAsNonRoot: true,
-//              },
-//              resources: {
-//                limits: {
-//                  cpu: "250m",
-//                  memory: "512Mi",
-//                  "ephemeral-storage": "1Gi",
-//                },
-//                requests: {
-//                  cpu: "250m",
-//                  memory: "512Mi",
-//                  "ephemeral-storage": "1Gi",
-//                },
-//              },
-//            },
-//          ],
-//          restartPolicy: "OnFailure",
+//          },
 //        },
 //      },
 //    },
@@ -263,264 +349,178 @@ const dbcred = new k8s.core.v1.Secret(
 //    provider: clusterProvider,
 //  }
 //);
-
-const seedLabels = { app: `probable-seed-${env}` };
-
-const seedJob = new k8s.batch.v1.CronJob(
-  seedLabels.app,
-  {
-    metadata: {
-      namespace: namespaceName,
-    },
-    spec: {
-      schedule: "0 0 1 2,3,4 *",
-      jobTemplate: {
-        spec: {
-          template: {
-            spec: {
-              imagePullSecrets: [
-                { name: regcred.metadata.apply((m) => m.name) },
-              ],
-              serviceAccountName: ksa.metadata.apply((m) => m.name),
-              containers: [
-                {
-                  name: seedLabels.app,
-
-                  image: `ghcr.io/tmlamb/probable-pitchers-ingest:${
-                    changedIngest ? imageTag : "latest"
-                  }`,
-                  env: [
-                    {
-                      name: "DATABASE_URL",
-                      valueFrom: {
-                        secretKeyRef: {
-                          name: dbcred.metadata.apply((m) => m.name),
-                          key: "databaseUrl",
-                        },
-                      },
-                    },
-                    {
-                      name: "INGEST_JOBS",
-                      value: "teams,pitchers",
-                    },
-                  ],
-                  resources: {
-                    limits: {
-                      cpu: "250m",
-                      memory: "512Mi",
-                      "ephemeral-storage": "1Gi",
-                    },
-                    requests: {
-                      cpu: "250m",
-                      memory: "512Mi",
-                      "ephemeral-storage": "1Gi",
-                    },
-                  },
-                },
-                {
-                  name: "cloudsql-proxy",
-                  image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.13.0",
-                  args: ["--port=3306", databaseInstance.connectionName],
-                  securityContext: {
-                    runAsNonRoot: true,
-                  },
-                  resources: {
-                    limits: {
-                      cpu: "250m",
-                      memory: "512Mi",
-                      "ephemeral-storage": "1Gi",
-                    },
-                    requests: {
-                      cpu: "250m",
-                      memory: "512Mi",
-                      "ephemeral-storage": "1Gi",
-                    },
-                  },
-                },
-              ],
-              restartPolicy: "OnFailure",
-            },
-          },
-        },
-      },
-    },
-  },
-  {
-    provider: clusterProvider,
-  }
-);
-
-const playerLabels = { app: `probable-player-${env}` };
-
-const playerJob = new k8s.batch.v1.CronJob(
-  playerLabels.app,
-  {
-    metadata: {
-      namespace: namespaceName,
-    },
-    spec: {
-      schedule: "0 6 * 2,3,4,5,6,7,8,9,10,11,12 *",
-      jobTemplate: {
-        spec: {
-          template: {
-            spec: {
-              imagePullSecrets: [
-                { name: regcred.metadata.apply((m) => m.name) },
-              ],
-              serviceAccountName: ksa.metadata.apply((m) => m.name),
-              containers: [
-                {
-                  name: playerLabels.app,
-
-                  image: `ghcr.io/tmlamb/probable-pitchers-ingest:${
-                    changedIngest ? imageTag : "latest"
-                  }`,
-                  env: [
-                    {
-                      name: "DATABASE_URL",
-                      valueFrom: {
-                        secretKeyRef: {
-                          name: dbcred.metadata.apply((m) => m.name),
-                          key: "databaseUrl",
-                        },
-                      },
-                    },
-                    {
-                      name: "INGEST_JOBS",
-                      value: "pitchers,games",
-                    },
-                  ],
-                  resources: {
-                    limits: {
-                      cpu: "250m",
-                      memory: "512Mi",
-                      "ephemeral-storage": "1Gi",
-                    },
-                    requests: {
-                      cpu: "250m",
-                      memory: "512Mi",
-                      "ephemeral-storage": "1Gi",
-                    },
-                  },
-                },
-                {
-                  name: "cloudsql-proxy",
-                  image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.13.0",
-                  args: ["--port=3306", databaseInstance.connectionName],
-                  securityContext: {
-                    runAsNonRoot: true,
-                  },
-                  resources: {
-                    limits: {
-                      cpu: "250m",
-                      memory: "512Mi",
-                      "ephemeral-storage": "1Gi",
-                    },
-                    requests: {
-                      cpu: "250m",
-                      memory: "512Mi",
-                      "ephemeral-storage": "1Gi",
-                    },
-                  },
-                },
-              ],
-              restartPolicy: "OnFailure",
-            },
-          },
-        },
-      },
-    },
-  },
-  {
-    provider: clusterProvider,
-  }
-);
-
-const notifyLabels = { app: `probable-notify-${env}` };
-
-const notifyJob = new k8s.batch.v1.CronJob(
-  notifyLabels.app,
-  {
-    metadata: {
-      namespace: namespaceName,
-    },
-    spec: {
-      schedule: "0,30 * * 2,3,4,5,6,7,8,9,10,11,12 *",
-      jobTemplate: {
-        spec: {
-          template: {
-            spec: {
-              imagePullSecrets: [
-                { name: regcred.metadata.apply((m) => m.name) },
-              ],
-              serviceAccountName: ksa.metadata.apply((m) => m.name),
-              containers: [
-                {
-                  name: notifyLabels.app,
-
-                  image: `ghcr.io/tmlamb/probable-pitchers-ingest:${
-                    changedIngest ? imageTag : "latest"
-                  }`,
-                  env: [
-                    {
-                      name: "DATABASE_URL",
-                      valueFrom: {
-                        secretKeyRef: {
-                          name: dbcred.metadata.apply((m) => m.name),
-                          key: "databaseUrl",
-                        },
-                      },
-                    },
-                    {
-                      name: "INGEST_JOBS",
-                      value: "games,notifications",
-                    },
-                  ],
-                  resources: {
-                    limits: {
-                      cpu: "250m",
-                      memory: "512Mi",
-                      "ephemeral-storage": "1Gi",
-                    },
-                    requests: {
-                      cpu: "250m",
-                      memory: "512Mi",
-                      "ephemeral-storage": "1Gi",
-                    },
-                  },
-                },
-                {
-                  name: "cloudsql-proxy",
-                  image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.13.0",
-                  args: ["--port=3306", databaseInstance.connectionName],
-                  securityContext: {
-                    runAsNonRoot: true,
-                  },
-                  resources: {
-                    limits: {
-                      cpu: "250m",
-                      memory: "512Mi",
-                      "ephemeral-storage": "1Gi",
-                    },
-                    requests: {
-                      cpu: "250m",
-                      memory: "512Mi",
-                      "ephemeral-storage": "1Gi",
-                    },
-                  },
-                },
-              ],
-              restartPolicy: "OnFailure",
-            },
-          },
-        },
-      },
-    },
-  },
-  {
-    provider: clusterProvider,
-  }
-);
+//
+//const playerLabels = { app: `probable-player-${env}` };
+//
+//const playerJob = new k8s.batch.v1.CronJob(
+//  playerLabels.app,
+//  {
+//    metadata: {
+//      namespace: namespaceName,
+//    },
+//    spec: {
+//      schedule: "0 6 * 2,3,4,5,6,7,8,9,10,11,12 *",
+//      jobTemplate: {
+//        spec: {
+//          template: {
+//            spec: {
+//              imagePullSecrets: [
+//                { name: regcred.metadata.apply((m) => m.name) },
+//              ],
+//              serviceAccountName: ksa.metadata.apply((m) => m.name),
+//              containers: [
+//                {
+//                  name: playerLabels.app,
+//
+//                  image: `ghcr.io/tmlamb/probable-pitchers-ingest:${
+//                    changedIngest ? imageTag : "latest"
+//                  }`,
+//                  env: [
+//                    {
+//                      name: "DATABASE_URL",
+//                      valueFrom: {
+//                        secretKeyRef: {
+//                          name: dbcred.metadata.apply((m) => m.name),
+//                          key: "databaseUrl",
+//                        },
+//                      },
+//                    },
+//                    {
+//                      name: "INGEST_JOBS",
+//                      value: "pitchers,games",
+//                    },
+//                  ],
+//                  resources: {
+//                    limits: {
+//                      cpu: "250m",
+//                      memory: "512Mi",
+//                      "ephemeral-storage": "1Gi",
+//                    },
+//                    requests: {
+//                      cpu: "250m",
+//                      memory: "512Mi",
+//                      "ephemeral-storage": "1Gi",
+//                    },
+//                  },
+//                },
+//                {
+//                  name: "cloudsql-proxy",
+//                  image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.13.0",
+//                  args: ["--port=3306", databaseInstance.connectionName],
+//                  securityContext: {
+//                    runAsNonRoot: true,
+//                  },
+//                  resources: {
+//                    limits: {
+//                      cpu: "250m",
+//                      memory: "512Mi",
+//                      "ephemeral-storage": "1Gi",
+//                    },
+//                    requests: {
+//                      cpu: "250m",
+//                      memory: "512Mi",
+//                      "ephemeral-storage": "1Gi",
+//                    },
+//                  },
+//                },
+//              ],
+//              restartPolicy: "OnFailure",
+//            },
+//          },
+//        },
+//      },
+//    },
+//  },
+//  {
+//    provider: clusterProvider,
+//  }
+//);
+//
+//const notifyLabels = { app: `probable-notify-${env}` };
+//
+//const notifyJob = new k8s.batch.v1.CronJob(
+//  notifyLabels.app,
+//  {
+//    metadata: {
+//      namespace: namespaceName,
+//    },
+//    spec: {
+//      schedule: "0,30 * * 2,3,4,5,6,7,8,9,10,11,12 *",
+//      jobTemplate: {
+//        spec: {
+//          template: {
+//            spec: {
+//              imagePullSecrets: [
+//                { name: regcred.metadata.apply((m) => m.name) },
+//              ],
+//              serviceAccountName: ksa.metadata.apply((m) => m.name),
+//              containers: [
+//                {
+//                  name: notifyLabels.app,
+//
+//                  image: `ghcr.io/tmlamb/probable-pitchers-ingest:${
+//                    changedIngest ? imageTag : "latest"
+//                  }`,
+//                  env: [
+//                    {
+//                      name: "DATABASE_URL",
+//                      valueFrom: {
+//                        secretKeyRef: {
+//                          name: dbcred.metadata.apply((m) => m.name),
+//                          key: "databaseUrl",
+//                        },
+//                      },
+//                    },
+//                    {
+//                      name: "INGEST_JOBS",
+//                      value: "games,notifications",
+//                    },
+//                  ],
+//                  resources: {
+//                    limits: {
+//                      cpu: "250m",
+//                      memory: "512Mi",
+//                      "ephemeral-storage": "1Gi",
+//                    },
+//                    requests: {
+//                      cpu: "250m",
+//                      memory: "512Mi",
+//                      "ephemeral-storage": "1Gi",
+//                    },
+//                  },
+//                },
+//                {
+//                  name: "cloudsql-proxy",
+//                  image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.13.0",
+//                  args: ["--port=3306", databaseInstance.connectionName],
+//                  securityContext: {
+//                    runAsNonRoot: true,
+//                  },
+//                  resources: {
+//                    limits: {
+//                      cpu: "250m",
+//                      memory: "512Mi",
+//                      "ephemeral-storage": "1Gi",
+//                    },
+//                    requests: {
+//                      cpu: "250m",
+//                      memory: "512Mi",
+//                      "ephemeral-storage": "1Gi",
+//                    },
+//                  },
+//                },
+//              ],
+//              restartPolicy: "OnFailure",
+//            },
+//          },
+//        },
+//      },
+//    },
+//  },
+//  {
+//    provider: clusterProvider,
+//  }
+//);
 
 const appleClientSecret = pulumi
   .all([
