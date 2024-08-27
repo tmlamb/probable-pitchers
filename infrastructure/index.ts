@@ -189,80 +189,80 @@ const dbcred = new k8s.core.v1.Secret(
   { provider: clusterProvider }
 );
 
-const migrationLabels = { app: `probable-migration-${env}` };
-
-const migrationJob = new k8s.batch.v1.Job(
-  migrationLabels.app,
-  {
-    metadata: {
-      namespace: namespaceName,
-    },
-    spec: {
-      template: {
-        spec: {
-          imagePullSecrets: [{ name: regcred.metadata.apply((m) => m.name) }],
-          serviceAccountName: ksa.metadata.apply((m) => m.name),
-          containers: [
-            {
-              name: migrationLabels.app,
-
-              image: `ghcr.io/tmlamb/probable-pitchers-migration:${
-                changedDatabase ? imageTag : "latest"
-              }`,
-              env: [
-                {
-                  name: "DATABASE_URL",
-                  valueFrom: {
-                    secretKeyRef: {
-                      name: dbcred.metadata.apply((m) => m.name),
-                      key: "databaseUrl",
-                    },
-                  },
-                },
-              ],
-              resources: {
-                limits: {
-                  cpu: "250m",
-                  memory: "512Mi",
-                  "ephemeral-storage": "1Gi",
-                },
-                requests: {
-                  cpu: "250m",
-                  memory: "512Mi",
-                  "ephemeral-storage": "1Gi",
-                },
-              },
-            },
-            {
-              name: "cloudsql-proxy",
-              image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.13.0",
-              args: ["--port=3306", databaseInstance.connectionName],
-              securityContext: {
-                runAsNonRoot: true,
-              },
-              resources: {
-                limits: {
-                  cpu: "250m",
-                  memory: "512Mi",
-                  "ephemeral-storage": "1Gi",
-                },
-                requests: {
-                  cpu: "250m",
-                  memory: "512Mi",
-                  "ephemeral-storage": "1Gi",
-                },
-              },
-            },
-          ],
-          restartPolicy: "OnFailure",
-        },
-      },
-    },
-  },
-  {
-    provider: clusterProvider,
-  }
-);
+//const migrationLabels = { app: `probable-migration-${env}` };
+//
+//const migrationJob = new k8s.batch.v1.Job(
+//  migrationLabels.app,
+//  {
+//    metadata: {
+//      namespace: namespaceName,
+//    },
+//    spec: {
+//      template: {
+//        spec: {
+//          imagePullSecrets: [{ name: regcred.metadata.apply((m) => m.name) }],
+//          serviceAccountName: ksa.metadata.apply((m) => m.name),
+//          containers: [
+//            {
+//              name: migrationLabels.app,
+//
+//              image: `ghcr.io/tmlamb/probable-pitchers-migration:${
+//                changedDatabase ? imageTag : "latest"
+//              }`,
+//              env: [
+//                {
+//                  name: "DATABASE_URL",
+//                  valueFrom: {
+//                    secretKeyRef: {
+//                      name: dbcred.metadata.apply((m) => m.name),
+//                      key: "databaseUrl",
+//                    },
+//                  },
+//                },
+//              ],
+//              resources: {
+//                limits: {
+//                  cpu: "250m",
+//                  memory: "512Mi",
+//                  "ephemeral-storage": "1Gi",
+//                },
+//                requests: {
+//                  cpu: "250m",
+//                  memory: "512Mi",
+//                  "ephemeral-storage": "1Gi",
+//                },
+//              },
+//            },
+//            {
+//              name: "cloudsql-proxy",
+//              image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.13.0",
+//              args: ["--port=3306", databaseInstance.connectionName],
+//              securityContext: {
+//                runAsNonRoot: true,
+//              },
+//              resources: {
+//                limits: {
+//                  cpu: "250m",
+//                  memory: "512Mi",
+//                  "ephemeral-storage": "1Gi",
+//                },
+//                requests: {
+//                  cpu: "250m",
+//                  memory: "512Mi",
+//                  "ephemeral-storage": "1Gi",
+//                },
+//              },
+//            },
+//          ],
+//          restartPolicy: "OnFailure",
+//        },
+//      },
+//    },
+//  },
+//  {
+//    provider: clusterProvider,
+//  }
+//);
 
 //const seedLabels = { app: `probable-seed-${env}` };
 //
