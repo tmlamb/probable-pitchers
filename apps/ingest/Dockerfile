@@ -55,6 +55,7 @@ ENV NODE_ENV production
 
 RUN addgroup --system --gid 1001 ingest
 RUN adduser --system --uid 1001 ingest
+RUN apk add --no-cache curl
 
 COPY --from=builder /probable-pitchers/apps/ingest/package.json ./apps/ingest/package.json
 COPY --from=builder /probable-pitchers/package.json ./package.json
