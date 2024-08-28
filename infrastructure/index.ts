@@ -310,8 +310,6 @@ const seedJob = new k8s.batch.v1.CronJob(
                     },
                   ],
 
-                  restartPolicy: "OnFailure",
-
                   resources: {
                     limits: {
                       cpu: "250m",
