@@ -276,12 +276,12 @@ const seedJob = new k8s.batch.v1.CronJob(
       schedule: "0 0 1 2,3,4 *",
       jobTemplate: {
         spec: {
-          activeDeadlineSeconds: 600,
+          activeDeadlineSeconds: 20 * 60,
           parallelism: 1,
           completions: 1,
+          backoffLimit: 3,
           template: {
             spec: {
-              restartPolicy: "Never",
               imagePullSecrets: [
                 { name: regcred.metadata.apply((m) => m.name) },
               ],
@@ -309,6 +309,8 @@ const seedJob = new k8s.batch.v1.CronJob(
                     },
                   ],
 
+                  restartPolicy: "OnFailure",
+
                   resources: {
                     limits: {
                       cpu: "250m",
@@ -316,9 +318,9 @@ const seedJob = new k8s.batch.v1.CronJob(
                       "ephemeral-storage": "1Gi",
                     },
                   },
-                  args: [
-                    ";exit_code=$?; curl -X POST localhost:9091/quitquitquit; exit $exit_code",
-                  ],
+                  //args: [
+                  //  ";exit_code=$?; curl -X POST localhost:9091/quitquitquit; exit $exit_code",
+                  //],
                 },
               ],
               initContainers: [
@@ -333,6 +335,7 @@ const seedJob = new k8s.batch.v1.CronJob(
                   securityContext: {
                     runAsNonRoot: true,
                   },
+                  restartPolicy: "Always",
                   resources: {
                     limits: {
                       cpu: "250m",
