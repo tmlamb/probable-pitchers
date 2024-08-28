@@ -277,8 +277,6 @@ const seedJob = new k8s.batch.v1.CronJob(
       jobTemplate: {
         spec: {
           activeDeadlineSeconds: 20 * 60,
-          parallelism: 1,
-          completions: 1,
           backoffLimit: 3,
           template: {
             spec: {
