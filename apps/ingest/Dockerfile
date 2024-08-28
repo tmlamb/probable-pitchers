@@ -64,4 +64,4 @@ COPY --from=builder --chown=ingest:ingest /probable-pitchers/apps/ingest/dist/ .
 
 USER ingest
 
-ENTRYPOINT ["node", "apps/ingest/index.js"]
+CMD ["node", "apps/ingest/index.js"]
