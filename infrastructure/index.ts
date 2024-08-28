@@ -198,10 +198,13 @@ const dbcred = new k8s.core.v1.Secret(
 //      namespace: namespaceName,
 //    },
 //    spec: {
+//      activeDeadlineSeconds: 20 * 60,
+//      backoffLimit: 3,
 //      template: {
 //        spec: {
 //          imagePullSecrets: [{ name: regcred.metadata.apply((m) => m.name) }],
 //          serviceAccountName: ksa.metadata.apply((m) => m.name),
+//          restartPolicy: "OnFailure",
 //          containers: [
 //            {
 //              name: migrationLabels.app,
@@ -226,11 +229,6 @@ const dbcred = new k8s.core.v1.Secret(
 //                  memory: "512Mi",
 //                  "ephemeral-storage": "1Gi",
 //                },
-//                requests: {
-//                  cpu: "250m",
-//                  memory: "512Mi",
-//                  "ephemeral-storage": "1Gi",
-//                },
 //              },
 //            },
 //            {
@@ -246,15 +244,9 @@ const dbcred = new k8s.core.v1.Secret(
 //                  memory: "512Mi",
 //                  "ephemeral-storage": "1Gi",
 //                },
-//                requests: {
-//                  cpu: "250m",
-//                  memory: "512Mi",
-//                  "ephemeral-storage": "1Gi",
-//                },
 //              },
 //            },
 //          ],
-//          restartPolicy: "OnFailure",
 //        },
 //      },
 //    },
@@ -306,6 +298,13 @@ const seedJob = new k8s.batch.v1.CronJob(
                       name: "INGEST_JOBS",
                       value: "teams,pitchers",
                     },
+                  ],
+
+                  args: [
+                    ";",
+                    "curl",
+                    "-s",
+                    "http://localhost:9091/quitquitquit",
                   ],
 
                   resources: {
