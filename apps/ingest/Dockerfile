@@ -65,4 +65,4 @@ COPY --from=builder --chown=ingest:ingest /probable-pitchers/apps/ingest/dist/ .
 
 USER ingest
 
-CMD ["sh", "-c", "node apps/ingest/index.js ; curl http://localhost:9091/quitquitquit"]
+ENTRYPOINT ["node", "apps/ingest/index.js"]
