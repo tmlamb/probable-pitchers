@@ -308,8 +308,14 @@ const seedJob = new k8s.batch.v1.CronJob(
                     },
                   ],
 
-                  args: [
-                    "; exit_code=$?; curl -X POST localhost:9091/quitquitquit; exit $exit_code",
+                  command: [
+                    "sh",
+                    "-c",
+                    "node",
+                    "apps/ingest/index.js",
+                    ";",
+                    "curl",
+                    "http://localhost:9091/quitquitquit",
                   ],
 
                   resources: {
@@ -327,6 +333,7 @@ const seedJob = new k8s.batch.v1.CronJob(
                     "--port=3306",
                     databaseInstance.connectionName,
                     "--quitquitquit",
+                    "--exit-zero-on-sigterm",
                   ],
                   securityContext: {
                     runAsNonRoot: true,
