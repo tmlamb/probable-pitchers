@@ -308,7 +308,7 @@ const seedJob = new k8s.batch.v1.CronJob(
                     },
                   ],
 
-                  command: [
+                  args: [
                     "sh",
                     "-c",
                     "node",
