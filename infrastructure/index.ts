@@ -300,7 +300,11 @@ const seedJob = new k8s.batch.v1.CronJob(
                     },
                   ],
 
-                  args: ["; curl -s http://localhost:9091/quitquitquit"],
+                  command: ["sh", "-c"],
+                  args: [
+                    "node apps/dist/index.js",
+                    "; curl -s http://localhost:9091/quitquitquit",
+                  ],
 
                   resources: {
                     limits: {
