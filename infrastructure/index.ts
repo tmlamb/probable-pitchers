@@ -282,6 +282,7 @@ const seedJob = new k8s.batch.v1.CronJob(
           backoffLimit: 3,
           template: {
             spec: {
+              restartPolicy: "OnFailure",
               imagePullSecrets: [
                 { name: regcred.metadata.apply((m) => m.name) },
               ],
