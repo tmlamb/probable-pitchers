@@ -308,7 +308,7 @@ const seedJob = new k8s.batch.v1.CronJob(
                     },
                   ],
 
-                  args: ["sh -c echo 'hello world'"],
+                  args: ["/bin/sh -c echo 'hello world'"],
                   //args: [
                   //  "node apps/ingest/index.js",
                   //  "curl http://localhost:9091/quitquitquit",
