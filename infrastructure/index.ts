@@ -331,7 +331,6 @@ const seedJob = new k8s.batch.v1.CronJob(
                   securityContext: {
                     runAsNonRoot: true,
                   },
-                  restartPolicy: "Always",
                   resources: {
                     limits: {
                       cpu: "250m",
