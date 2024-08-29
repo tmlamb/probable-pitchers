@@ -14,6 +14,9 @@ COPY packages/db ./packages/db
 # Install dependencies based on the preferred package manager
 COPY package.json  package-lock.json ./
 COPY turbo.json ./turbo.json
+
+RUN apk add --no-cache curl
+
 RUN \
   if [ -f package-lock.json ]; then npm ci; \
   else echo "Lockfile not found." && exit 1; \
