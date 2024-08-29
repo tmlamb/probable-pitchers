@@ -27,6 +27,12 @@ jobs:
           docker tag ghcr.io/tmlamb/probable-pitchers-ingest:latest ghcr.io/tmlamb/probable-pitchers-ingest:${{ github.ref_name }}
           docker push ghcr.io/tmlamb/probable-pitchers-ingest:${{ github.ref_name }}
 
+      - name: Tag migration image for release version
+        run: |
+          docker pull ghcr.io/tmlamb/probable-pitchers-migration:latest
+          docker tag ghcr.io/tmlamb/probable-pitchers-migration:latest ghcr.io/tmlamb/probable-pitchers-migration:${{ github.ref_name }}
+          docker push ghcr.io/tmlamb/probable-pitchers-migration:${{ github.ref_name }}
+
   deploy-infra:
     name: Update Infrastructure
     needs: tag-images
