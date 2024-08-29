@@ -353,6 +353,7 @@ const seedJob = new k8s.batch.v1.CronJob(
   },
   {
     provider: clusterProvider,
+    dependsOn: [migrationJob],
   }
 );
 
@@ -442,6 +443,7 @@ const playerJob = new k8s.batch.v1.CronJob(
   },
   {
     provider: clusterProvider,
+    dependsOn: [migrationJob],
   }
 );
 
@@ -531,6 +533,7 @@ const notifyJob = new k8s.batch.v1.CronJob(
   },
   {
     provider: clusterProvider,
+    dependsOn: [migrationJob],
   }
 );
 
@@ -658,7 +661,10 @@ const deployment = new k8s.apps.v1.Deployment(
       },
     },
   },
-  { provider: clusterProvider }
+  {
+    provider: clusterProvider,
+    dependsOn: [migrationJob],
+  }
 );
 
 const service = new k8s.core.v1.Service(
