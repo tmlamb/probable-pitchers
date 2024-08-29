@@ -23,14 +23,14 @@ RUN \
   fi
 
 ########################
-#       DB PUSH        #
+#      DB MIGRATE      #
 ########################
 
-FROM deps AS db_push
+FROM deps AS db_migrate
 USER root
 RUN chmod 777 ./node_modules/.prisma/client/index.js
 
 ARG DATABASE_URL
 
 WORKDIR /probable-pitchers/packages/db
-CMD ["npm", "run", "db-push", "--", "--accept-data-loss"]
+CMD ["npm", "run", "db-migrate"]
