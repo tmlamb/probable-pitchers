@@ -226,7 +226,7 @@ const migrationJob = new k8s.batch.v1.Job(
 
               command: ["sh", "-c"],
               args: [
-                "npm run db-migrate -- --accept-data-loss; curl -s http://localhost:9091/quitquitquit",
+                "npm run db-migrate; curl -s http://localhost:9091/quitquitquit",
               ],
 
               resources: {
