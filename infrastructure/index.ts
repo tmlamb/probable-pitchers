@@ -200,6 +200,8 @@ const migrationJob = new k8s.batch.v1.Job(
     spec: {
       activeDeadlineSeconds: 20 * 60,
       backoffLimit: 3,
+      parallelism: 1,
+      completions: 1,
       template: {
         spec: {
           restartPolicy: "OnFailure",
@@ -281,6 +283,8 @@ const seedJob = new k8s.batch.v1.CronJob(
         spec: {
           activeDeadlineSeconds: 20 * 60,
           backoffLimit: 3,
+          parallelism: 1,
+          completions: 1,
           template: {
             spec: {
               restartPolicy: "OnFailure",
@@ -371,6 +375,8 @@ const playerJob = new k8s.batch.v1.CronJob(
         spec: {
           activeDeadlineSeconds: 20 * 60,
           backoffLimit: 3,
+          parallelism: 1,
+          completions: 1,
           template: {
             spec: {
               restartPolicy: "OnFailure",
@@ -461,6 +467,8 @@ const notifyJob = new k8s.batch.v1.CronJob(
         spec: {
           activeDeadlineSeconds: 20 * 60,
           backoffLimit: 3,
+          parallelism: 1,
+          completions: 1,
           template: {
             spec: {
               restartPolicy: "OnFailure",
@@ -577,13 +585,9 @@ const deployment = new k8s.apps.v1.Deployment(
               image: `ghcr.io/tmlamb/probable-pitchers-nextjs:${
                 changedNextjs ? imageTag : "latest"
               }`,
+
               ports: [{ name: "http", containerPort: 3000 }],
               resources: {
-                limits: {
-                  cpu: "250m",
-                  memory: "512Mi",
-                  "ephemeral-storage": "1Gi",
-                },
                 requests: {
                   cpu: "250m",
                   memory: "512Mi",
