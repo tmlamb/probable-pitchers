@@ -69,17 +69,17 @@ const databaseUrl = pulumi
     return `mysql://${username}:${password}@${ipAddress}/${database}`;
   });
 
-const clusterProvider = new k8s.Provider(`probable-pitchers-${env}`, {
+export const clusterProvider = new k8s.Provider(`probable-pitchers-${env}`, {
   kubeconfig: process.env.KUBECONFIG,
 });
 
-const ns = new k8s.core.v1.Namespace(
+export const namespace = new k8s.core.v1.Namespace(
   `probable-${env}`,
   {},
   { provider: clusterProvider }
 );
 
-export const namespaceName = ns.metadata.name;
+const namespaceName = namespace.metadata.name;
 
 const ksa = new k8s.core.v1.ServiceAccount(
   `probable-gke-service-account-${env}`,
