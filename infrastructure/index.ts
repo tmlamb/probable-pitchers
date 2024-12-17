@@ -136,7 +136,7 @@ pulumi
     );
   });
 
-const regcred = new k8s.core.v1.Secret(
+export const regcred = new k8s.core.v1.Secret(
   `probable-regcred-${env}`,
   {
     metadata: {
