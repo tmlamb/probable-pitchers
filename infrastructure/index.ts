@@ -61,17 +61,6 @@ const databaseLegacy = new gcp.sql.Database(`probable-legacy-db`, {
   charset: "utf8",
 });
 
-const databaseUrlLegacy = pulumi
-  .all([
-    databaseInstanceLegacy.publicIpAddress,
-    databaseLegacy.name,
-    databaseUserLegacy.name,
-    databaseUserLegacy.password,
-  ])
-  .apply(([ipAddress, database, username, password]) => {
-    return `mysql://${username}:${password}@${ipAddress}/${database}`;
-  });
-
 export const clusterProviderLegacy = new k8s.Provider(
   `probable-pitchers-legacy`,
   {
@@ -205,514 +194,514 @@ const dbcredLegacy = new k8s.core.v1.Secret(
   { provider: clusterProviderLegacy }
 );
 
-const migrationLabels = { app: `probable-legacy-migration` };
-
-const migrationJobLegacy = new k8s.batch.v1.Job(
-  migrationLabels.app,
-  {
-    metadata: {
-      namespace: namespaceName,
-    },
-    spec: {
-      activeDeadlineSeconds: 20 * 60,
-      backoffLimit: 3,
-      parallelism: 1,
-      completions: 1,
-      template: {
-        spec: {
-          restartPolicy: "OnFailure",
-          imagePullSecrets: [
-            { name: regcredLegacy.metadata.apply((m) => m.name) },
-          ],
-          serviceAccountName: ksaLegacy.metadata.apply((m) => m.name),
-          containers: [
-            {
-              name: migrationLabels.app,
-
-              image: `ghcr.io/tmlamb/probable-pitchers-migration:${
-                changedDatabase ? imageTag : "latest"
-              }`,
-              env: [
-                {
-                  name: "DATABASE_URL",
-                  valueFrom: {
-                    secretKeyRef: {
-                      name: dbcredLegacy.metadata.apply((m) => m.name),
-                      key: "databaseUrl",
-                    },
-                  },
-                },
-              ],
-
-              command: ["sh", "-c"],
-              args: [
-                "npm run db-migrate; curl -s http://localhost:9091/quitquitquit",
-              ],
-
-              resources: {
-                limits: {
-                  cpu: "250m",
-                  memory: "512Mi",
-                  "ephemeral-storage": "1Gi",
-                },
-              },
-            },
-            {
-              name: "cloudsql-proxy",
-              image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.13.0",
-              args: [
-                "--port=3306",
-                databaseInstanceLegacy.connectionName,
-                "--quitquitquit",
-                "--exit-zero-on-sigterm",
-              ],
-              securityContext: {
-                runAsNonRoot: true,
-              },
-              resources: {
-                limits: {
-                  cpu: "250m",
-                  memory: "512Mi",
-                  "ephemeral-storage": "1Gi",
-                },
-              },
-            },
-          ],
-        },
-      },
-    },
-  },
-  {
-    provider: clusterProviderLegacy,
-  }
-);
-
-const seedLabels = { app: `probable-legacy-seed` };
-
-const seedJobLegacy = new k8s.batch.v1.CronJob(
-  seedLabels.app,
-  {
-    metadata: {
-      namespace: namespaceName,
-    },
-    spec: {
-      schedule: "0 0 1 2,3,4 *",
-      jobTemplate: {
-        spec: {
-          activeDeadlineSeconds: 20 * 60,
-          backoffLimit: 3,
-          parallelism: 1,
-          completions: 1,
-          template: {
-            spec: {
-              restartPolicy: "OnFailure",
-              imagePullSecrets: [
-                { name: regcredLegacy.metadata.apply((m) => m.name) },
-              ],
-              serviceAccountName: ksaLegacy.metadata.apply((m) => m.name),
-              containers: [
-                {
-                  name: seedLabels.app,
-
-                  image: `ghcr.io/tmlamb/probable-pitchers-ingest:${
-                    changedIngest ? imageTag : "latest"
-                  }`,
-                  env: [
-                    {
-                      name: "DATABASE_URL",
-                      valueFrom: {
-                        secretKeyRef: {
-                          name: dbcredLegacy.metadata.apply((m) => m.name),
-                          key: "databaseUrl",
-                        },
-                      },
-                    },
-                    {
-                      name: "INGEST_JOBS",
-                      value: "teams,pitchers",
-                    },
-                  ],
-
-                  command: ["sh", "-c"],
-                  args: [
-                    "node apps/ingest/index.js; curl -s http://localhost:9091/quitquitquit",
-                  ],
-
-                  resources: {
-                    limits: {
-                      cpu: "250m",
-                      memory: "512Mi",
-                      "ephemeral-storage": "1Gi",
-                    },
-                  },
-                },
-                {
-                  name: "cloudsql-proxy",
-                  image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.13.0",
-                  args: [
-                    "--port=3306",
-                    databaseInstanceLegacy.connectionName,
-                    "--quitquitquit",
-                    "--exit-zero-on-sigterm",
-                  ],
-                  securityContext: {
-                    runAsNonRoot: true,
-                  },
-                  resources: {
-                    limits: {
-                      cpu: "250m",
-                      memory: "512Mi",
-                      "ephemeral-storage": "1Gi",
-                    },
-                  },
-                },
-              ],
-            },
-          },
-        },
-      },
-    },
-  },
-  {
-    provider: clusterProviderLegacy,
-    dependsOn: [migrationJobLegacy],
-  }
-);
-
-const playerLabels = { app: `probable-legacy-player` };
-
-const playerJobLegacy = new k8s.batch.v1.CronJob(
-  playerLabels.app,
-  {
-    metadata: {
-      namespace: namespaceName,
-    },
-    spec: {
-      schedule: "0 6 * 2,3,4,5,6,7,8,9,10,11,12 *",
-      jobTemplate: {
-        spec: {
-          activeDeadlineSeconds: 20 * 60,
-          backoffLimit: 3,
-          parallelism: 1,
-          completions: 1,
-          template: {
-            spec: {
-              restartPolicy: "OnFailure",
-              imagePullSecrets: [
-                { name: regcredLegacy.metadata.apply((m) => m.name) },
-              ],
-              serviceAccountName: ksaLegacy.metadata.apply((m) => m.name),
-              containers: [
-                {
-                  name: playerLabels.app,
-
-                  image: `ghcr.io/tmlamb/probable-pitchers-ingest:${
-                    changedIngest ? imageTag : "latest"
-                  }`,
-                  env: [
-                    {
-                      name: "DATABASE_URL",
-                      valueFrom: {
-                        secretKeyRef: {
-                          name: dbcredLegacy.metadata.apply((m) => m.name),
-                          key: "databaseUrl",
-                        },
-                      },
-                    },
-                    {
-                      name: "INGEST_JOBS",
-                      value: "pitchers,games",
-                    },
-                  ],
-
-                  command: ["sh", "-c"],
-                  args: [
-                    "node apps/ingest/index.js; curl -s http://localhost:9091/quitquitquit",
-                  ],
-
-                  resources: {
-                    limits: {
-                      cpu: "250m",
-                      memory: "512Mi",
-                      "ephemeral-storage": "1Gi",
-                    },
-                  },
-                },
-                {
-                  name: "cloudsql-proxy",
-                  image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.13.0",
-                  args: [
-                    "--port=3306",
-                    databaseInstanceLegacy.connectionName,
-                    "--quitquitquit",
-                    "--exit-zero-on-sigterm",
-                  ],
-                  securityContext: {
-                    runAsNonRoot: true,
-                  },
-                  resources: {
-                    limits: {
-                      cpu: "250m",
-                      memory: "512Mi",
-                      "ephemeral-storage": "1Gi",
-                    },
-                  },
-                },
-              ],
-            },
-          },
-        },
-      },
-    },
-  },
-  {
-    provider: clusterProviderLegacy,
-    dependsOn: [migrationJobLegacy],
-  }
-);
-
-const notifyLabels = { app: `probable-legacy-notify` };
-
-const notifyJobLegacy = new k8s.batch.v1.CronJob(
-  notifyLabels.app,
-  {
-    metadata: {
-      namespace: namespaceName,
-    },
-    spec: {
-      schedule: "0,30 * * 2,3,4,5,6,7,8,9,10,11,12 *",
-      jobTemplate: {
-        spec: {
-          activeDeadlineSeconds: 20 * 60,
-          backoffLimit: 3,
-          parallelism: 1,
-          completions: 1,
-          template: {
-            spec: {
-              restartPolicy: "OnFailure",
-              imagePullSecrets: [
-                { name: regcredLegacy.metadata.apply((m) => m.name) },
-              ],
-              serviceAccountName: ksaLegacy.metadata.apply((m) => m.name),
-              containers: [
-                {
-                  name: notifyLabels.app,
-
-                  image: `ghcr.io/tmlamb/probable-pitchers-ingest:${
-                    changedIngest ? imageTag : "latest"
-                  }`,
-                  env: [
-                    {
-                      name: "DATABASE_URL",
-                      valueFrom: {
-                        secretKeyRef: {
-                          name: dbcredLegacy.metadata.apply((m) => m.name),
-                          key: "databaseUrl",
-                        },
-                      },
-                    },
-                    {
-                      name: "INGEST_JOBS",
-                      value: "games,notifications",
-                    },
-                  ],
-
-                  command: ["sh", "-c"],
-                  args: [
-                    "node apps/ingest/index.js; curl -s http://localhost:9091/quitquitquit",
-                  ],
-
-                  resources: {
-                    limits: {
-                      cpu: "250m",
-                      memory: "512Mi",
-                      "ephemeral-storage": "1Gi",
-                    },
-                  },
-                },
-                {
-                  name: "cloudsql-proxy",
-                  image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.13.0",
-                  args: [
-                    "--port=3306",
-                    databaseInstanceLegacy.connectionName,
-                    "--quitquitquit",
-                    "--exit-zero-on-sigterm",
-                  ],
-                  securityContext: {
-                    runAsNonRoot: true,
-                  },
-                  resources: {
-                    limits: {
-                      cpu: "250m",
-                      memory: "512Mi",
-                      "ephemeral-storage": "1Gi",
-                    },
-                  },
-                },
-              ],
-            },
-          },
-        },
-      },
-    },
-  },
-  {
-    provider: clusterProviderLegacy,
-    dependsOn: [migrationJobLegacy],
-  }
-);
-
-const appleClientSecret = pulumi
-  .all([
-    config.requireSecret("appleTeamId"),
-    config.requireSecret("appleKeyId"),
-    config.requireSecret("applePrivateKey"),
-    config.requireSecret("appleClientId"),
-  ])
-  .apply(([teamId, keyId, privateKey, clientId]) =>
-    generateSecret({ teamId, keyId, privateKey, clientId })
-  );
-
-const appLabels = { app: `probable-legacy-nextjs` };
-
-const deploymentLegacy = new k8s.apps.v1.Deployment(
-  appLabels.app,
-  {
-    metadata: {
-      namespace: namespaceName,
-    },
-    spec: {
-      strategy: {
-        type: "RollingUpdate",
-        rollingUpdate: {
-          maxSurge: 1,
-          maxUnavailable: 1,
-        },
-      },
-      selector: { matchLabels: appLabels },
-      replicas: replicas,
-      template: {
-        metadata: { labels: appLabels },
-        spec: {
-          imagePullSecrets: [
-            { name: regcredLegacy.metadata.apply((m) => m.name) },
-          ],
-          serviceAccountName: ksaLegacy.metadata.apply((m) => m.name),
-          containers: [
-            {
-              name: appLabels.app,
-              image: `ghcr.io/tmlamb/probable-pitchers-nextjs:${
-                changedNextjs ? imageTag : "latest"
-              }`,
-
-              ports: [{ name: "http", containerPort: 3000 }],
-              resources: {
-                requests: {
-                  cpu: "250m",
-                  memory: "512Mi",
-                  "ephemeral-storage": "1Gi",
-                },
-              },
-              livenessProbe: {
-                httpGet: { path: "/", port: "http" },
-              },
-              env: [
-                {
-                  name: "DATABASE_URL",
-                  valueFrom: {
-                    secretKeyRef: {
-                      name: dbcredLegacy.metadata.apply((m) => m.name),
-                      key: "databaseUrl",
-                    },
-                  },
-                },
-                {
-                  name: "AUTH_GOOGLE_CLIENT_ID",
-                  value: config.requireSecret("authGoogleClientId"),
-                },
-                {
-                  name: "AUTH_GOOGLE_CLIENT_SECRET",
-                  value: config.requireSecret("authGoogleClientSecret"),
-                },
-                {
-                  name: "APPLE_CLIENT_ID",
-                  value: config.requireSecret("appleClientId"),
-                },
-                {
-                  name: "APPLE_CLIENT_SECRET",
-                  value: appleClientSecret,
-                },
-                {
-                  name: "APPLE_WEB_CLIENT_ID",
-                  value: config.requireSecret("appleWebClientId"),
-                },
-                {
-                  name: "APPLE_WEB_CLIENT_SECRET",
-                  value: config.requireSecret("appleWebClientSecret"),
-                },
-                {
-                  name: "NEXTAUTH_SECRET",
-                  value: config.requireSecret("nextAuthSecret"),
-                },
-                {
-                  name: "NEXTAUTH_URL",
-                  value: config.requireSecret("nextAuthUrl"),
-                },
-                {
-                  name: "NEXTAUTH_EXPO_URL",
-                  value: config.requireSecret("nextAuthExpoUrl"),
-                },
-              ],
-            },
-            {
-              name: "cloudsql-proxy",
-              image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.13.0",
-              args: ["--port=3306", databaseInstanceLegacy.connectionName],
-              securityContext: {
-                runAsNonRoot: true,
-              },
-              resources: {
-                limits: {
-                  cpu: "250m",
-                  memory: "512Mi",
-                  "ephemeral-storage": "1Gi",
-                },
-              },
-            },
-          ],
-        },
-      },
-    },
-  },
-  {
-    provider: clusterProviderLegacy,
-    dependsOn: [migrationJobLegacy],
-  }
-);
-
-const serviceLegacy = new k8s.core.v1.Service(
-  appLabels.app,
-  {
-    metadata: {
-      namespace: namespaceName,
-    },
-    spec: {
-      ports: [
-        {
-          port: 80,
-          targetPort: 3000,
-        },
-      ],
-      selector: {
-        app: appLabels.app,
-      },
-    },
-  },
-  {
-    provider: clusterProviderLegacy,
-  }
-);
+//const migrationLabels = { app: `probable-legacy-migration` };
+//
+//const migrationJobLegacy = new k8s.batch.v1.Job(
+//  migrationLabels.app,
+//  {
+//    metadata: {
+//      namespace: namespaceName,
+//    },
+//    spec: {
+//      activeDeadlineSeconds: 20 * 60,
+//      backoffLimit: 3,
+//      parallelism: 1,
+//      completions: 1,
+//      template: {
+//        spec: {
+//          restartPolicy: "OnFailure",
+//          imagePullSecrets: [
+//            { name: regcredLegacy.metadata.apply((m) => m.name) },
+//          ],
+//          serviceAccountName: ksaLegacy.metadata.apply((m) => m.name),
+//          containers: [
+//            {
+//              name: migrationLabels.app,
+//
+//              image: `ghcr.io/tmlamb/probable-pitchers-migration:${
+//                changedDatabase ? imageTag : "latest"
+//              }`,
+//              env: [
+//                {
+//                  name: "DATABASE_URL",
+//                  valueFrom: {
+//                    secretKeyRef: {
+//                      name: dbcredLegacy.metadata.apply((m) => m.name),
+//                      key: "databaseUrl",
+//                    },
+//                  },
+//                },
+//              ],
+//
+//              command: ["sh", "-c"],
+//              args: [
+//                "npm run db-migrate; curl -s http://localhost:9091/quitquitquit",
+//              ],
+//
+//              resources: {
+//                limits: {
+//                  cpu: "250m",
+//                  memory: "512Mi",
+//                  "ephemeral-storage": "1Gi",
+//                },
+//              },
+//            },
+//            {
+//              name: "cloudsql-proxy",
+//              image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.13.0",
+//              args: [
+//                "--port=3306",
+//                databaseInstanceLegacy.connectionName,
+//                "--quitquitquit",
+//                "--exit-zero-on-sigterm",
+//              ],
+//              securityContext: {
+//                runAsNonRoot: true,
+//              },
+//              resources: {
+//                limits: {
+//                  cpu: "250m",
+//                  memory: "512Mi",
+//                  "ephemeral-storage": "1Gi",
+//                },
+//              },
+//            },
+//          ],
+//        },
+//      },
+//    },
+//  },
+//  {
+//    provider: clusterProviderLegacy,
+//  }
+//);
+//
+//const seedLabels = { app: `probable-legacy-seed` };
+//
+//const seedJobLegacy = new k8s.batch.v1.CronJob(
+//  seedLabels.app,
+//  {
+//    metadata: {
+//      namespace: namespaceName,
+//    },
+//    spec: {
+//      schedule: "0 0 1 2,3,4 *",
+//      jobTemplate: {
+//        spec: {
+//          activeDeadlineSeconds: 20 * 60,
+//          backoffLimit: 3,
+//          parallelism: 1,
+//          completions: 1,
+//          template: {
+//            spec: {
+//              restartPolicy: "OnFailure",
+//              imagePullSecrets: [
+//                { name: regcredLegacy.metadata.apply((m) => m.name) },
+//              ],
+//              serviceAccountName: ksaLegacy.metadata.apply((m) => m.name),
+//              containers: [
+//                {
+//                  name: seedLabels.app,
+//
+//                  image: `ghcr.io/tmlamb/probable-pitchers-ingest:${
+//                    changedIngest ? imageTag : "latest"
+//                  }`,
+//                  env: [
+//                    {
+//                      name: "DATABASE_URL",
+//                      valueFrom: {
+//                        secretKeyRef: {
+//                          name: dbcredLegacy.metadata.apply((m) => m.name),
+//                          key: "databaseUrl",
+//                        },
+//                      },
+//                    },
+//                    {
+//                      name: "INGEST_JOBS",
+//                      value: "teams,pitchers",
+//                    },
+//                  ],
+//
+//                  command: ["sh", "-c"],
+//                  args: [
+//                    "node apps/ingest/index.js; curl -s http://localhost:9091/quitquitquit",
+//                  ],
+//
+//                  resources: {
+//                    limits: {
+//                      cpu: "250m",
+//                      memory: "512Mi",
+//                      "ephemeral-storage": "1Gi",
+//                    },
+//                  },
+//                },
+//                {
+//                  name: "cloudsql-proxy",
+//                  image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.13.0",
+//                  args: [
+//                    "--port=3306",
+//                    databaseInstanceLegacy.connectionName,
+//                    "--quitquitquit",
+//                    "--exit-zero-on-sigterm",
+//                  ],
+//                  securityContext: {
+//                    runAsNonRoot: true,
+//                  },
+//                  resources: {
+//                    limits: {
+//                      cpu: "250m",
+//                      memory: "512Mi",
+//                      "ephemeral-storage": "1Gi",
+//                    },
+//                  },
+//                },
+//              ],
+//            },
+//          },
+//        },
+//      },
+//    },
+//  },
+//  {
+//    provider: clusterProviderLegacy,
+//    dependsOn: [migrationJobLegacy],
+//  }
+//);
+//
+//const playerLabels = { app: `probable-legacy-player` };
+//
+//const playerJobLegacy = new k8s.batch.v1.CronJob(
+//  playerLabels.app,
+//  {
+//    metadata: {
+//      namespace: namespaceName,
+//    },
+//    spec: {
+//      schedule: "0 6 * 2,3,4,5,6,7,8,9,10,11,12 *",
+//      jobTemplate: {
+//        spec: {
+//          activeDeadlineSeconds: 20 * 60,
+//          backoffLimit: 3,
+//          parallelism: 1,
+//          completions: 1,
+//          template: {
+//            spec: {
+//              restartPolicy: "OnFailure",
+//              imagePullSecrets: [
+//                { name: regcredLegacy.metadata.apply((m) => m.name) },
+//              ],
+//              serviceAccountName: ksaLegacy.metadata.apply((m) => m.name),
+//              containers: [
+//                {
+//                  name: playerLabels.app,
+//
+//                  image: `ghcr.io/tmlamb/probable-pitchers-ingest:${
+//                    changedIngest ? imageTag : "latest"
+//                  }`,
+//                  env: [
+//                    {
+//                      name: "DATABASE_URL",
+//                      valueFrom: {
+//                        secretKeyRef: {
+//                          name: dbcredLegacy.metadata.apply((m) => m.name),
+//                          key: "databaseUrl",
+//                        },
+//                      },
+//                    },
+//                    {
+//                      name: "INGEST_JOBS",
+//                      value: "pitchers,games",
+//                    },
+//                  ],
+//
+//                  command: ["sh", "-c"],
+//                  args: [
+//                    "node apps/ingest/index.js; curl -s http://localhost:9091/quitquitquit",
+//                  ],
+//
+//                  resources: {
+//                    limits: {
+//                      cpu: "250m",
+//                      memory: "512Mi",
+//                      "ephemeral-storage": "1Gi",
+//                    },
+//                  },
+//                },
+//                {
+//                  name: "cloudsql-proxy",
+//                  image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.13.0",
+//                  args: [
+//                    "--port=3306",
+//                    databaseInstanceLegacy.connectionName,
+//                    "--quitquitquit",
+//                    "--exit-zero-on-sigterm",
+//                  ],
+//                  securityContext: {
+//                    runAsNonRoot: true,
+//                  },
+//                  resources: {
+//                    limits: {
+//                      cpu: "250m",
+//                      memory: "512Mi",
+//                      "ephemeral-storage": "1Gi",
+//                    },
+//                  },
+//                },
+//              ],
+//            },
+//          },
+//        },
+//      },
+//    },
+//  },
+//  {
+//    provider: clusterProviderLegacy,
+//    dependsOn: [migrationJobLegacy],
+//  }
+//);
+//
+//const notifyLabels = { app: `probable-legacy-notify` };
+//
+//const notifyJobLegacy = new k8s.batch.v1.CronJob(
+//  notifyLabels.app,
+//  {
+//    metadata: {
+//      namespace: namespaceName,
+//    },
+//    spec: {
+//      schedule: "0,30 * * 2,3,4,5,6,7,8,9,10,11,12 *",
+//      jobTemplate: {
+//        spec: {
+//          activeDeadlineSeconds: 20 * 60,
+//          backoffLimit: 3,
+//          parallelism: 1,
+//          completions: 1,
+//          template: {
+//            spec: {
+//              restartPolicy: "OnFailure",
+//              imagePullSecrets: [
+//                { name: regcredLegacy.metadata.apply((m) => m.name) },
+//              ],
+//              serviceAccountName: ksaLegacy.metadata.apply((m) => m.name),
+//              containers: [
+//                {
+//                  name: notifyLabels.app,
+//
+//                  image: `ghcr.io/tmlamb/probable-pitchers-ingest:${
+//                    changedIngest ? imageTag : "latest"
+//                  }`,
+//                  env: [
+//                    {
+//                      name: "DATABASE_URL",
+//                      valueFrom: {
+//                        secretKeyRef: {
+//                          name: dbcredLegacy.metadata.apply((m) => m.name),
+//                          key: "databaseUrl",
+//                        },
+//                      },
+//                    },
+//                    {
+//                      name: "INGEST_JOBS",
+//                      value: "games,notifications",
+//                    },
+//                  ],
+//
+//                  command: ["sh", "-c"],
+//                  args: [
+//                    "node apps/ingest/index.js; curl -s http://localhost:9091/quitquitquit",
+//                  ],
+//
+//                  resources: {
+//                    limits: {
+//                      cpu: "250m",
+//                      memory: "512Mi",
+//                      "ephemeral-storage": "1Gi",
+//                    },
+//                  },
+//                },
+//                {
+//                  name: "cloudsql-proxy",
+//                  image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.13.0",
+//                  args: [
+//                    "--port=3306",
+//                    databaseInstanceLegacy.connectionName,
+//                    "--quitquitquit",
+//                    "--exit-zero-on-sigterm",
+//                  ],
+//                  securityContext: {
+//                    runAsNonRoot: true,
+//                  },
+//                  resources: {
+//                    limits: {
+//                      cpu: "250m",
+//                      memory: "512Mi",
+//                      "ephemeral-storage": "1Gi",
+//                    },
+//                  },
+//                },
+//              ],
+//            },
+//          },
+//        },
+//      },
+//    },
+//  },
+//  {
+//    provider: clusterProviderLegacy,
+//    dependsOn: [migrationJobLegacy],
+//  }
+//);
+//
+//const appleClientSecret = pulumi
+//  .all([
+//    config.requireSecret("appleTeamId"),
+//    config.requireSecret("appleKeyId"),
+//    config.requireSecret("applePrivateKey"),
+//    config.requireSecret("appleClientId"),
+//  ])
+//  .apply(([teamId, keyId, privateKey, clientId]) =>
+//    generateSecret({ teamId, keyId, privateKey, clientId })
+//  );
+//
+//const appLabels = { app: `probable-legacy-nextjs` };
+//
+//const deploymentLegacy = new k8s.apps.v1.Deployment(
+//  appLabels.app,
+//  {
+//    metadata: {
+//      namespace: namespaceName,
+//    },
+//    spec: {
+//      strategy: {
+//        type: "RollingUpdate",
+//        rollingUpdate: {
+//          maxSurge: 1,
+//          maxUnavailable: 1,
+//        },
+//      },
+//      selector: { matchLabels: appLabels },
+//      replicas: replicas,
+//      template: {
+//        metadata: { labels: appLabels },
+//        spec: {
+//          imagePullSecrets: [
+//            { name: regcredLegacy.metadata.apply((m) => m.name) },
+//          ],
+//          serviceAccountName: ksaLegacy.metadata.apply((m) => m.name),
+//          containers: [
+//            {
+//              name: appLabels.app,
+//              image: `ghcr.io/tmlamb/probable-pitchers-nextjs:${
+//                changedNextjs ? imageTag : "latest"
+//              }`,
+//
+//              ports: [{ name: "http", containerPort: 3000 }],
+//              resources: {
+//                requests: {
+//                  cpu: "250m",
+//                  memory: "512Mi",
+//                  "ephemeral-storage": "1Gi",
+//                },
+//              },
+//              livenessProbe: {
+//                httpGet: { path: "/", port: "http" },
+//              },
+//              env: [
+//                {
+//                  name: "DATABASE_URL",
+//                  valueFrom: {
+//                    secretKeyRef: {
+//                      name: dbcredLegacy.metadata.apply((m) => m.name),
+//                      key: "databaseUrl",
+//                    },
+//                  },
+//                },
+//                {
+//                  name: "AUTH_GOOGLE_CLIENT_ID",
+//                  value: config.requireSecret("authGoogleClientId"),
+//                },
+//                {
+//                  name: "AUTH_GOOGLE_CLIENT_SECRET",
+//                  value: config.requireSecret("authGoogleClientSecret"),
+//                },
+//                {
+//                  name: "APPLE_CLIENT_ID",
+//                  value: config.requireSecret("appleClientId"),
+//                },
+//                {
+//                  name: "APPLE_CLIENT_SECRET",
+//                  value: appleClientSecret,
+//                },
+//                {
+//                  name: "APPLE_WEB_CLIENT_ID",
+//                  value: config.requireSecret("appleWebClientId"),
+//                },
+//                {
+//                  name: "APPLE_WEB_CLIENT_SECRET",
+//                  value: config.requireSecret("appleWebClientSecret"),
+//                },
+//                {
+//                  name: "NEXTAUTH_SECRET",
+//                  value: config.requireSecret("nextAuthSecret"),
+//                },
+//                {
+//                  name: "NEXTAUTH_URL",
+//                  value: config.requireSecret("nextAuthUrl"),
+//                },
+//                {
+//                  name: "NEXTAUTH_EXPO_URL",
+//                  value: config.requireSecret("nextAuthExpoUrl"),
+//                },
+//              ],
+//            },
+//            {
+//              name: "cloudsql-proxy",
+//              image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.13.0",
+//              args: ["--port=3306", databaseInstanceLegacy.connectionName],
+//              securityContext: {
+//                runAsNonRoot: true,
+//              },
+//              resources: {
+//                limits: {
+//                  cpu: "250m",
+//                  memory: "512Mi",
+//                  "ephemeral-storage": "1Gi",
+//                },
+//              },
+//            },
+//          ],
+//        },
+//      },
+//    },
+//  },
+//  {
+//    provider: clusterProviderLegacy,
+//    dependsOn: [migrationJobLegacy],
+//  }
+//);
+//
+//const serviceLegacy = new k8s.core.v1.Service(
+//  appLabels.app,
+//  {
+//    metadata: {
+//      namespace: namespaceName,
+//    },
+//    spec: {
+//      ports: [
+//        {
+//          port: 80,
+//          targetPort: 3000,
+//        },
+//      ],
+//      selector: {
+//        app: appLabels.app,
+//      },
+//    },
+//  },
+//  {
+//    provider: clusterProviderLegacy,
+//  }
+//);
 
 const ipAddressLegacy = new gcp.compute.GlobalAddress(
   `probable-legacy-address`,
@@ -759,48 +748,48 @@ const httpsRedirectLegacy = new k8s.apiextensions.CustomResource(
   }
 );
 
-const ingressLegacy = new k8s.networking.v1.Ingress(
-  `probable-lgeacy-ingress`,
-  {
-    metadata: {
-      namespace: namespaceName,
-      annotations: {
-        "kubernetes.io/ingress.class": "gce",
-        "kubernetes.io/ingress.global-static-ip-name": ipAddressLegacy.name,
-        "networking.gke.io/managed-certificates":
-          managedCertificateLegacy.metadata.apply((m) => m.name),
-        "networking.gke.io/v1beta1.FrontendConfig":
-          httpsRedirectLegacy.metadata.apply((m) => m.name),
-      },
-    },
-    spec: {
-      rules: domains.map((domain) => {
-        const rule = {
-          host: domain,
-          http: {
-            paths: [
-              {
-                path: "/",
-                pathType: "Prefix",
-                backend: {
-                  service: {
-                    name: serviceLegacy?.metadata?.apply((m) => m?.name),
-                    port: {
-                      number: serviceLegacy?.spec?.ports?.[0].apply(
-                        (p) => p?.port
-                      ),
-                    },
-                  },
-                },
-              },
-            ],
-          },
-        };
-        return rule;
-      }),
-    },
-  },
-  {
-    provider: clusterProviderLegacy,
-  }
-);
+//const ingressLegacy = new k8s.networking.v1.Ingress(
+//  `probable-lgeacy-ingress`,
+//  {
+//    metadata: {
+//      namespace: namespaceName,
+//      annotations: {
+//        "kubernetes.io/ingress.class": "gce",
+//        "kubernetes.io/ingress.global-static-ip-name": ipAddressLegacy.name,
+//        "networking.gke.io/managed-certificates":
+//          managedCertificateLegacy.metadata.apply((m) => m.name),
+//        "networking.gke.io/v1beta1.FrontendConfig":
+//          httpsRedirectLegacy.metadata.apply((m) => m.name),
+//      },
+//    },
+//    spec: {
+//      rules: domains.map((domain) => {
+//        const rule = {
+//          host: domain,
+//          http: {
+//            paths: [
+//              {
+//                path: "/",
+//                pathType: "Prefix",
+//                backend: {
+//                  service: {
+//                    name: serviceLegacy?.metadata?.apply((m) => m?.name),
+//                    port: {
+//                      number: serviceLegacy?.spec?.ports?.[0].apply(
+//                        (p) => p?.port
+//                      ),
+//                    },
+//                  },
+//                },
+//              },
+//            ],
+//          },
+//        };
+//        return rule;
+//      }),
+//    },
+//  },
+//  {
+//    provider: clusterProviderLegacy,
+//  }
+//);
