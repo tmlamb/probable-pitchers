@@ -284,10 +284,10 @@ jobs:
 
   tag-git:
     name: Preview Tag Git
-    needs: [deploy-infra, update-preview]
+    needs: [deploy-infra, update-legacy]
     if: always() &&
       (needs.deploy-infra.result == 'skipped' || needs.deploy-infra.result == 'success') &&
-      (needs.update-preview.result == 'skipped' || needs.update-preview.result == 'success')
+      (needs.update-legacy.result == 'skipped' || needs.update-legacy.result == 'success')
     runs-on: ubuntu-latest
     steps:
       - name: "Check out repository code"
