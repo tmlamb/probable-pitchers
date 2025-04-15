@@ -161,11 +161,11 @@ jobs:
       - name: Install dependencies
         run: cd infrastructure && npm ci
 
-      - name: Update production stack
+      - name: Update legacy stack
         uses: pulumi/actions@v4
         with:
           command: up
-          stack-name: production
+          stack-name: legacy
           work-dir: infrastructure
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
