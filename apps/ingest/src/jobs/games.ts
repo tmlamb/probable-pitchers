@@ -15,7 +15,9 @@ export async function ingestGames() {
   ]);
 
   console.debug(
-    `Found ${schedule.flat().length} games for ${today.toISOString()}: ${JSON.stringify(schedule.flat())}`
+    `Found ${
+      schedule.flat().length
+    } games for ${today.toISOString()}: ${JSON.stringify(schedule.flat())}`
   );
 
   for (const game of schedule.flat()) {
