@@ -32,7 +32,7 @@ COPY types/ types/
 COPY --from=pruner /probable-pitchers/out/package-lock.json ./package-lock.json
 COPY --from=pruner /probable-pitchers/out/full/ .
 
-RUN npm install --package-lock=false
+RUN npm install --legacy-peer-deps --package-lock=false
 
 ARG DATABASE_URL
 ARG AUTH_GOOGLE_CLIENT_ID
