@@ -284,7 +284,7 @@ jobs:
 
   tag-git:
     name: Preview Tag Git
-    needs: [deploy-infra, update-legacy]
+    needs: [deploy-infra, update-production-rn-app]
     if: always() &&
       (needs.deploy-infra.result == 'skipped' || needs.deploy-infra.result == 'success') &&
       (needs.update-production-rn-app.result == 'skipped' || needs.update-production-rn-app.result == 'success')
