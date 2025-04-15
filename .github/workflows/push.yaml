@@ -198,7 +198,7 @@ jobs:
 
   deploy-infra:
     name: Update Infrastructure
-    needs: tag-images
+    needs: [checks, build-nextjs, build-ingest, build-migration]
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
