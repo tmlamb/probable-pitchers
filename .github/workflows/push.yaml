@@ -134,7 +134,6 @@ jobs:
     name: Build nextjs image
     needs: [test, lint, format, checks]
     runs-on: ubuntu-latest
-    if: ${{ needs.checks.outputs.changed-nextjs }}
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -157,7 +156,6 @@ jobs:
     name: Build ingest image
     needs: [test, lint, format, checks]
     runs-on: ubuntu-latest
-    if: ${{ needs.checks.outputs.changed-ingest }}
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -180,7 +178,6 @@ jobs:
     name: Build Migration image
     needs: [test, lint, format, checks]
     runs-on: ubuntu-latest
-    if: ${{ needs.checks.outputs.changed-db }}
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -200,12 +197,8 @@ jobs:
           docker push --all-tags ghcr.io/tmlamb/probable-pitchers-migration
 
   deploy-infra:
-    name: Deploy Preview Infrastructure
-    needs: [checks, build-nextjs, build-ingest, build-migration]
-    if: always() &&
-      (needs.build-migration.result == 'skipped' || needs.build-migration.result == 'success') &&
-      (needs.build-nextjs.result == 'skipped' || needs.build-nextjs.result == 'success') &&
-      (needs.build-ingest.result == 'skipped' || needs.build-ingest.result == 'success')
+    name: Update Infrastructure
+    needs: tag-images
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
@@ -220,54 +213,55 @@ jobs:
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
         with:
-          credentials_json: "${{ secrets.GCP_CREDENTIALS_PROD }}"
+          credentials_json: ${{ secrets.GCP_CREDENTIALS_PROD }}
 
-      - name: "Set up Cloud SDK"
-        uses: "google-github-actions/setup-gcloud@v1"
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
 
-      - name: "Get GKR Credentials"
-        uses: "google-github-actions/get-gke-credentials@v1"
+      - name: Get GKR Credentials
+        uses: google-github-actions/get-gke-credentials@v1
         with:
-          cluster_name: "probable-pitcher"
-          location: "us-west1"
+          cluster_name: probable-pitcher
+          location: us-west1
 
       - name: Install dependencies
         run: cd infrastructure && npm ci
 
-      - name: Update test stack
+      - name: Update production stack
         uses: pulumi/actions@v4
         with:
           command: up
-          stack-name: preview
+          stack-name: production
           work-dir: infrastructure
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
           DEPLOY_COMMIT_TAG: sha-${{ github.sha }}
-          CHANGED_INGEST: ${{ needs.checks.outputs.changed-ingest }}
-          CHANGED_NEXTJS: ${{ needs.checks.outputs.changed-nextjs }}
-          CHANGED_DB: ${{ needs.checks.outputs.changed-db }}
+          CHANGED_INGEST: "true"
+          CHANGED_NEXTJS: "true"
+          CHANGED_DB: "true"
 
-  update-preview:
-    name: Update Preview Mobile App
-    needs: [checks, deploy-infra]
-    if: |
-      always() &&
-      needs.checks.result == 'success' &&
-      needs.deploy-infra.result == 'success' &&
-      needs.checks.outputs.changed-expo
+  update-legacy:
+    name: Update Legacy App
+    needs: deploy-infra
     runs-on: ubuntu-latest
-    env:
-      CHANGED_EXPO: ${{ needs.checks.outputs.changed-expo }}
     steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Run semver-diff
+        id: semver-diff
+        uses: tj-actions/semver-diff@v2.1.0
+
+      - name: Show release type
+        run: |
+          echo "Release type: ${{ steps.semver-diff.outputs.release_type }}"
+
       - name: Check for EXPO_TOKEN
         run: |
           if [ -z "${{ secrets.EXPO_TOKEN }}" ]; then
             echo "You must provide an EXPO_TOKEN secret linked to this project's Expo account in this repo's secrets. Learn more: https://docs.expo.dev/eas-update/github-actions"
             exit 1
           fi
-
-      - name: Checkout repository
-        uses: actions/checkout@v3
 
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
@@ -285,12 +279,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Publish Live App Update
-        run:
-          cd apps/expo && APP_ENV=preview NEXTAUTH_URL="https://dev.probablepitcher.com" SENTRY_PUBLIC_DSN="${{ secrets.SENTRY_PUBLIC_DSN }}" eas update --branch preview --message "${{ github.event.head_commit.message }}"
-
-          #- name: App Store Build
-          #  run: cd apps/expo && eas build --profile preview --platform all --non-interactive
+      - name: Publish Live Update
+        run: cd apps/expo && APP_ENV=production NEXTAUTH_URL="https://probablepitcher.com" SENTRY_PUBLIC_DSN="${{ secrets.SENTRY_PUBLIC_DSN }}" eas update --branch production --message "${{ github.event.release.name }}"
 
   tag-git:
     name: Preview Tag Git

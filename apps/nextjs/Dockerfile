@@ -3,7 +3,7 @@
 ########################
 
 FROM node:18-alpine AS pruner
-# RUN apk add --no-cache libc6-compat openssl
+RUN apk add --no-cache libc6-compat openssl
 RUN apk update
 
 WORKDIR /probable-pitchers
@@ -19,7 +19,7 @@ RUN turbo prune --scope=@probable/nextjs --docker
 ########################
 
 FROM node:18-alpine AS builder
-# RUN apk add --no-cache libc6-compat openssl
+RUN apk add --no-cache libc6-compat openssl
 RUN apk update
 
 WORKDIR /probable-pitchers
@@ -61,6 +61,7 @@ RUN npm run build -- --filter=nextjs
 
 # Production image, copy all the files and run next
 FROM node:18-alpine AS runner
+RUN apk add --no-cache libc6-compat openssl
 WORKDIR /probable-pitchers
 
 ENV NODE_ENV production

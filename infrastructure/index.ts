@@ -15,23 +15,26 @@ const isProd = env === "production";
 const domains = config.requireObject<string[]>("domains");
 const replicas = config.requireNumber("nextjsReplicas");
 
-const projectCloudSql = new gcp.projects.Service(
-  `probable-cloudsql-api-${env}`,
+const projectCloudSqlLegacy = new gcp.projects.Service(
+  `probable-legacy-cloudsql-api`,
   {
     service: "sqladmin.googleapis.com",
     project: gcp.config.project,
   }
 );
 
-const gsa = new gcp.serviceaccount.Account(`probable-service-account-${env}`, {
-  accountId: `probable-sa-${env}`,
-  project: gcp.config.project,
-});
-
-const databaseInstance = new gcp.sql.DatabaseInstance(
-  `probable-db-instance-${env}`,
+const gsaLegacy = new gcp.serviceaccount.Account(
+  `probable-legacy-service-account`,
   {
-    name: `probable-db-instance-${env}`,
+    accountId: `probable-legacy-sa`,
+    project: gcp.config.project,
+  }
+);
+
+const databaseInstanceLegacy = new gcp.sql.DatabaseInstance(
+  `probable-legacy-db-instance`,
+  {
+    name: `probable-legacy-db-instance`,
     databaseVersion: "MYSQL_8_0",
     region: "us-west1",
     settings: {
@@ -46,57 +49,66 @@ const databaseInstance = new gcp.sql.DatabaseInstance(
   }
 );
 
-const databaseUser = new gcp.sql.User(`probable-db-user-${env}`, {
-  name: `probable-db-user-${env}`,
-  instance: databaseInstance.name,
+const databaseUserLegacy = new gcp.sql.User(`probable-legacy-db-user`, {
+  name: `probable-legacy-db-user`,
+  instance: databaseInstanceLegacy.name,
   password: config.requireSecret("databasePassword"),
 });
 
-const database = new gcp.sql.Database(`probable-db-${env}`, {
-  name: `probable-db-${env}`,
-  instance: databaseInstance.name,
+const databaseLegacy = new gcp.sql.Database(`probable-legacy-db`, {
+  name: `probable-legacy-db`,
+  instance: databaseInstanceLegacy.name,
   charset: "utf8",
 });
 
-const databaseUrl = pulumi
+const databaseUrlLegacy = pulumi
   .all([
-    databaseInstance.publicIpAddress,
-    database.name,
-    databaseUser.name,
-    databaseUser.password,
+    databaseInstanceLegacy.publicIpAddress,
+    databaseLegacy.name,
+    databaseUserLegacy.name,
+    databaseUserLegacy.password,
   ])
   .apply(([ipAddress, database, username, password]) => {
     return `mysql://${username}:${password}@${ipAddress}/${database}`;
   });
 
-export const clusterProvider = new k8s.Provider(`probable-pitchers-${env}`, {
-  kubeconfig: process.env.KUBECONFIG,
-});
+export const clusterProviderLegacy = new k8s.Provider(
+  `probable-pitchers-legacy`,
+  {
+    kubeconfig: process.env.KUBECONFIG,
+  }
+);
 
 export const namespace = new k8s.core.v1.Namespace(
-  `probable-${env}`,
+  `probable-legacy`,
   {},
-  { provider: clusterProvider }
+  { provider: clusterProviderLegacy }
 );
 
 const namespaceName = namespace.metadata.name;
 
-const ksa = new k8s.core.v1.ServiceAccount(
-  `probable-gke-service-account-${env}`,
+const ksaLegacy = new k8s.core.v1.ServiceAccount(
+  `probable-legacy-gke-service-account`,
   {
     metadata: {
-      name: `probable-gke-service-account-${env}`,
+      name: `probable-legacy-gke-service-account`,
       namespace: namespaceName,
     },
   },
-  { provider: clusterProvider }
+  { provider: clusterProviderLegacy }
 );
 
 pulumi
-  .all([gsa.email, gsa.name, gsa.member, ksa.metadata.name, namespaceName])
+  .all([
+    gsaLegacy.email,
+    gsaLegacy.name,
+    gsaLegacy.member,
+    ksaLegacy.metadata.name,
+    namespaceName,
+  ])
   .apply(([email, gsaName, member, ksaName, namespaceName]) => {
-    const gsaAnnotation = new k8s.core.v1.ServiceAccountPatch(
-      `probable-gke-service-account-annotation-${env}`,
+    const gsaAnnotationLegacy = new k8s.core.v1.ServiceAccountPatch(
+      `probable-legacy-gke-service-account-annotation`,
       {
         metadata: {
           namespace: namespaceName,
@@ -106,11 +118,11 @@ pulumi
           },
         },
       },
-      { provider: clusterProvider }
+      { provider: clusterProviderLegacy }
     );
 
-    const ksaIamMember = new gcp.serviceaccount.IAMMember(
-      `probable-gke-service-account-iam-${env}`,
+    const ksaIamMemberLegacy = new gcp.serviceaccount.IAMMember(
+      `probable-gke-service-account-iam`,
       {
         serviceAccountId: gsaName,
         role: "roles/iam.workloadIdentityUser",
@@ -120,14 +132,14 @@ pulumi
           ".svc.id.goog[",
           namespaceName,
           "/",
-          ksa.metadata.name,
+          ksaLegacy.metadata.name,
           "]"
         ),
       }
     );
 
-    const gsaIamMember = new gcp.projects.IAMMember(
-      `probable-gcp-service-account-iam-${env}`,
+    const gsaIamMemberLegacy = new gcp.projects.IAMMember(
+      `probable-legacy-gcp-service-account-iam`,
       {
         project: gcp.config.project!,
         role: "roles/cloudsql.admin",
@@ -136,8 +148,8 @@ pulumi
     );
   });
 
-export const regcred = new k8s.core.v1.Secret(
-  `probable-regcred-${env}`,
+export const regcredLegacy = new k8s.core.v1.Secret(
+  `probable-legacy-regcred`,
   {
     metadata: {
       namespace: namespaceName,
@@ -165,18 +177,22 @@ export const regcred = new k8s.core.v1.Secret(
         }),
     },
   },
-  { provider: clusterProvider }
+  { provider: clusterProviderLegacy }
 );
 
-const dbcred = new k8s.core.v1.Secret(
-  `probable-dbcred-${env}`,
+const dbcredLegacy = new k8s.core.v1.Secret(
+  `probable-legacy-dbcred`,
   {
     metadata: {
       namespace: namespaceName,
     },
     type: "Opaque",
     data: pulumi
-      .all([databaseUser.name, databaseUser.password, database.name])
+      .all([
+        databaseUserLegacy.name,
+        databaseUserLegacy.password,
+        databaseLegacy.name,
+      ])
       .apply(([username, password, databaseName]) => ({
         username: btoa(username),
         password: btoa(password!),
@@ -186,12 +202,12 @@ const dbcred = new k8s.core.v1.Secret(
         ),
       })),
   },
-  { provider: clusterProvider }
+  { provider: clusterProviderLegacy }
 );
 
-const migrationLabels = { app: `probable-migration-${env}` };
+const migrationLabels = { app: `probable-legacy-migration` };
 
-const migrationJob = new k8s.batch.v1.Job(
+const migrationJobLegacy = new k8s.batch.v1.Job(
   migrationLabels.app,
   {
     metadata: {
@@ -205,8 +221,10 @@ const migrationJob = new k8s.batch.v1.Job(
       template: {
         spec: {
           restartPolicy: "OnFailure",
-          imagePullSecrets: [{ name: regcred.metadata.apply((m) => m.name) }],
-          serviceAccountName: ksa.metadata.apply((m) => m.name),
+          imagePullSecrets: [
+            { name: regcredLegacy.metadata.apply((m) => m.name) },
+          ],
+          serviceAccountName: ksaLegacy.metadata.apply((m) => m.name),
           containers: [
             {
               name: migrationLabels.app,
@@ -219,7 +237,7 @@ const migrationJob = new k8s.batch.v1.Job(
                   name: "DATABASE_URL",
                   valueFrom: {
                     secretKeyRef: {
-                      name: dbcred.metadata.apply((m) => m.name),
+                      name: dbcredLegacy.metadata.apply((m) => m.name),
                       key: "databaseUrl",
                     },
                   },
@@ -244,7 +262,7 @@ const migrationJob = new k8s.batch.v1.Job(
               image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.13.0",
               args: [
                 "--port=3306",
-                databaseInstance.connectionName,
+                databaseInstanceLegacy.connectionName,
                 "--quitquitquit",
                 "--exit-zero-on-sigterm",
               ],
@@ -265,13 +283,13 @@ const migrationJob = new k8s.batch.v1.Job(
     },
   },
   {
-    provider: clusterProvider,
+    provider: clusterProviderLegacy,
   }
 );
 
-const seedLabels = { app: `probable-seed-${env}` };
+const seedLabels = { app: `probable-legacy-seed` };
 
-const seedJob = new k8s.batch.v1.CronJob(
+const seedJobLegacy = new k8s.batch.v1.CronJob(
   seedLabels.app,
   {
     metadata: {
@@ -289,9 +307,9 @@ const seedJob = new k8s.batch.v1.CronJob(
             spec: {
               restartPolicy: "OnFailure",
               imagePullSecrets: [
-                { name: regcred.metadata.apply((m) => m.name) },
+                { name: regcredLegacy.metadata.apply((m) => m.name) },
               ],
-              serviceAccountName: ksa.metadata.apply((m) => m.name),
+              serviceAccountName: ksaLegacy.metadata.apply((m) => m.name),
               containers: [
                 {
                   name: seedLabels.app,
@@ -304,7 +322,7 @@ const seedJob = new k8s.batch.v1.CronJob(
                       name: "DATABASE_URL",
                       valueFrom: {
                         secretKeyRef: {
-                          name: dbcred.metadata.apply((m) => m.name),
+                          name: dbcredLegacy.metadata.apply((m) => m.name),
                           key: "databaseUrl",
                         },
                       },
@@ -333,7 +351,7 @@ const seedJob = new k8s.batch.v1.CronJob(
                   image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.13.0",
                   args: [
                     "--port=3306",
-                    databaseInstance.connectionName,
+                    databaseInstanceLegacy.connectionName,
                     "--quitquitquit",
                     "--exit-zero-on-sigterm",
                   ],
@@ -356,14 +374,14 @@ const seedJob = new k8s.batch.v1.CronJob(
     },
   },
   {
-    provider: clusterProvider,
-    dependsOn: [migrationJob],
+    provider: clusterProviderLegacy,
+    dependsOn: [migrationJobLegacy],
   }
 );
 
-const playerLabels = { app: `probable-player-${env}` };
+const playerLabels = { app: `probable-legacy-player` };
 
-const playerJob = new k8s.batch.v1.CronJob(
+const playerJobLegacy = new k8s.batch.v1.CronJob(
   playerLabels.app,
   {
     metadata: {
@@ -381,9 +399,9 @@ const playerJob = new k8s.batch.v1.CronJob(
             spec: {
               restartPolicy: "OnFailure",
               imagePullSecrets: [
-                { name: regcred.metadata.apply((m) => m.name) },
+                { name: regcredLegacy.metadata.apply((m) => m.name) },
               ],
-              serviceAccountName: ksa.metadata.apply((m) => m.name),
+              serviceAccountName: ksaLegacy.metadata.apply((m) => m.name),
               containers: [
                 {
                   name: playerLabels.app,
@@ -396,7 +414,7 @@ const playerJob = new k8s.batch.v1.CronJob(
                       name: "DATABASE_URL",
                       valueFrom: {
                         secretKeyRef: {
-                          name: dbcred.metadata.apply((m) => m.name),
+                          name: dbcredLegacy.metadata.apply((m) => m.name),
                           key: "databaseUrl",
                         },
                       },
@@ -425,7 +443,7 @@ const playerJob = new k8s.batch.v1.CronJob(
                   image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.13.0",
                   args: [
                     "--port=3306",
-                    databaseInstance.connectionName,
+                    databaseInstanceLegacy.connectionName,
                     "--quitquitquit",
                     "--exit-zero-on-sigterm",
                   ],
@@ -448,14 +466,14 @@ const playerJob = new k8s.batch.v1.CronJob(
     },
   },
   {
-    provider: clusterProvider,
-    dependsOn: [migrationJob],
+    provider: clusterProviderLegacy,
+    dependsOn: [migrationJobLegacy],
   }
 );
 
-const notifyLabels = { app: `probable-notify-${env}` };
+const notifyLabels = { app: `probable-legacy-notify` };
 
-const notifyJob = new k8s.batch.v1.CronJob(
+const notifyJobLegacy = new k8s.batch.v1.CronJob(
   notifyLabels.app,
   {
     metadata: {
@@ -473,9 +491,9 @@ const notifyJob = new k8s.batch.v1.CronJob(
             spec: {
               restartPolicy: "OnFailure",
               imagePullSecrets: [
-                { name: regcred.metadata.apply((m) => m.name) },
+                { name: regcredLegacy.metadata.apply((m) => m.name) },
               ],
-              serviceAccountName: ksa.metadata.apply((m) => m.name),
+              serviceAccountName: ksaLegacy.metadata.apply((m) => m.name),
               containers: [
                 {
                   name: notifyLabels.app,
@@ -488,7 +506,7 @@ const notifyJob = new k8s.batch.v1.CronJob(
                       name: "DATABASE_URL",
                       valueFrom: {
                         secretKeyRef: {
-                          name: dbcred.metadata.apply((m) => m.name),
+                          name: dbcredLegacy.metadata.apply((m) => m.name),
                           key: "databaseUrl",
                         },
                       },
@@ -517,7 +535,7 @@ const notifyJob = new k8s.batch.v1.CronJob(
                   image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.13.0",
                   args: [
                     "--port=3306",
-                    databaseInstance.connectionName,
+                    databaseInstanceLegacy.connectionName,
                     "--quitquitquit",
                     "--exit-zero-on-sigterm",
                   ],
@@ -540,8 +558,8 @@ const notifyJob = new k8s.batch.v1.CronJob(
     },
   },
   {
-    provider: clusterProvider,
-    dependsOn: [migrationJob],
+    provider: clusterProviderLegacy,
+    dependsOn: [migrationJobLegacy],
   }
 );
 
@@ -556,9 +574,9 @@ const appleClientSecret = pulumi
     generateSecret({ teamId, keyId, privateKey, clientId })
   );
 
-const appLabels = { app: `probable-nextjs-${env}` };
+const appLabels = { app: `probable-legacy-nextjs` };
 
-const deployment = new k8s.apps.v1.Deployment(
+const deploymentLegacy = new k8s.apps.v1.Deployment(
   appLabels.app,
   {
     metadata: {
@@ -577,8 +595,10 @@ const deployment = new k8s.apps.v1.Deployment(
       template: {
         metadata: { labels: appLabels },
         spec: {
-          imagePullSecrets: [{ name: regcred.metadata.apply((m) => m.name) }],
-          serviceAccountName: ksa.metadata.apply((m) => m.name),
+          imagePullSecrets: [
+            { name: regcredLegacy.metadata.apply((m) => m.name) },
+          ],
+          serviceAccountName: ksaLegacy.metadata.apply((m) => m.name),
           containers: [
             {
               name: appLabels.app,
@@ -602,7 +622,7 @@ const deployment = new k8s.apps.v1.Deployment(
                   name: "DATABASE_URL",
                   valueFrom: {
                     secretKeyRef: {
-                      name: dbcred.metadata.apply((m) => m.name),
+                      name: dbcredLegacy.metadata.apply((m) => m.name),
                       key: "databaseUrl",
                     },
                   },
@@ -648,7 +668,7 @@ const deployment = new k8s.apps.v1.Deployment(
             {
               name: "cloudsql-proxy",
               image: "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.13.0",
-              args: ["--port=3306", databaseInstance.connectionName],
+              args: ["--port=3306", databaseInstanceLegacy.connectionName],
               securityContext: {
                 runAsNonRoot: true,
               },
@@ -666,12 +686,12 @@ const deployment = new k8s.apps.v1.Deployment(
     },
   },
   {
-    provider: clusterProvider,
-    dependsOn: [migrationJob],
+    provider: clusterProviderLegacy,
+    dependsOn: [migrationJobLegacy],
   }
 );
 
-const service = new k8s.core.v1.Service(
+const serviceLegacy = new k8s.core.v1.Service(
   appLabels.app,
   {
     metadata: {
@@ -690,17 +710,20 @@ const service = new k8s.core.v1.Service(
     },
   },
   {
-    provider: clusterProvider,
+    provider: clusterProviderLegacy,
   }
 );
 
-const ipAddress = new gcp.compute.GlobalAddress(`probable-address-${env}`, {
-  project: gcp.config.project,
-  addressType: "EXTERNAL",
-});
+const ipAddressLegacy = new gcp.compute.GlobalAddress(
+  `probable-legacy-address`,
+  {
+    project: gcp.config.project,
+    addressType: "EXTERNAL",
+  }
+);
 
-const managedCertificate = new k8s.apiextensions.CustomResource(
-  `probable-certificate-${env}`,
+const managedCertificateLegacy = new k8s.apiextensions.CustomResource(
+  `probable-legacy-certificate`,
   {
     apiVersion: "networking.gke.io/v1",
     kind: "ManagedCertificate",
@@ -712,12 +735,12 @@ const managedCertificate = new k8s.apiextensions.CustomResource(
     },
   },
   {
-    provider: clusterProvider,
+    provider: clusterProviderLegacy,
   }
 );
 
-const httpsRedirect = new k8s.apiextensions.CustomResource(
-  `probable-https-redirect-${env}`,
+const httpsRedirectLegacy = new k8s.apiextensions.CustomResource(
+  `probable-legacy-https-redirect`,
   {
     apiVersion: "networking.gke.io/v1beta1",
     kind: "FrontendConfig",
@@ -732,22 +755,22 @@ const httpsRedirect = new k8s.apiextensions.CustomResource(
     },
   },
   {
-    provider: clusterProvider,
+    provider: clusterProviderLegacy,
   }
 );
 
-const ingress = new k8s.networking.v1.Ingress(
-  `probable-ingress-${env}`,
+const ingressLegacy = new k8s.networking.v1.Ingress(
+  `probable-lgeacy-ingress`,
   {
     metadata: {
       namespace: namespaceName,
       annotations: {
         "kubernetes.io/ingress.class": "gce",
-        "kubernetes.io/ingress.global-static-ip-name": ipAddress.name,
+        "kubernetes.io/ingress.global-static-ip-name": ipAddressLegacy.name,
         "networking.gke.io/managed-certificates":
-          managedCertificate.metadata.apply((m) => m.name),
+          managedCertificateLegacy.metadata.apply((m) => m.name),
         "networking.gke.io/v1beta1.FrontendConfig":
-          httpsRedirect.metadata.apply((m) => m.name),
+          httpsRedirectLegacy.metadata.apply((m) => m.name),
       },
     },
     spec: {
@@ -761,9 +784,11 @@ const ingress = new k8s.networking.v1.Ingress(
                 pathType: "Prefix",
                 backend: {
                   service: {
-                    name: service?.metadata?.apply((m) => m?.name),
+                    name: serviceLegacy?.metadata?.apply((m) => m?.name),
                     port: {
-                      number: service?.spec?.ports?.[0].apply((p) => p?.port),
+                      number: serviceLegacy?.spec?.ports?.[0].apply(
+                        (p) => p?.port
+                      ),
                     },
                   },
                 },
@@ -776,6 +801,6 @@ const ingress = new k8s.networking.v1.Ingress(
     },
   },
   {
-    provider: clusterProvider,
+    provider: clusterProviderLegacy,
   }
 );

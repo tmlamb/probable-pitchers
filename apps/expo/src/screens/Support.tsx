@@ -39,7 +39,7 @@ export const Support = () => {
           <SecondaryText style={tw`mr-2`}>
             <AntDesign name="github" size={16} />
           </SecondaryText>
-          <SpecialText style={tw`self-center`}>Feedback?</SpecialText>
+          <SpecialText style={tw`self-center`}>Send Feedback</SpecialText>
         </ButtonContainer>
       </ScrollView>
     </ScreenLayout>

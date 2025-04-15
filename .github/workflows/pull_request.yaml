@@ -104,7 +104,7 @@ jobs:
         uses: pulumi/actions@v4
         with:
           command: preview
-          stack-name: preview
+          stack-name: legacy
           work-dir: infrastructure
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}

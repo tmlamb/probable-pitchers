@@ -1,0 +1,41 @@
+config:
+  gcp:project: probable-pitchers-prod
+  gcp:region: us-west1
+  probable-pitchers:nextjsReplicas: "1"
+  probable-pitchers:appleClientId:
+    secure: AAABANreCyfaz34blQ129krP/cgeVwoKG/+91GEpnFG/rUB1fh+TCQbGJQZhNPLmOtwspK+3khMDjqHYHVKTIg==
+  probable-pitchers:appleKeyId:
+    secure: AAABAJzCEGWdApBAE/xb5uTT94Dy8B4oBL1OsOouMZUjAyGyLvrdSt11
+  probable-pitchers:applePrivateKey:
+    secure: AAABAOL/BeQCkTqAP83mMv33kagke2fOrdr21xd8CINDlMgyg/OYOjn6mlIzEWRhAf5ZvBKK4FSRX+7InAuL8yYNvWcySnf+f/Pr5fXLeujqma1neZj81iN5dzzfDBJ6ZPwvQsLuifV1fltcaWdgq/xJtrZ5ngfumOwwFDUKsDym2yR753HVbEy+CilZsi1Yu931EH7qLt2okG+Sh6iZNQ/3LJcNdkXH1z58ano2xSmn5fVkrZiSOovlZhnblZeKYYJZjd5dDsY3SAJPwcSwGhR54IqghaMYS2rXmAlZFtT6HLCaho0hUHDQ2n9zMZ9/+KxfYoT5MYGTyLt4Jm95JeZjTKqMI60t3ROWR1Y0IhgqZl5ddl5SqhRJ5ntY0w1M3g==
+  probable-pitchers:appleTeamId:
+    secure: AAABAO1cni+KNbZ/koQEVVKUDUJoEE/ohGsGOLQKoF6iI4XERPMTmh97
+  probable-pitchers:appleWebClientId:
+    secure: AAABAHIXB3b/aMN/Z8PTz0j7O5/1BLBxkYMdfSl8DcwV+GfIYxIlZIboBxehzXP2k0S0S4cxfTvfqQ==
+  probable-pitchers:appleWebClientSecret:
+    secure: AAABAEx2WtrjQnQRSaqEAbgX1revELXh1Rp/Dfimk70pGKtTe7S3aOKtWrqzHwAWX2W2yycItlGmnTa4Nkj3nTd51pwo7jV+Q31fc6dXdGNcm7trzL2yyoJMMm4xekvm15I16qdS1EqxLX/HFgkT2uslunmTyc0c939mW/2493TD7zLhHI4QRZMnHgPZzh36UQFPKGSJQh56y+EpHeltfZOnmVx+0/q9fyw/sb5LybzQoPa+tvLBymxDH4kM/eYf3xDxjVhlD90yewJL3+CMOtRdoHZWmiawN5J3v2YW5V1cuADEbpj1MxMo7o4CFI0RBimGH4/yrSenSE89PfYyp8TCNVHwsp3QYAIVyp8dcCw5PRavHDvx1uChpqZcC1+TIWuNu6lxcb6lVXTiwSD7nAVmm51VNMLIW/OIEkdLjX8f0DjCkI57zRwT
+  probable-pitchers:authGoogleClientId:
+    secure: AAABAOHk8MePv9D57CJqyIWN/F/1yKiaabbd7s+0fI3E1lzdHq88ONYuAvHIvpcxxdHSbdc+hHP2U0bZkuR0ZRTwKtZtVFdIgIxDAm5B4v7i3rrHx+074va6RW0W+63UR4cd/EZxnzU=
+  probable-pitchers:authGoogleClientSecret:
+    secure: AAABAIpslMTUT/63Mw7m75ySUpHosgtp58viFqgWe8Cql5Og6A0T5RPHelG/9u44crrngkeG7YQb08RjNiXOnv0vgw==
+  probable-pitchers:containerRegistry:
+    email:
+      secure: AAABAOxg81xiFCyUComHZhWuYsTmuNZfcPXspD1AIurJZ2dMFXUuQveu8X5+D27u
+    host:
+      secure: AAABAFneMh525u38wIm05Ky+I8Oq5PsdA/X7m5PxJwLLnczUM87SB4nFkB2klnc=
+    user:
+      secure: AAABAFBcYoCaWKaRwH8tRguH8gDEEHnFwmqEZ8FOcWO+mpuFLTw=
+    password:
+      secure: AAABALP8y1N199cptGkKEvGgGxvkfhKqPqMWpaW4+Q4wW5rPoaBsj0a40wfyhE2vcK8CXXKUjGwi1Io3wyuOuMkssYcWQYw8
+  probable-pitchers:databasePassword:
+    secure: AAABAKggghH+4I5L6C68azwNd/0o272PAOGdUM2dfN3q39p6RZkfEad5Xv3HP/E3IK60Kw==
+  probable-pitchers:dbUrl:
+    secure: AAABAA838u6OyFrKKHt7EwJYSggV/JP2Rjbw87eIMNdWwrYG2/7JL2KTb4ydbclUzUyxOg8sXgw5XFESLSnoVtF4bxV7zv/FFN8Z9Riao+RqaOusFr36DAil0MsHZLCyLeO5hV3h/T5cBRKqYH6rF1hKJ21InjPz047WnA7uTmy3SRX3bNe5sYIvO93+syQan1Yqx/zTl+A6Qu2gZ4DLLO64uJH9+aEALWfCjxp1Cac=
+  probable-pitchers:domains:
+    - dev.login.probablepitcher.com
+  probable-pitchers:nextAuthExpoUrl:
+    secure: AAABAMRRONlQGt5XDyu06dng1GjfR2m4TWVu8EIu/afK9kaAjUmyTcfzujiY19wNwQvWHdupnFa/W5EMvDmgmSnHf5BJvKI300kdrabL
+  probable-pitchers:nextAuthSecret:
+    secure: AAABANhSdPb/5/UPT8hknTL8wA7NKLRnEejjBldx13an2REZ/0Ys7tOpesVT31hlSh+i67GfGZFbHT84qFqM6wHKxsBuBtZLN89fmg==
+  probable-pitchers:nextAuthUrl:
+    secure: AAABAHT0gzxroxM++k2QrksNpGYhu8NtdvqOqqOgQG3zswnqXxESgOwb3ZhrNqz6e+ebOlc1lL7J4E8ptiAarJ3GFKlj
