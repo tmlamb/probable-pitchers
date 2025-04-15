@@ -130,9 +130,75 @@ jobs:
       - name: Run Tests
         run: npm run format:check
 
+  build-nextjs:
+    name: Build nextjs image
+    needs: [test, lint, format, checks]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - name: Login to container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.GHCR_USER }}
+          password: ${{ secrets.GHCR_ACCESS_TOKEN }}
+
+      - name: Build and publish nextjs image
+        run: |
+          docker build . --file apps/nextjs/Dockerfile --tag ghcr.io/tmlamb/probable-pitchers-nextjs:sha-${{ github.sha }} --tag ghcr.io/tmlamb/probable-pitchers-nextjs:latest --build-arg TURBO_TEAM=${{ env.TURBO_TEAM }} --build-arg TURBO_TOKEN=${{ env.TURBO_TOKEN }}
+          docker push --all-tags ghcr.io/tmlamb/probable-pitchers-nextjs
+
+  build-ingest:
+    name: Build ingest image
+    needs: [test, lint, format, checks]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - name: Login to container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.GHCR_USER }}
+          password: ${{ secrets.GHCR_ACCESS_TOKEN }}
+
+      - name: Build and publish ingest image
+        run: |
+          docker build . --file apps/ingest/Dockerfile --tag ghcr.io/tmlamb/probable-pitchers-ingest:sha-${{ github.sha }} --tag ghcr.io/tmlamb/probable-pitchers-ingest:latest --build-arg TURBO_TEAM=${{ env.TURBO_TEAM }} --build-arg TURBO_TOKEN=${{ env.TURBO_TOKEN }}
+          docker push --all-tags ghcr.io/tmlamb/probable-pitchers-ingest
+
+  build-migration:
+    name: Build Migration image
+    needs: [test, lint, format, checks]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - name: Login to container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.GHCR_USER }}
+          password: ${{ secrets.GHCR_ACCESS_TOKEN }}
+
+      - name: Build and publish db migration image
+        run: |
+          docker build . --file packages/db/Dockerfile --tag ghcr.io/tmlamb/probable-pitchers-migration:sha-${{ github.sha }} --tag ghcr.io/tmlamb/probable-pitchers-migration:latest --build-arg TURBO_TEAM=${{ env.TURBO_TEAM }} --build-arg TURBO_TOKEN=${{ env.TURBO_TOKEN }}
+          docker push --all-tags ghcr.io/tmlamb/probable-pitchers-migration
+
   deploy-infra:
     name: Update Infrastructure
-    needs: [checks]
+    needs: [checks, build-nextjs, build-ingest, build-migration]
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
@@ -169,6 +235,7 @@ jobs:
           work-dir: infrastructure
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+          DEPLOY_COMMIT_TAG: sha-${{ github.sha }}
           CHANGED_INGEST: "true"
           CHANGED_NEXTJS: "true"
           CHANGED_DB: "true"
@@ -215,18 +282,18 @@ jobs:
   #     - name: Publish Live Update
   #       run: cd apps/expo && APP_ENV=production NEXTAUTH_URL="https://probablepitcher.com" SENTRY_PUBLIC_DSN="${{ secrets.SENTRY_PUBLIC_DSN }}" eas update --branch production --message "${{ github.event.release.name }}"
 
-  # tag-git:
-  #   name: Preview Tag Git
-  #   needs: [deploy-infra, update-legacy]
-  #   if: always() &&
-  #     (needs.deploy-infra.result == 'skipped' || needs.deploy-infra.result == 'success') &&
-  #     (needs.update-legacy.result == 'skipped' || needs.update-legacy.result == 'success')
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: "Check out repository code"
-  #       uses: actions/checkout@v3
-  #
-  #     - name: "Push preview tag"
-  #       uses: EndBug/latest-tag@latest
-  #       with:
-  #         ref: preview
+  tag-git:
+    name: Preview Tag Git
+    needs: [deploy-infra, update-legacy]
+    if: always() &&
+      (needs.deploy-infra.result == 'skipped' || needs.deploy-infra.result == 'success') &&
+      (needs.update-production-rn-app.result == 'skipped' || needs.update-production-rn-app.result == 'success')
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Check out repository code"
+        uses: actions/checkout@v3
+
+      - name: "Push preview tag"
+        uses: EndBug/latest-tag@latest
+        with:
+          ref: preview
