@@ -280,7 +280,7 @@ jobs:
         run: npm ci
 
       - name: Publish Live Update
-        run: cd apps/expo && APP_ENV=production NEXTAUTH_URL="https://dev.login.probablepitcher.com" SENTRY_PUBLIC_DSN="${{ secrets.SENTRY_PUBLIC_DSN }}" eas update --branch production --message "${{ github.event.release.name }}"
+        run: cd apps/expo && APP_ENV=production NEXTAUTH_URL="https://dev.login.probablepitcher.com" SENTRY_PUBLIC_DSN="${{ secrets.SENTRY_PUBLIC_DSN }}" eas update --branch production --message "switch to legacy backend"
 
   tag-git:
     name: Preview Tag Git
