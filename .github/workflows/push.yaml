@@ -279,8 +279,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # - name: Publish Live Update
-      #   run: cd apps/expo && APP_ENV=production NEXTAUTH_URL="https://probablepitcher.com" SENTRY_PUBLIC_DSN="${{ secrets.SENTRY_PUBLIC_DSN }}" eas update --branch production --message "${{ github.event.release.name }}"
+      - name: Publish Live Update
+        run: cd apps/expo && APP_ENV=production NEXTAUTH_URL="https://dev.login.probablepitcher.com" SENTRY_PUBLIC_DSN="${{ secrets.SENTRY_PUBLIC_DSN }}" eas update --branch production --message "${{ github.event.release.name }}"
 
   tag-git:
     name: Preview Tag Git
