@@ -132,7 +132,7 @@ jobs:
 
   deploy-infra:
     name: Update Infrastructure
-    needs: [checks, build-nextjs, build-ingest, build-migration]
+    needs: [checks]
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
