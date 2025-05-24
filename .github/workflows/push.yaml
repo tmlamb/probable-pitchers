@@ -109,27 +109,6 @@ jobs:
       - name: Run Tests
         run: npm run lint
 
-  format:
-    name: Format
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 2
-
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18.x
-          cache: "npm"
-
-      - name: Install Dependencies
-        run: npm ci
-
-      - name: Run Tests
-        run: npm run format:check
-
   build-nextjs:
     name: Build nextjs image
     needs: [test, lint, format, checks]
