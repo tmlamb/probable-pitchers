@@ -111,7 +111,7 @@ jobs:
 
   build-nextjs:
     name: Build nextjs image
-    needs: [test, lint, format, checks]
+    needs: [test, lint, checks]
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
@@ -133,7 +133,7 @@ jobs:
 
   build-ingest:
     name: Build ingest image
-    needs: [test, lint, format, checks]
+    needs: [test, lint, checks]
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
@@ -155,7 +155,7 @@ jobs:
 
   build-migration:
     name: Build Migration image
-    needs: [test, lint, format, checks]
+    needs: [test, lint, checks]
     runs-on: ubuntu-latest
     steps:
       - name: Check out code

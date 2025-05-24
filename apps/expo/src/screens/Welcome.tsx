@@ -16,7 +16,7 @@ export const Welcome = () => {
   const appVersionAlert = () =>
     Alert.alert(
       "App Version Expired",
-      "You are using a version of the app that is no long supported. Please update the application to continue.",
+      "You are using a version of the app that is no longer supported. Please update the application to continue.",
       [
         {
           text: "Ok",
