@@ -1,9 +1,7 @@
 import * as AppleAuthentication from "expo-apple-authentication";
-import { signIn } from "next-auth/expo";
 import { useState } from "react";
-import { ActivityIndicator, Image, Pressable, View } from "react-native";
+import { ActivityIndicator, Alert, Image, Pressable, View } from "react-native";
 import { useAppColorScheme } from "twrnc";
-import { appleLogin, googleLogin } from "../components/AuthProvider";
 import ModalLayout from "../components/ModalLayout";
 import {
   PrimaryText,
@@ -13,8 +11,19 @@ import {
 import tw from "../tailwind";
 
 export const Welcome = () => {
-  const [isSigningIn, setIsSigningIn] = useState(false);
+  const [isSigningIn] = useState(false);
   const [colorScheme] = useAppColorScheme(tw);
+  const appVersionAlert = () =>
+    Alert.alert(
+      "App Version Expired",
+      "You are using a version of the app that is no long supported. Please update the application to continue.",
+      [
+        {
+          text: "Ok",
+          onPress: () => console.error("App Version Expired Alert Dismissed"),
+        },
+      ],
+    );
   return (
     <ModalLayout>
       <View style={tw`h-full w-full py-9 px-3 justify-evenly`}>
@@ -35,11 +44,7 @@ export const Welcome = () => {
           <View>
             <Pressable
               style={tw`mx-auto active:opacity-10`}
-              onPress={async () => {
-                setIsSigningIn(true);
-                await signIn(() => googleLogin());
-                setIsSigningIn(false);
-              }}
+              onPress={() => appVersionAlert()}
             >
               <Image
                 alt="Sign in with Google"
@@ -58,11 +63,7 @@ export const Welcome = () => {
               }
               cornerRadius={1}
               style={tw`mx-auto mt-9 w-[200px] h-[43.24px] active:opacity-10`}
-              onPress={async () => {
-                setIsSigningIn(true);
-                await signIn(() => appleLogin());
-                setIsSigningIn(false);
-              }}
+              onPress={() => appVersionAlert()}
             />
           </View>
         ) : (
